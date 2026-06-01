@@ -22,4 +22,6 @@ public interface Options {
     @Nullable
     Class<? extends UuidGenerator> getUuidGeneratorClass();
 
+    List<String> getGlueClasses();
+
 }

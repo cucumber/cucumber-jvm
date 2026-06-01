@@ -3,6 +3,7 @@ package io.cucumber.core.runner;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.eventbus.EventBus;
@@ -50,11 +51,9 @@ public final class Runner {
         this.backends = backends;
         this.glue = new CachingGlue(bus);
         this.objectFactory = objectFactory;
-        List<URI> gluePaths = runnerOptions.getGlue();
-        log.debug(() -> "Loading glue from " + gluePaths);
         for (Backend backend : backends) {
             log.debug(() -> "Loading glue for backend " + backend.getClass().getName());
-            backend.loadGlue(this.glue, gluePaths);
+            backend.loadGlue(this.glue, new RunnerGlueDiscoveryRequest(runnerOptions));
         }
     }
 
@@ -245,4 +244,21 @@ public final class Runner {
                 .collect(toList());
     }
 
+    private static class RunnerGlueDiscoveryRequest implements GlueDiscoveryRequest {
+        private final Options runnerOptions;
+
+        RunnerGlueDiscoveryRequest(Options runnerOptions) {
+            this.runnerOptions = runnerOptions;
+        }
+
+        @Override
+        public List<URI> getGlue() {
+            return runnerOptions.getGlue();
+        }
+
+        @Override
+        public List<String> getGlueClassNames() {
+            return runnerOptions.getGlueClasses();
+        }
+    }
 }

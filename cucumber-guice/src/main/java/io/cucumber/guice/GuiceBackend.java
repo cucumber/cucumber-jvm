@@ -3,15 +3,13 @@ package io.cucumber.guice;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.Snippet;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
-import org.jspecify.annotations.Nullable;
 
-import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 
@@ -26,30 +24,21 @@ final class GuiceBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<URI> gluePaths) {
-        gluePaths.stream()
+    public void loadGlue(Glue glue, GlueDiscoveryRequest discoveryRequest) {
+        Stream<Class<?>> glueClasses = discoveryRequest.getGlue()
+                .stream()
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
-                .flatMap(Collection::stream)
-                .filter(InjectorSource.class::isAssignableFrom)
+                .flatMap(Collection::stream);
+
+        Stream<Class<?>> explicitClasses = discoveryRequest.getGlueClassNames()
+                .stream()
+                .map(classFinder::loadClass);
+
+        Stream.concat(glueClasses, explicitClasses)
                 .distinct()
                 .forEach(container::addClass);
-    }
-
-    @Override
-    public void buildWorld() {
-
-    }
-
-    @Override
-    public void disposeWorld() {
-
-    }
-
-    @Override
-    public @Nullable Snippet getSnippet() {
-        return null;
     }
 
 }

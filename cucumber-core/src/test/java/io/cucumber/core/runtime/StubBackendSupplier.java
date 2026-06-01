@@ -2,13 +2,13 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.snippets.TestSnippet;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -68,7 +68,7 @@ public final class StubBackendSupplier implements BackendSupplier {
     public Collection<? extends Backend> get() {
         return Collections.singletonList(new Backend() {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 beforeAll.forEach(glue::addBeforeAllHook);
                 before.forEach(glue::addBeforeHook);
                 beforeStep.forEach(glue::addBeforeStepHook);

@@ -2,6 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.StaticHookDefinition;
@@ -17,9 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 
-import java.net.URI;
 import java.time.Clock;
-import java.util.List;
 import java.util.UUID;
 
 import static java.util.Collections.emptyList;
@@ -61,7 +60,7 @@ class RunnerTest {
             glue.addBeforeHook(beforeHook);
             glue.addAfterHook(afterHook);
             return null;
-        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
+        }).when(backend).loadGlue(any(Glue.class), any(GlueDiscoveryRequest.class));
 
         Runner runner = new Runner(bus, singletonList(backend), objectFactory, runtimeOptions);
         runner.runBeforeAllHooks();
@@ -108,7 +107,7 @@ class RunnerTest {
         doThrow(new RuntimeException("Boom")).when(failingBeforeHook).execute(ArgumentMatchers.any());
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addBeforeHook(failingBeforeHook);
                 glue.addStepDefinition(stepDefinition);
             }
@@ -148,7 +147,7 @@ class RunnerTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addAfterHook(afterStepHook);
                 glue.addStepDefinition(stepDefinition);
             }
@@ -171,7 +170,7 @@ class RunnerTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addAfterHook(afteStepHook1);
                 glue.addAfterHook(afteStepHook2);
                 glue.addStepDefinition(stepDefinition);
@@ -196,7 +195,7 @@ class RunnerTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addBeforeHook(failingBeforeHook);
                 glue.addBeforeHook(beforeHook);
                 glue.addAfterHook(afterHook);
@@ -219,7 +218,7 @@ class RunnerTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addBeforeAllHook(beforeAllHook);
                 glue.addBeforeAllHook(failingBeforeAllHook);
             }
@@ -239,7 +238,7 @@ class RunnerTest {
         Pickle pickleMatchingStepDefinitions = createPickleMatchingStepDefinitions(stepDefinition);
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addStepDefinition(stepDefinition);
             }
         };
@@ -254,7 +253,7 @@ class RunnerTest {
         RuntimeOptions runtimeOptions = new RuntimeOptionsBuilder().setDryRun().build();
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addStepDefinition(stepDefinition);
             }
         };
@@ -277,7 +276,7 @@ class RunnerTest {
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
 
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addBeforeAllHook(beforeAllHook);
                 glue.addAfterAllHook(afterAllHook);
                 glue.addBeforeHook(beforeHook);
@@ -308,7 +307,7 @@ class RunnerTest {
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
 
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addBeforeHook(beforeHook);
                 glue.addAfterHook(afterHook);
                 glue.addBeforeStepHook(beforeStepHook);
