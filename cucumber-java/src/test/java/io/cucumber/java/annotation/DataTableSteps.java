@@ -20,12 +20,12 @@ public final class DataTableSteps {
     private final Person mononymousPerson = new Person("Plato", "");
 
     @DataTableType
-    public Author singleAuthorTransformer(DataTable table) {
+    Author singleAuthorTransformer(DataTable table) {
         return authorEntryTransformer(table.entries().get(0));
     }
 
     @DataTableType
-    public Author authorEntryTransformer(Map<String, String> entry) {
+    Author authorEntryTransformer(Map<String, String> entry) {
         return new DataTableSteps.Author(
             requireNonNull(entry.get("firstName")),
             requireNonNull(entry.get("lastName")),
@@ -33,33 +33,33 @@ public final class DataTableSteps {
     }
 
     @Given("a list of authors in a table")
-    public void aListOfAuthorsInATable(List<Author> authors) {
+    void aListOfAuthorsInATable(List<Author> authors) {
         assertTrue(authors.contains(expectedAuthor));
     }
 
     @Given("a list of authors in a transposed table")
-    public void aListOfAuthorsInATransposedTable(@Transpose List<Author> authors) {
+    void aListOfAuthorsInATransposedTable(@Transpose List<Author> authors) {
         assertTrue(authors.contains(expectedAuthor));
     }
 
     @Given("a single author in a table")
-    public void aSingleAuthorInATable(Author author) {
+    void aSingleAuthorInATable(Author author) {
         assertEquals(expectedAuthor, author);
     }
 
     @Given("a single author in a transposed table")
-    public void aSingleAuthorInATransposedTable(@Transpose Author author) {
+    void aSingleAuthorInATransposedTable(@Transpose Author author) {
         assertEquals(expectedAuthor, author);
     }
 
     @Given("a list of people in a table")
-    public void this_table_of_authors(List<DataTableSteps.Person> persons) {
+    void this_table_of_authors(List<DataTableSteps.Person> persons) {
         assertTrue(persons.contains(expectedPerson));
         assertTrue(persons.contains(mononymousPerson));
     }
 
     @DataTableType(replaceWithEmptyString = "[blank]")
-    public DataTableSteps.Person transform(Map<String, String> tableEntry) {
+    DataTableSteps.Person transform(Map<String, String> tableEntry) {
         return new Person(
             requireNonNull(tableEntry.get("first")),
             requireNonNull(tableEntry.get("last")));

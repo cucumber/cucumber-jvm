@@ -10,27 +10,27 @@ public final class GlueAdaptorTestStepDefinitions {
 
     @Given(value = "a step")
     @Given("repeated")
-    public void step_definition() {
+    void step_definition() {
 
     }
 
     @DefaultDataTableCellTransformer
-    public String default_data_table_cell_transformer(String fromValue, Type toValueType) {
+    String default_data_table_cell_transformer(String fromValue, Type toValueType) {
         return "default_data_table_cell_transformer";
     }
 
     @DefaultDataTableEntryTransformer
-    public String default_data_table_entry_transformer(Map<String, String> fromValue, Type toValueType) {
+    String default_data_table_entry_transformer(Map<String, String> fromValue, Type toValueType) {
         return "default_data_table_entry_transformer";
     }
 
     @DefaultParameterTransformer
-    public String default_parameter_transformer(String fromValue, Type toValueTYpe) {
+    String default_parameter_transformer(String fromValue, Type toValueTYpe) {
         return "default_parameter_transformer";
     }
 
     @DataTableType
-    public String data_table_type(String fromValue) {
+    String data_table_type(String fromValue) {
         return "data_table_type";
     }
 
@@ -40,42 +40,43 @@ public final class GlueAdaptorTestStepDefinitions {
             preferForRegexMatch = true,
             useForSnippets = true,
             useRegexpMatchAsStrongTypeHint = false)
-    public String parameter_type(String fromValue) {
+    String parameter_type(String fromValue) {
         return "parameter_type";
     }
 
     @AfterStep(name = "after-step")
-    public void after_step() {
+    void after_step() {
 
     }
 
     @BeforeStep(name = "before-step")
-    public void before_step() {
+    void before_step() {
 
     }
 
     @After(name = "after")
-    public void after() {
+    void after() {
 
     }
 
     @Before(name = "before")
-    public void before() {
+    void before() {
 
     }
 
     @AfterAll
-    public static void afterAll() {
+    static void afterAll() {
 
     }
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
 
     }
 
     @DocStringType
-    public @Nullable Object json(String docString) {
+    @Nullable
+    Object json(String docString) {
         return null;
     }
 

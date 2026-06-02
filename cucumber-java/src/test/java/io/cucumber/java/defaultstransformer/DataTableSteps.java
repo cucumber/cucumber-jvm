@@ -31,27 +31,27 @@ public final class DataTableSteps {
     @DefaultParameterTransformer
     @DefaultDataTableEntryTransformer
     @DefaultDataTableCellTransformer
-    public Object defaultTransformer(Object fromValue, Type toValueType) {
+    Object defaultTransformer(Object fromValue, Type toValueType) {
         return objectMapper.convertValue(fromValue, objectMapper.constructType(toValueType));
     }
 
     @Given("a list of authors in a table")
-    public void aListOfAuthorsInATable(List<Author> authors) {
+    void aListOfAuthorsInATable(List<Author> authors) {
         assertTrue(authors.contains(expectedAuthor));
     }
 
     @Given("a table with title case headers")
-    public void aTableWithCapitalCaseHeaders(List<Author> authors) {
+    void aTableWithCapitalCaseHeaders(List<Author> authors) {
         assertTrue(authors.contains(expectedAuthor));
     }
 
     @Given("a single currency in a table")
-    public void aSingleCurrencyInATable(Currency currency) {
+    void aSingleCurrencyInATable(Currency currency) {
         assertThat(currency, is(Currency.getInstance("EUR")));
     }
 
     @Given("a currency in a parameter {}")
-    public void aCurrencyInAParameter(Currency currency) {
+    void aCurrencyInAParameter(Currency currency) {
         assertThat(currency, is(Currency.getInstance("EUR")));
     }
 

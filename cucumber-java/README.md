@@ -39,19 +39,19 @@ public class CalculatorStepDefinitions {
     private RpnCalculator calc;
 
     @Given("a calculator I just turned on")
-    public void a_calculator_I_just_turned_on() {
+    void a_calculator_I_just_turned_on() {
         calc = new RpnCalculator();
     }
 
     @When("I add {int} and {int}")
-    public void adding(int arg1, int arg2) {
+    void adding(int arg1, int arg2) {
         calc.push(arg1);
         calc.push(arg2);
         calc.push("+");
     }
 
     @Then("the result is {int}")
-    public void the_result_is(double expected) {
+    void the_result_is(double expected) {
         assertEquals(expected, calc.value());
     }
 }
@@ -78,17 +78,17 @@ import io.cucumber.java.en.Given;
 public class StepDefinitions {
     
     @Given("a datatable:")
-    public void a_data_table(DataTable table){
+    void a_data_table(DataTable table){
         
     }
     
     @Given("a datatable as a list of maps:")
-    public void a_data_table(List<Map<String, String>> table){
+    void a_data_table(List<Map<String, String>> table){
         
     }
 
     @Given("a datatable as a list of maps:")
-    public void a_data_table(Map<String, Map<String, Double>> table){
+    void a_data_table(Map<String, Map<String, Double>> table){
         
     }
 }
@@ -112,7 +112,7 @@ import io.cucumber.java.en.Given;
 public class StepDefinitions {
     
     @Given("a docstring:")
-    public void a_data_table(DocString docString){
+    void a_data_table(DocString docString){
         
     }
 }
@@ -262,12 +262,12 @@ import java.time.LocalDate;
 public class StepDefinitions {
 
     @ParameterType("([0-9]{4})-([0-9]{2})-([0-9]{2})")
-    public LocalDate iso8601Date(String year, String month, String day) {
+    LocalDate iso8601Date(String year, String month, String day) {
         return LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
     }
 
     @Given("today is {iso8601Date}")
-    public void today_is(LocalDate date) {
+    void today_is(LocalDate date) {
 
     }
 }
@@ -299,7 +299,7 @@ import java.util.Map;
 public class StepDefinitions {
 
     @DataTableType
-    public Author authorEntryTransformer(Map<String, String> entry) {
+    Author authorEntryTransformer(Map<String, String> entry) {
         return new Author(
             entry.get("firstName"),
             entry.get("lastName"),
@@ -307,7 +307,7 @@ public class StepDefinitions {
     }
 
     @Given("a list of authors in a table")
-    public void aListOfAuthorsInATable(List<Author> authors) {
+    void aListOfAuthorsInATable(List<Author> authors) {
         
     }
 }
@@ -443,7 +443,7 @@ public class DataTableStepDefinitions {
     }
     
     @Given("some authors")
-    public void given_some_authors(List<Author> authors){
+    void given_some_authors(List<Author> authors){
       // authors = [Author(name="Aspiring Author", firstPublication=null), Author(name="Ancient Author", firstPublication=)]
     }
 }
@@ -472,12 +472,12 @@ import java.util.List;
 public class DataTableStepDefinitions {
 
     @DataTableType(replaceWithEmptyString = "[blank]")
-    public String listOfStringListsType(String cell) {
+    String listOfStringListsType(String cell) {
         return cell;
     }
 
     @Given("a blank value")
-    public void given_a_blank_value(Map<String, String> map){
+    void given_a_blank_value(Map<String, String> map){
         // map contains { "key":"a", "value": ""}
     }
 }
@@ -511,7 +511,7 @@ import java.util.List;
 public class DataTableStepDefinitions {
 
     @DataTableType
-    public User convert(Map<String, String> entry){
+    User convert(Map<String, String> entry){
       return new User(
          entry.get("firstname"),
          entry.get("lastname"),
@@ -520,7 +520,7 @@ public class DataTableStepDefinitions {
     }
     
     @Given("the user is")
-    public void the_user_is(@Transpose User user){
+    void the_user_is(@Transpose User user){
       // user = [User(firstname="Roberto", lastname="Lo Giacco", nationality="Italian")
     }
 }
@@ -574,24 +574,24 @@ public class StepDefinitions {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @DocStringType
-    public List<Grocery> json(String docString) throws IOException {
+    List<Grocery> json(String docString) throws IOException {
         return objectMapper.readValue(docString, new TypeReference<List<Grocery>>() {
         });
     }
 
     @DocStringType(contentType = "json")
-    public FoodItem convertFoodItem(String docString) throws IOException {
+    FoodItem convertFoodItem(String docString) throws IOException {
         return objectMapper.readValue(docString, new TypeReference<FoodItem>() {
         });
     }
 
     @Given("some more information")
-    public void some_more_information(List<Grocery> groceries) {
+    void some_more_information(List<Grocery> groceries) {
 
     }
 
     @Then("some conclusion is drawn")
-    public void some_conclusion_is_drawn(FoodItem foodItem) {
+    void some_conclusion_is_drawn(FoodItem foodItem) {
 
     }
 }

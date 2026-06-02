@@ -6,7 +6,7 @@ public final class Steps {
 
     @Given("test")
     @Given("test again")
-    public void test() {
+    void test() {
 
     }
 
