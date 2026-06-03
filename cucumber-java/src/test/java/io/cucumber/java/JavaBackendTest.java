@@ -66,7 +66,17 @@ class JavaBackendTest {
             URI.create("classpath:io/cucumber/java/incorrectlysubclassedsteps")));
         InvalidMethodException expectedThrown = assertThrows(InvalidMethodException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo(
-            "You're not allowed to extend classes that define Step Definitions or hooks. class io.cucumber.java.incorrectlysubclassedsteps.SubclassesSteps extends class io.cucumber.java.steps.Steps")));
+            """
+                    "io.cucumber.java.incorrectlysubclassedsteps.SubclassesSteps" extends "io.cucumber.java.steps.Steps" which declares a step definition or hook "io.cucumber.java.steps.Steps.test()".
+
+                    It is not possible to extend classes that define step definitions or hooks.
+
+                    If you are trying to share state between steps consider using dependency injection such as:
+                         * cucumber-picocontainer
+                         * cucumber-spring
+                         * cucumber-jakarta-cdi
+                         * ...etc
+                    """)));
     }
 
     @Test

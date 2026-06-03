@@ -11,10 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MethodScannerTest {
@@ -36,10 +33,11 @@ class MethodScannerTest {
         Method packagePrivateMethod = BaseSteps.class.getDeclaredMethod("n");
         Method protectedMethod = BaseSteps.class.getDeclaredMethod("o");
         MethodScanner.scan(BaseSteps.class, this::addScanResult);
-        assertThat(scanResult,
-            contains(new SimpleEntry<>(publicMethod, publicMethod.getAnnotations()[0]),
-                new SimpleEntry<>(packagePrivateMethod, packagePrivateMethod.getAnnotations()[0]),
-                new SimpleEntry<>(protectedMethod, protectedMethod.getAnnotations()[0])));
+        assertThat(scanResult)
+                .containsExactlyInAnyOrder(
+                    new SimpleEntry<>(publicMethod, publicMethod.getAnnotations()[0]),
+                    new SimpleEntry<>(packagePrivateMethod, packagePrivateMethod.getAnnotations()[0]),
+                    new SimpleEntry<>(protectedMethod, protectedMethod.getAnnotations()[0]));
     }
 
     @Test
@@ -48,10 +46,11 @@ class MethodScannerTest {
         Method packagePrivateMethod = ProtectedSteps.class.getDeclaredMethod("n");
         Method protectedMethod = ProtectedSteps.class.getDeclaredMethod("o");
         MethodScanner.scan(ProtectedSteps.class, this::addScanResult);
-        assertThat(scanResult,
-            contains(new SimpleEntry<>(publicMethod, publicMethod.getAnnotations()[0]),
-                new SimpleEntry<>(packagePrivateMethod, packagePrivateMethod.getAnnotations()[0]),
-                new SimpleEntry<>(protectedMethod, protectedMethod.getAnnotations()[0])));
+        assertThat(scanResult)
+                .containsExactlyInAnyOrder(
+                    new SimpleEntry<>(publicMethod, publicMethod.getAnnotations()[0]),
+                    new SimpleEntry<>(packagePrivateMethod, packagePrivateMethod.getAnnotations()[0]),
+                    new SimpleEntry<>(protectedMethod, protectedMethod.getAnnotations()[0]));
     }
 
     @Test
@@ -60,44 +59,44 @@ class MethodScannerTest {
         Method packagePrivateMethod = PackagePrivateSteps.class.getDeclaredMethod("n");
         Method protectedMethod = PackagePrivateSteps.class.getDeclaredMethod("o");
         MethodScanner.scan(PackagePrivateSteps.class, this::addScanResult);
-        assertThat(scanResult,
-            contains(new SimpleEntry<>(publicMethod, publicMethod.getAnnotations()[0]),
-                new SimpleEntry<>(packagePrivateMethod, packagePrivateMethod.getAnnotations()[0]),
-                new SimpleEntry<>(protectedMethod, protectedMethod.getAnnotations()[0])));
+        assertThat(scanResult)
+                .containsExactlyInAnyOrder(
+                    new SimpleEntry<>(publicMethod, publicMethod.getAnnotations()[0]),
+                    new SimpleEntry<>(packagePrivateMethod, packagePrivateMethod.getAnnotations()[0]),
+                    new SimpleEntry<>(protectedMethod, protectedMethod.getAnnotations()[0]));
     }
 
     @Test
     void scan_ignores_private_class() {
         MethodScanner.scan(PrivateSteps.class, this::addScanResult);
-        assertThat(scanResult, empty());
+        assertThat(scanResult).isEmpty();
     }
 
     @Test
     void scan_ignores_object() {
         MethodScanner.scan(Object.class, this::addScanResult);
-        assertThat(scanResult, empty());
+        assertThat(scanResult).isEmpty();
     }
 
     @Test
     void scan_ignores_bridge_methods() throws NoSuchMethodException {
         Method method = SpecializedReturnType.class.getMethod("test");
         MethodScanner.scan(SpecializedReturnType.class, this::addScanResult);
-        assertThat(scanResult, contains(new SimpleEntry<>(method, method.getAnnotations()[0])));
+        assertThat(scanResult).containsExactlyInAnyOrder(new SimpleEntry<>(method, method.getAnnotations()[0]));
     }
 
     @Test
     void scan_ignores_non_instantiable_class() {
         MethodScanner.scan(NonStaticInnerClass.class, this::addScanResult);
-        assertThat(scanResult, empty());
+        assertThat(scanResult).isEmpty();
     }
 
     @Test
     void loadGlue_fails_when_class_is_not_method_declaring_class() {
         InvalidMethodException exception = assertThrows(InvalidMethodException.class,
             () -> MethodScanner.scan(ExtendedSteps.class, this::addScanResult));
-        assertThat(exception.getMessage(), is(
-            "You're not allowed to extend classes that define Step Definitions or hooks. " +
-                    "class io.cucumber.java.MethodScannerTest$ExtendedSteps extends class io.cucumber.java.MethodScannerTest$BaseSteps"));
+        assertThat(exception).hasMessageStartingWith(
+            "\"io.cucumber.java.MethodScannerTest$ExtendedSteps\" extends \"io.cucumber.java.MethodScannerTest$BaseSteps\" which declares a step definition or hook \"io.cucumber.java.MethodScannerTest$BaseSteps.n()");
     }
 
     public static class ExtendedSteps extends BaseSteps {

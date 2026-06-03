@@ -16,7 +16,6 @@ import static io.cucumber.java.InvalidMethodException.createInvalidMethodExcepti
 import static io.cucumber.java.Invoker.invoke;
 import static java.lang.reflect.Modifier.isAbstract;
 import static java.lang.reflect.Modifier.isPrivate;
-import static java.lang.reflect.Modifier.isPublic;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Objects.requireNonNull;
 
@@ -36,28 +35,29 @@ final class MethodScanner {
         if (!isInstantiable(aClass)) {
             return;
         }
-        for (Method method : safelyGetPublicMethods(aClass)) {
-            scan(consumer, aClass, method);
+        for (Method method : safelyGetDeclaredMethods(aClass)) {
+            scan(aClass, method, consumer);
         }
-        for (Method method : safelyGetProtectedAndPackagePrivateMethods(aClass)) {
-            scan(consumer, aClass, method);
+
+        requireNoGlueDefinitionsInSuperClass(aClass);
+    }
+
+    private static void requireNoGlueDefinitionsInSuperClass(Class<?> aClass) {
+        for (Class<?> superclass = aClass.getSuperclass(); //
+                !Object.class.equals(superclass); //
+                superclass = superclass.getSuperclass()) {
+            for (Method method : safelyGetDeclaredMethods(superclass)) {
+                scan(aClass, method, (candiateMethod, annotation) -> {
+                    throw createInvalidMethodException(candiateMethod, aClass);
+                });
+            }
         }
     }
 
-    private static Method[] safelyGetPublicMethods(Class<?> aClass) {
-        try {
-            return aClass.getMethods();
-        } catch (NoClassDefFoundError e) {
-            log.warn(e,
-                () -> "Failed to load methods of class '" + aClass.getName() + "'.\n" + classPathScanningExplanation());
-        }
-        return new Method[0];
-    }
-
-    private static List<Method> safelyGetProtectedAndPackagePrivateMethods(Class<?> aClass) {
+    private static List<Method> safelyGetDeclaredMethods(Class<?> aClass) {
         try {
             return Arrays.stream(aClass.getDeclaredMethods())
-                    .filter(MethodScanner::hasAcceptableModifiers)
+                    .filter(MethodScanner::isConcreteNonPrivate)
                     .collect(Collectors.toList());
         } catch (NoClassDefFoundError e) {
             log.warn(e,
@@ -67,9 +67,8 @@ final class MethodScanner {
         return Collections.emptyList();
     }
 
-    private static boolean hasAcceptableModifiers(Method aMethod) {
+    private static boolean isConcreteNonPrivate(Method aMethod) {
         return !isPrivate(aMethod.getModifiers())
-                && !isPublic(aMethod.getModifiers())
                 && !isAbstract(aMethod.getModifiers());
     }
 
@@ -79,7 +78,7 @@ final class MethodScanner {
                 && (isStatic(clazz.getModifiers()) || clazz.getEnclosingClass() == null);
     }
 
-    private static void scan(BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method) {
+    private static void scan(Class<?> aClass, Method method, BiConsumer<Method, Annotation> consumer) {
         // prevent unnecessary checking of Object methods
         if (Object.class.equals(method.getDeclaringClass())) {
             return;
@@ -103,17 +102,10 @@ final class MethodScanner {
     ) {
         for (Annotation annotation : methodAnnotations) {
             if (isHookAnnotation(annotation) || isStepDefinitionAnnotation(annotation)) {
-                validateMethod(aClass, method);
                 consumer.accept(method, annotation);
             } else if (isRepeatedStepDefinitionAnnotation(annotation)) {
                 scan(consumer, aClass, method, repeatedAnnotations(annotation));
             }
-        }
-    }
-
-    private static void validateMethod(Class<?> glueCodeClass, Method method) {
-        if (!glueCodeClass.equals(method.getDeclaringClass())) {
-            throw createInvalidMethodException(method, glueCodeClass);
         }
     }
 
