@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LambdaStepDefinitions implements io.cucumber.java8.En {
+class LambdaStepDefinitions implements io.cucumber.java8.En {
 
     private static @Nullable LambdaStepDefinitions lastInstance;
 
     private final int outside = 41;
 
-    public LambdaStepDefinitions() {
+    LambdaStepDefinitions() {
         DataTableType("[blank]", (Map<String, String> entry) -> {
             Person person = new Person();
             person.first = entry.get("first");

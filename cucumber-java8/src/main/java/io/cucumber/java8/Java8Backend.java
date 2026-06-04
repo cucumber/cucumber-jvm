@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static io.cucumber.java8.LambdaGlueRegistry.CLOSED;
+import static java.lang.reflect.Modifier.isAbstract;
+import static java.lang.reflect.Modifier.isPrivate;
+import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Objects.requireNonNull;
 
 final class Java8Backend implements Backend {
@@ -42,8 +45,7 @@ final class Java8Backend implements Backend {
                 .map(ClasspathSupport::packageName)
                 .map(basePackageName -> classFinder.scanForSubClassesInPackage(basePackageName, LambdaGlue.class))
                 .flatMap(Collection::stream)
-                .filter(glueClass -> !glueClass.isInterface())
-                .filter(glueClass -> glueClass.getConstructors().length > 0)
+                .filter(Java8Backend::isInstantiable)
                 .distinct()
                 .forEach(glueClass -> {
                     container.addClass(glueClass);
@@ -74,4 +76,11 @@ final class Java8Backend implements Backend {
         return new Java8Snippet();
     }
 
+    private static boolean isInstantiable(Class<?> clazz) {
+        return !clazz.isInterface()
+                && clazz.getDeclaredConstructors().length > 0
+                && !isPrivate(clazz.getModifiers())
+                && !isAbstract(clazz.getModifiers())
+                && (isStatic(clazz.getModifiers()) || clazz.getEnclosingClass() == null);
+    }
 }

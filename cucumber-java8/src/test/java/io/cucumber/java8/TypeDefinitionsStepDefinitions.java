@@ -16,9 +16,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @SuppressWarnings("UnnecessaryStringBuilder")
-public class TypeDefinitionsStepDefinitions implements En {
+class TypeDefinitionsStepDefinitions implements En {
 
-    public TypeDefinitionsStepDefinitions() {
+    TypeDefinitionsStepDefinitions() {
         Given("docstring, defined by lambda",
             (StringBuilder builder) -> assertThat(builder.getClass(), equalTo(StringBuilder.class)));
         DocStringType("doc", (String docString) -> new StringBuilder(docString));
