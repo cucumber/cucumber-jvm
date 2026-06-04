@@ -119,7 +119,7 @@ into a Suite.
 @SelectPackages("com.example")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example")
 @ConfigurationParametersResource("cucumber.properties")
-public class RunCucumberTest {
+class RunCucumberTest {
 }
 ```
 
@@ -304,7 +304,7 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 @IncludeEngines("cucumber")
 @SelectPackages("com.example")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example")
-public class RunCucumberTest {
+class RunCucumberTest {
 }
 ```
 
@@ -659,10 +659,10 @@ import org.junit.jupiter.api.Assumptions;
 
 import java.util.List;
 
-public class RpnCalculatorSteps {
+class RpnCalculatorSteps {
 
    @Before
-   public void before() {
+   void before() {
        boolean condition = // decide if tests should abort
        Assumptions.assumeTrue(condition, "Condition not met");
    }
@@ -685,7 +685,7 @@ The JUnit Platform Engine supports rerun files. Rerun files must have the
 @SelectPackages("com.example")
 // Writes the failed tests to rerun.txt
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "rerun:target/rerun.txt")
-public class RunCucumber { 
+class RunCucumber { 
 }
 ```
 
@@ -696,7 +696,7 @@ can be selected for execution:
 @Suite(failIfNoTests = false) // Allows the suite have no tests to rerun if all tests in RunCucumber passed
 @IncludeEngines("cucumber")
 @SelectFile("target/rerun.txt") // Selects the rerun file, must end with .txt 
-public class RerunRunCucumber {
+class RerunRunCucumber {
 }
 ```
 
