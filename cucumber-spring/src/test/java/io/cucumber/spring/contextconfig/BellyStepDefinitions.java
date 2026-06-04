@@ -25,12 +25,12 @@ public class BellyStepDefinitions {
     }
 
     @Then("I have belly")
-    public void I_have_belly() {
+    void I_have_belly() {
         assertNotNull(belly);
     }
 
     @Then("I have belly bean")
-    public void I_have_belly_bean() {
+    void I_have_belly_bean() {
         assertNotNull(bellyBean);
     }
 

@@ -12,7 +12,7 @@ public class AnotherStepDef {
     OneStepDef oneStepDef;
 
     @Then("I can read {int} cucumbers from the other step def class")
-    public void i_can_read_cucumbers_from_the_other_step_def_class(int arg1) {
+    void i_can_read_cucumbers_from_the_other_step_def_class(int arg1) {
         assertEquals(arg1, oneStepDef.cucumbers);
     }
 

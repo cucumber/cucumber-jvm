@@ -13,7 +13,7 @@ public class AnnotationContextConfigurationDefinitions {
     private ApplicationContext context;
 
     @Then("cucumber picks up configuration class without step defs")
-    public void pickUpContext() {
+    void pickUpContext() {
         assertNotNull(context);
     }
 
