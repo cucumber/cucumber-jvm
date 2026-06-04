@@ -4,7 +4,7 @@ import io.cucumber.java.en.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StepDefinitions {
+class StepDefinitions {
 
     @Given("an example scenario")
     void anExampleScenario() {
