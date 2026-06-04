@@ -2,8 +2,11 @@ package io.cucumber.core.backend;
 
 import io.cucumber.core.exception.CucumberException;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,24 +55,75 @@ public final class DefaultObjectFactory implements ObjectFactory {
     }
 
     private <T> T cacheNewInstance(Class<T> type) {
+        Constructor<T> constructor = getAccesibleZeroArgumentConstructor(type);
+        if (constructor == null) {
+            throw createNoAccessibleZeroArgumentConstructor(type, null);
+        }
         try {
-            Constructor<T> constructor = type.getConstructor();
-            T instance = constructor.newInstance();
+            T instance = makeAccessible(constructor).newInstance();
             instances.put(type, instance);
             return instance;
-        } catch (NoSuchMethodException | IllegalAccessException e) {
-            throw new CucumberException("""
-                    %s does not have an accessible public zero-argument constructor.
-
-                    To use dependency injection add an other ObjectFactory implementation such as:
-                     * cucumber-picocontainer
-                     * cucumber-spring
-                     * cucumber-jakarta-cdi
-                     * ...etc
-                    """.formatted(type), e);
+        } catch (IllegalAccessException e) {
+            throw createNoAccessibleZeroArgumentConstructor(type, e);
         } catch (Exception e) {
             throw new CucumberException("Failed to instantiate %s".formatted(type), e);
         }
+    }
+
+    private static <T> CucumberException createNoAccessibleZeroArgumentConstructor(
+            Class<T> type, @Nullable Throwable cause
+    ) {
+        return new CucumberException("""
+                %s does not have an single accessible zero-argument constructor.
+
+                To use dependency injection add an other ObjectFactory implementation such as:
+                 * cucumber-picocontainer
+                 * cucumber-spring
+                 * cucumber-jakarta-cdi
+                 * ...etc
+                """.formatted(type), cause);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> @Nullable Constructor<T> getAccesibleZeroArgumentConstructor(Class<T> type) {
+        var constructors = Arrays.stream(type.getDeclaredConstructors())//
+                .filter(constructor -> !isSynthetic(constructor))//
+                .filter(constructor -> !isPrivate(constructor))
+                .filter(DefaultObjectFactory::isZeroParameters)
+                .toList();
+
+        if (constructors.size() != 1) {
+            return null;
+        }
+        return (Constructor<T>) constructors.get(0);
+    }
+
+    @SuppressWarnings("deprecation")
+    public static <T> Constructor<T> makeAccessible(Constructor<T> constructor) {
+        if ((!isPublic(constructor) || !isPublic(constructor.getDeclaringClass())) && !constructor.isAccessible()) {
+            constructor.setAccessible(true);
+        }
+        return constructor;
+    }
+
+    private static boolean isPublic(Class<?> declaringClass) {
+        return Modifier.isPublic(declaringClass.getModifiers());
+    }
+
+    private static boolean isPrivate(Constructor<?> constructor) {
+        return Modifier.isPrivate(constructor.getModifiers());
+    }
+
+    private static boolean isPublic(Constructor<?> constructor) {
+        return Modifier.isPublic(constructor.getModifiers());
+    }
+
+    private static boolean isZeroParameters(Constructor<?> constructor) {
+        return constructor.getParameterCount() == 0;
+    }
+
+    private static boolean isSynthetic(Constructor<?> constructor) {
+        return constructor.isSynthetic();
     }
 
 }
