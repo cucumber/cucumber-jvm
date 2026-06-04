@@ -29,10 +29,10 @@ class MethodScannerTest {
 
     @Test
     void scan_finds_annotated_methods_in_public_class() throws NoSuchMethodException {
-        Method publicMethod = BaseSteps.class.getMethod("m");
-        Method packagePrivateMethod = BaseSteps.class.getDeclaredMethod("n");
-        Method protectedMethod = BaseSteps.class.getDeclaredMethod("o");
-        MethodScanner.scan(BaseSteps.class, this::addScanResult);
+        Method publicMethod = PublicClassStepDefinitions.class.getMethod("m");
+        Method packagePrivateMethod = PublicClassStepDefinitions.class.getDeclaredMethod("n");
+        Method protectedMethod = PublicClassStepDefinitions.class.getDeclaredMethod("o");
+        MethodScanner.scan(PublicClassStepDefinitions.class, this::addScanResult);
         assertThat(scanResult)
                 .containsExactlyInAnyOrder(
                     new SimpleEntry<>(publicMethod, publicMethod.getAnnotations()[0]),
@@ -42,10 +42,10 @@ class MethodScannerTest {
 
     @Test
     void scan_finds_annotated_methods_in_protected_class() throws NoSuchMethodException {
-        Method publicMethod = ProtectedSteps.class.getMethod("m");
-        Method packagePrivateMethod = ProtectedSteps.class.getDeclaredMethod("n");
-        Method protectedMethod = ProtectedSteps.class.getDeclaredMethod("o");
-        MethodScanner.scan(ProtectedSteps.class, this::addScanResult);
+        Method publicMethod = ProtectedClassStepDefinitions.class.getMethod("m");
+        Method packagePrivateMethod = ProtectedClassStepDefinitions.class.getDeclaredMethod("n");
+        Method protectedMethod = ProtectedClassStepDefinitions.class.getDeclaredMethod("o");
+        MethodScanner.scan(ProtectedClassStepDefinitions.class, this::addScanResult);
         assertThat(scanResult)
                 .containsExactlyInAnyOrder(
                     new SimpleEntry<>(publicMethod, publicMethod.getAnnotations()[0]),
@@ -55,10 +55,10 @@ class MethodScannerTest {
 
     @Test
     void scan_finds_annotated_methods_in_package_private_class() throws NoSuchMethodException {
-        Method publicMethod = PackagePrivateSteps.class.getMethod("m");
-        Method packagePrivateMethod = PackagePrivateSteps.class.getDeclaredMethod("n");
-        Method protectedMethod = PackagePrivateSteps.class.getDeclaredMethod("o");
-        MethodScanner.scan(PackagePrivateSteps.class, this::addScanResult);
+        Method publicMethod = PackagePrivateClassStepDefinitions.class.getMethod("m");
+        Method packagePrivateMethod = PackagePrivateClassStepDefinitions.class.getDeclaredMethod("n");
+        Method protectedMethod = PackagePrivateClassStepDefinitions.class.getDeclaredMethod("o");
+        MethodScanner.scan(PackagePrivateClassStepDefinitions.class, this::addScanResult);
         assertThat(scanResult)
                 .containsExactlyInAnyOrder(
                     new SimpleEntry<>(publicMethod, publicMethod.getAnnotations()[0]),
@@ -68,7 +68,7 @@ class MethodScannerTest {
 
     @Test
     void scan_ignores_private_class() {
-        MethodScanner.scan(PrivateSteps.class, this::addScanResult);
+        MethodScanner.scan(PrivateClassStepDefinitions.class, this::addScanResult);
         assertThat(scanResult).isEmpty();
     }
 
@@ -92,14 +92,36 @@ class MethodScannerTest {
     }
 
     @Test
-    void loadGlue_fails_when_class_is_not_method_declaring_class() {
+    void scan_fails_when_class_is_not_method_declaring_class() {
         InvalidMethodException exception = assertThrows(InvalidMethodException.class,
             () -> MethodScanner.scan(ExtendedSteps.class, this::addScanResult));
         assertThat(exception).hasMessageStartingWith(
-            "\"io.cucumber.java.MethodScannerTest$ExtendedSteps\" extends \"io.cucumber.java.MethodScannerTest$BaseSteps\" which declares a step definition or hook \"io.cucumber.java.MethodScannerTest$BaseSteps.n()");
+            "\"io.cucumber.java.MethodScannerTest$ExtendedSteps\" extends \"io.cucumber.java.MethodScannerTest$PublicClassStepDefinitions\" which declares a step definition or hook \"io.cucumber.java.MethodScannerTest$PublicClassStepDefinitions.n()");
     }
 
-    public static class ExtendedSteps extends BaseSteps {
+    @Test
+    void scan_fails_when_annotated_method_is_private() {
+        InvalidMethodException exception = assertThrows(InvalidMethodException.class,
+            () -> MethodScanner.scan(PrivateStepDefinitionMethod.class, this::addScanResult));
+        assertThat(exception).hasMessageStartingWith(
+            "\"void io.cucumber.java.MethodScannerTest$PrivateStepDefinitionMethod.p()\" is not valid step definition.");
+    }
+
+    @Test
+    void scan_fails_when_annotated_method_is_implementing_abstract_class() {
+        InvalidMethodException exception = assertThrows(InvalidMethodException.class,
+            () -> MethodScanner.scan(ConcreteStepDefinitionMethod.class, this::addScanResult));
+        assertThat(exception).hasMessageStartingWith(
+            "\"io.cucumber.java.MethodScannerTest$ConcreteStepDefinitionMethod\" extends \"io.cucumber.java.MethodScannerTest$AbstractStepDefinitionMethod\" which declares a step definition or hook \"void io.cucumber.java.MethodScannerTest$AbstractStepDefinitionMethod.p()");
+    }
+
+    @Test
+    void scan_ignores_step_definitions_in_interfaces() {
+        MethodScanner.scan(ImplementedStepDefinitionMethod.class, this::addScanResult);
+        assertThat(scanResult).isEmpty();
+    }
+
+    public static class ExtendedSteps extends PublicClassStepDefinitions {
 
         public interface Interface1 {
 
@@ -107,7 +129,7 @@ class MethodScannerTest {
 
     }
 
-    public static class BaseSteps {
+    public static class PublicClassStepDefinitions {
 
         @Before
         public void m() {
@@ -119,16 +141,11 @@ class MethodScannerTest {
 
         @Before
         protected void o() {
-        }
-
-        @Before
-        @SuppressWarnings("unused")
-        private void p() {
         }
 
     }
 
-    protected static class ProtectedSteps {
+    protected static class ProtectedClassStepDefinitions {
 
         @Before
         public void m() {
@@ -140,16 +157,11 @@ class MethodScannerTest {
 
         @Before
         protected void o() {
-        }
-
-        @Before
-        @SuppressWarnings("unused")
-        private void p() {
         }
 
     }
 
-    static class PackagePrivateSteps {
+    static class PackagePrivateClassStepDefinitions {
 
         @Before
         public void m() {
@@ -162,6 +174,31 @@ class MethodScannerTest {
         @Before
         protected void o() {
         }
+
+    }
+
+    @SuppressWarnings("FinalClass")
+    private static class PrivateClassStepDefinitions {
+
+        @Before
+        @SuppressWarnings({ "EffectivelyPrivate", "unused" })
+        public void m() {
+        }
+
+        @Before
+        @SuppressWarnings("unused")
+        void n() {
+        }
+
+        @Before
+        @SuppressWarnings({ "EffectivelyPrivate", "unused" })
+        protected void o() {
+        }
+
+    }
+
+    @SuppressWarnings("FinalClass")
+    static class PrivateStepDefinitionMethod {
 
         @Before
         @SuppressWarnings("unused")
@@ -171,26 +208,40 @@ class MethodScannerTest {
     }
 
     @SuppressWarnings("FinalClass")
-    private static class PrivateSteps {
-
-        @Before
-        @SuppressWarnings({ "EffectivelyPrivate", "unused" })
-        public void m() {
-        }
+    abstract static class AbstractStepDefinitionMethod {
 
         @Before
         @SuppressWarnings("unused")
-        void n() {
-        }
+        abstract void p();
 
-        @Before
-        @SuppressWarnings({ "EffectivelyPrivate", "unused" })
-        protected void o() {
-        }
+    }
 
-        @Before
+    @SuppressWarnings("FinalClass")
+    static class ConcreteStepDefinitionMethod extends AbstractStepDefinitionMethod {
+
         @SuppressWarnings("unused")
-        private void p() {
+        @Override
+        void p() {
+
+        }
+
+    }
+
+    @SuppressWarnings("FinalClass")
+    interface InterfaceStepDefinitionMethod {
+
+        @Before
+        void p();
+
+    }
+
+    @SuppressWarnings("FinalClass")
+    static class ImplementedStepDefinitionMethod implements InterfaceStepDefinitionMethod {
+
+        @SuppressWarnings("unused")
+        @Override
+        public void p() {
+
         }
 
     }

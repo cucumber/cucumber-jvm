@@ -5,14 +5,11 @@ import io.cucumber.core.logging.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 import static io.cucumber.core.resource.ClasspathSupport.classPathScanningExplanation;
-import static io.cucumber.java.InvalidMethodException.createInvalidMethodException;
+import static io.cucumber.java.InvalidMethodException.annotatedMethodInParentClass;
+import static io.cucumber.java.InvalidMethodException.invalidModifier;
 import static io.cucumber.java.Invoker.invoke;
 import static java.lang.reflect.Modifier.isAbstract;
 import static java.lang.reflect.Modifier.isPrivate;
@@ -36,10 +33,18 @@ final class MethodScanner {
             return;
         }
         for (Method method : safelyGetDeclaredMethods(aClass)) {
-            scan(aClass, method, consumer);
+            scan(method, validate().andThen(consumer));
         }
 
         requireNoGlueDefinitionsInSuperClass(aClass);
+    }
+
+    private static BiConsumer<Method, Annotation> validate() {
+        return (method, annotation) -> {
+            if (!isConcreteNonPrivate(method)) {
+                throw invalidModifier(method);
+            }
+        };
     }
 
     private static void requireNoGlueDefinitionsInSuperClass(Class<?> aClass) {
@@ -47,24 +52,22 @@ final class MethodScanner {
                 !Object.class.equals(superclass); //
                 superclass = superclass.getSuperclass()) {
             for (Method method : safelyGetDeclaredMethods(superclass)) {
-                scan(aClass, method, (candiateMethod, annotation) -> {
-                    throw createInvalidMethodException(candiateMethod, aClass);
+                scan(method, (candiateMethod, annotation) -> {
+                    throw annotatedMethodInParentClass(candiateMethod, aClass);
                 });
             }
         }
     }
 
-    private static List<Method> safelyGetDeclaredMethods(Class<?> aClass) {
+    private static Method[] safelyGetDeclaredMethods(Class<?> aClass) {
         try {
-            return Arrays.stream(aClass.getDeclaredMethods())
-                    .filter(MethodScanner::isConcreteNonPrivate)
-                    .collect(Collectors.toList());
+            return aClass.getDeclaredMethods();
         } catch (NoClassDefFoundError e) {
             log.warn(e,
                 () -> "Failed to load declared methods of class '" + aClass.getName() + "'.\n"
                         + classPathScanningExplanation());
         }
-        return Collections.emptyList();
+        return new Method[0];
     }
 
     private static boolean isConcreteNonPrivate(Method aMethod) {
@@ -78,7 +81,7 @@ final class MethodScanner {
                 && (isStatic(clazz.getModifiers()) || clazz.getEnclosingClass() == null);
     }
 
-    private static void scan(Class<?> aClass, Method method, BiConsumer<Method, Annotation> consumer) {
+    private static void scan(Method method, BiConsumer<Method, Annotation> consumer) {
         // prevent unnecessary checking of Object methods
         if (Object.class.equals(method.getDeclaringClass())) {
             return;
@@ -94,17 +97,17 @@ final class MethodScanner {
             return;
         }
 
-        scan(consumer, aClass, method, method.getAnnotations());
+        scan(consumer, method, method.getAnnotations());
     }
 
     private static void scan(
-            BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method, Annotation[] methodAnnotations
+            BiConsumer<Method, Annotation> consumer, Method method, Annotation[] methodAnnotations
     ) {
         for (Annotation annotation : methodAnnotations) {
             if (isHookAnnotation(annotation) || isStepDefinitionAnnotation(annotation)) {
                 consumer.accept(method, annotation);
             } else if (isRepeatedStepDefinitionAnnotation(annotation)) {
-                scan(consumer, aClass, method, repeatedAnnotations(annotation));
+                scan(consumer, method, repeatedAnnotations(annotation));
             }
         }
     }
