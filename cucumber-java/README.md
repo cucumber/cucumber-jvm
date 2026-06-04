@@ -1,8 +1,9 @@
 Cucumber Java
 =============
 
-Provides annotation-based step definitions. To use, add the `cucumber-java` dependency to your `pom.xml`
-and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
+Provides annotation-based step definitions. To use, add the `cucumber-java`
+dependency to your `pom.xml` and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency
+management:
 
 ```xml
 <dependencies>
@@ -349,7 +350,7 @@ public class DataTableStepDefinitions {
     @DefaultParameterTransformer
     @DefaultDataTableEntryTransformer
     @DefaultDataTableCellTransformer
-    public Object defaultTransformer(Object fromValue, Type toValueType) {
+    Object defaultTransformer(Object fromValue, Type toValueType) {
         return objectMapper.convertValue(fromValue, objectMapper.constructType(toValueType));
     }
 }
@@ -377,14 +378,14 @@ public class TransformerDefinitions {
     private DateTimeFormatter formatter;
 
     @Before
-    public void updateFormatter(final Scenario scenario) {
+    void updateFormatter(final Scenario scenario) {
         String language = scenario.getLanguage();
         Locale locale = new Locale.Builder().setLanguage(language).build();
         formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy").withLocale(locale);
     }
 
     @ParameterType(value = "\\d{1,2} \\w+ \\d{4}")
-    public LocalDate localizedDate(String value) {
+    LocalDate localizedDate(String value) {
         return LocalDate.parse(value, formatter);
     }
 
@@ -397,7 +398,7 @@ before each scenario.
 ```java
     [...]
     @Before
-    public void updateObjectMapper(final Scenario scenario) {
+    void updateObjectMapper(final Scenario scenario) {
         String language = scenario.getLanguage();
         Locale locale = new Locale.Builder().setLanguage(language).build();
         objectMapper.setLocale(locale);
@@ -435,7 +436,7 @@ import java.util.List;
 public class DataTableStepDefinitions {
 
     @DataTableType(replaceWithEmptyString = "[blank]")
-    public Author convert(Map<String, String> entry){
+    Author convert(Map<String, String> entry){
       return new Author(
          entry.get("name"),
          entry.get("first publication")
