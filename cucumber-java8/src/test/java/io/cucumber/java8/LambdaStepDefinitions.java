@@ -129,7 +129,7 @@ class LambdaStepDefinitions implements io.cucumber.java8.En {
         assertEquals(42, cuckes.intValue());
     }
 
-    public static final class Person {
+    static final class Person {
 
         @Nullable
         String first;
@@ -138,20 +138,20 @@ class LambdaStepDefinitions implements io.cucumber.java8.En {
 
     }
 
-    public static final class Contact {
+    static final class Contact {
 
         private final String number;
 
-        public Contact(String number) {
+        Contact(String number) {
             this.number = number;
             assertEquals("42", number);
         }
 
-        public void call() {
+        void call() {
             assertEquals("42", number);
         }
 
-        public void update(String number) {
+        void update(String number) {
             assertEquals("42", this.number);
             assertEquals("314", number);
         }

@@ -78,7 +78,6 @@ final class Java8Backend implements Backend {
 
     private static boolean isInstantiable(Class<?> clazz) {
         return !clazz.isInterface()
-                && clazz.getDeclaredConstructors().length > 0
                 && !isPrivate(clazz.getModifiers())
                 && !isAbstract(clazz.getModifiers())
                 && (isStatic(clazz.getModifiers()) || clazz.getEnclosingClass() == null);
