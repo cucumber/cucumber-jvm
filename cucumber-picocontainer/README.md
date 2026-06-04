@@ -31,7 +31,8 @@ Once an instance of `Belly` has been created, this can be used to create an
 instance of `StepDefinition`. This instance is then used to invoke the Given/
 When/Then methods on.
 
-Note: _Classes declaring step definitions and their dependencies must be `public`._
+Note: _When using `cucumber-pico`, classes declaring step definitions must be
+public and have a public constructor._ 
 
 ```java
 package com.example.app;
