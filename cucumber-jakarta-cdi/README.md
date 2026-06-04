@@ -121,22 +121,22 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StepDefinition {
+class StepDefinition {
 
     @Inject
     private final Belly belly;
 
-    public StepDefinitions(Belly belly) {
+    StepDefinitions(Belly belly) {
         this.belly = belly;
     }
 
     @Given("I have {int} {word} in my belly")
-    public void I_have_n_things_in_my_belly(int n, String what) {
+    void I_have_n_things_in_my_belly(int n, String what) {
         belly.setContents(Collections.nCopies(n, what));
     }
 
     @Then("there are {int} cukes in my belly")
-    public void checkCukes(int n) {
+    void checkCukes(int n) {
         assertEquals(belly.getContents(), Collections.nCopies(n, "cukes"));
     }
 }
