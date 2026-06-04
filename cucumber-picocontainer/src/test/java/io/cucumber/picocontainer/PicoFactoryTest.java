@@ -1,14 +1,15 @@
 package io.cucumber.picocontainer;
 
+import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsNull.nullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class PicoFactoryTest {
@@ -82,10 +83,10 @@ final class PicoFactoryTest {
     @Test
     void public_non_static_inner_classes_are_not_instantiable() {
         ObjectFactory factory = new PicoFactory();
-        factory.addClass(NonStaticInnerClass.class);
-        factory.start();
+        var exception = assertThrows(CucumberBackendException.class, () -> factory.addClass(NonStaticInnerClass.class));
 
-        assertThat(factory.getInstance(NonStaticInnerClass.class), nullValue());
+        assertThat(exception).hasMessageStartingWith(
+            "Glue class io.cucumber.picocontainer.PicoFactoryTest$NonStaticInnerClass is not instantiable by Pico Container.");
     }
 
     @SuppressWarnings({ "InnerClassMayBeStatic", "ClassCanBeStatic" })
