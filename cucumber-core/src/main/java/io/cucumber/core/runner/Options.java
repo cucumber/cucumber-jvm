@@ -1,5 +1,6 @@
 package io.cucumber.core.runner;
 
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.snippets.SnippetType;
@@ -10,7 +11,10 @@ import java.util.List;
 
 public interface Options {
 
-    List<URI> getGlue();
+    @Deprecated
+    default List<URI> getGlue(){
+        return getGlueDiscoveryRequest().getGluePaths();
+    }
 
     boolean isDryRun();
 
@@ -21,5 +25,7 @@ public interface Options {
 
     @Nullable
     Class<? extends UuidGenerator> getUuidGeneratorClass();
+
+    GlueDiscoveryRequest getGlueDiscoveryRequest();
 
 }

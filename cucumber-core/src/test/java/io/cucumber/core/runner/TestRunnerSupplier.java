@@ -2,6 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.eventbus.EventBus;
@@ -23,21 +24,6 @@ class TestRunnerSupplier implements Backend, RunnerSupplier, ObjectFactory {
     protected TestRunnerSupplier(EventBus bus, RuntimeOptions runtimeOptions) {
         this.bus = bus;
         this.runtimeOptions = runtimeOptions;
-    }
-
-    @Override
-    public void loadGlue(Glue glue, List<URI> gluePaths) {
-
-    }
-
-    @Override
-    public void buildWorld() {
-
-    }
-
-    @Override
-    public void disposeWorld() {
-
     }
 
     @Override

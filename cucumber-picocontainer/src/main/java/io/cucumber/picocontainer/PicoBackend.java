@@ -3,14 +3,11 @@ package io.cucumber.picocontainer;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.Snippet;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
-import org.jspecify.annotations.Nullable;
 
-import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Supplier;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
@@ -26,8 +23,8 @@ final class PicoBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<URI> gluePaths) {
-        gluePaths.stream()
+    public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
+        request.getGluePaths().stream()
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
@@ -39,19 +36,6 @@ final class PicoBackend implements Backend {
 
     private static boolean hasCucumberPicoProvider(Class<?> clazz) {
         return clazz.isAnnotationPresent(CucumberPicoProvider.class);
-    }
-
-    @Override
-    public void buildWorld() {
-    }
-
-    @Override
-    public void disposeWorld() {
-    }
-
-    @Override
-    public @Nullable Snippet getSnippet() {
-        return null;
     }
 
 }

@@ -1,6 +1,7 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.eventbus.EventBus;
@@ -42,7 +43,7 @@ class HookOrderTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addStepDefinition(new StubStepDefinition("pattern1"));
                 for (HookDefinition hook : hooks) {
                     glue.addBeforeHook(hook);
@@ -81,7 +82,7 @@ class HookOrderTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addStepDefinition(stepDefinition);
                 for (HookDefinition hook : hooks) {
                     glue.addBeforeStepHook(hook);
@@ -108,7 +109,7 @@ class HookOrderTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addStepDefinition(stepDefinition);
                 for (HookDefinition hook : hooks) {
                     glue.addAfterHook(hook);
@@ -135,7 +136,7 @@ class HookOrderTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addStepDefinition(stepDefinition);
                 for (HookDefinition hook : hooks) {
                     glue.addAfterStepHook(hook);
@@ -163,7 +164,7 @@ class HookOrderTest {
 
         TestRunnerSupplier runnerSupplier = new TestRunnerSupplier(bus, runtimeOptions) {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addStepDefinition(stepDefinition);
 
                 for (HookDefinition hook : backend1Hooks) {

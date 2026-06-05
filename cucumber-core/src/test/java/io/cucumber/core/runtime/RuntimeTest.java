@@ -2,6 +2,7 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ScenarioScoped;
@@ -428,7 +429,7 @@ class RuntimeTest {
 
         BackendSupplier backendSupplier = new TestBackendSupplier() {
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addAfterAllHook(mockedStaticHookDefinition);
             }
         };
@@ -512,7 +513,7 @@ class RuntimeTest {
             private @Nullable Glue glue;
 
             @Override
-            public void loadGlue(Glue glue, List<URI> gluePaths) {
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 this.glue = glue;
                 glue.addStepDefinition(mockedStepDefinition);
             }

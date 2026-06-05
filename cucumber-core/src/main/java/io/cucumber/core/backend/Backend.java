@@ -14,8 +14,20 @@ public interface Backend {
      * loaded.
      *
      * @param glue      Glue that provides the steps to be executed.
+     * @param request   The request to discover glue for.
+     */
+    default void loadGlue(Glue glue, GlueDiscoveryRequest request) {
+        loadGlue(glue, request.getGluePaths());
+    }
+
+    /**
+     * Invoked once before all features. This is where steps and hooks should be
+     * loaded.
+     *
+     * @param glue      Glue that provides the steps to be executed.
      * @param gluePaths The locations for the glue to be loaded.
      */
+    @Deprecated
     default void loadGlue(Glue glue, List<URI> gluePaths) {
 
     }

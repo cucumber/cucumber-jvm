@@ -4,6 +4,7 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.Snippet;
@@ -34,7 +35,7 @@ public final class StubBackendProviderService implements BackendProviderService 
         }
 
         @Override
-        public void loadGlue(Glue glue, List<URI> gluePaths) {
+        public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
             glue.addStepDefinition(createStepDefinition("a scenario"));
             glue.addStepDefinition(createStepDefinition("a scenario outline"));
             glue.addStepDefinition(createStepDefinition("it is executed"));
@@ -82,14 +83,6 @@ public final class StubBackendProviderService implements BackendProviderService 
                     return "stubbed location";
                 }
             };
-        }
-
-        @Override
-        public void buildWorld() {
-        }
-
-        @Override
-        public void disposeWorld() {
         }
 
         @Override
