@@ -8,8 +8,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class MethodFormatTest {
 
@@ -50,33 +49,33 @@ class MethodFormatTest {
 
     @Test
     void formatPublicMethod() {
-        assertThat(MethodFormat.FULL.format(methodWithoutArgs),
-            equalTo("io.cucumber.java.MethodFormatTest.methodWithoutArgs()"));
+        assertThat(MethodFormat.FULL.format(methodWithoutArgs))
+                .isEqualTo("io.cucumber.java.MethodFormatTest.methodWithoutArgs()");
     }
 
     @Test
     void formatPackagePrivateMethod() {
-        assertThat(MethodFormat.FULL.format(packagePrivateMethod),
-            equalTo("io.cucumber.java.MethodFormatTest.packagePrivateMethod()"));
+        assertThat(MethodFormat.FULL.format(packagePrivateMethod))
+                .isEqualTo("io.cucumber.java.MethodFormatTest.packagePrivateMethod()");
     }
 
     @Test
     void formatProtectedMethod() {
-        assertThat(MethodFormat.FULL.format(protectedMethod),
-            equalTo("io.cucumber.java.MethodFormatTest.protectedMethod()"));
+        assertThat(MethodFormat.FULL.format(protectedMethod))
+                .isEqualTo("io.cucumber.java.MethodFormatTest.protectedMethod()");
     }
 
     @Test
     void formatPrivateMethod() {
-        assertThat(MethodFormat.FULL.format(privateMethod),
-            equalTo("io.cucumber.java.MethodFormatTest.privateMethod()"));
+        assertThat(MethodFormat.FULL.format(privateMethod))
+                .isEqualTo("io.cucumber.java.MethodFormatTest.privateMethod()");
     }
 
     @Test
     void formatMethodWithExceptionsAndArguments() {
-        assertThat(MethodFormat.FULL.format(methodWithArgsAndException),
-            equalTo(
-                "io.cucumber.java.MethodFormatTest.methodWithArgsAndException(java.lang.String,java.util.Map<?, ?>)"));
+        assertThat(MethodFormat.FULL.format(methodWithArgsAndException))
+                .isEqualTo(
+                    "io.cucumber.java.MethodFormatTest.methodWithArgsAndException(java.lang.String,java.util.Map<?, ?>)");
     }
 
 }
