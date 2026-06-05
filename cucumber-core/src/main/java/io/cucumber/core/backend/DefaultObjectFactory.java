@@ -55,7 +55,7 @@ public final class DefaultObjectFactory implements ObjectFactory {
     }
 
     private <T> T cacheNewInstance(Class<T> type) {
-        Constructor<T> constructor = getAccesibleZeroArgumentConstructor(type);
+        Constructor<T> constructor = getNonPrivateZeroArgumentConstructor(type);
         if (constructor == null) {
             throw createNoAccessibleZeroArgumentConstructor(type, null);
         }
@@ -85,11 +85,11 @@ public final class DefaultObjectFactory implements ObjectFactory {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> @Nullable Constructor<T> getAccesibleZeroArgumentConstructor(Class<T> type) {
+    public static <T> @Nullable Constructor<T> getNonPrivateZeroArgumentConstructor(Class<T> type) {
         var constructors = Arrays.stream(type.getDeclaredConstructors())//
-                .filter(constructor -> !isSynthetic(constructor))//
-                .filter(constructor -> !isPrivate(constructor))
-                .filter(DefaultObjectFactory::isZeroParameters)
+                .filter(constructor -> !constructor.isSynthetic())//
+                .filter(constructor -> !Modifier.isPrivate(constructor.getModifiers()))
+                .filter(constructor -> constructor.getParameterCount() == 0)
                 .toList();
 
         if (constructors.size() != 1) {
@@ -100,30 +100,11 @@ public final class DefaultObjectFactory implements ObjectFactory {
 
     @SuppressWarnings("deprecation")
     public static <T> Constructor<T> makeAccessible(Constructor<T> constructor) {
-        if ((!isPublic(constructor) || !isPublic(constructor.getDeclaringClass())) && !constructor.isAccessible()) {
+        if ((!Modifier.isPublic(constructor.getModifiers())
+                || !Modifier.isPublic(constructor.getDeclaringClass().getModifiers())) && !constructor.isAccessible()) {
             constructor.setAccessible(true);
         }
         return constructor;
-    }
-
-    private static boolean isPublic(Class<?> declaringClass) {
-        return Modifier.isPublic(declaringClass.getModifiers());
-    }
-
-    private static boolean isPrivate(Constructor<?> constructor) {
-        return Modifier.isPrivate(constructor.getModifiers());
-    }
-
-    private static boolean isPublic(Constructor<?> constructor) {
-        return Modifier.isPublic(constructor.getModifiers());
-    }
-
-    private static boolean isZeroParameters(Constructor<?> constructor) {
-        return constructor.getParameterCount() == 0;
-    }
-
-    private static boolean isSynthetic(Constructor<?> constructor) {
-        return constructor.isSynthetic();
     }
 
 }
