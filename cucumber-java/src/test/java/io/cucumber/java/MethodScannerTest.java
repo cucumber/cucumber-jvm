@@ -104,7 +104,7 @@ class MethodScannerTest {
         InvalidMethodException exception = assertThrows(InvalidMethodException.class,
             () -> MethodScanner.scan(PrivateStepDefinitionMethod.class, this::addScanResult));
         assertThat(exception).hasMessageStartingWith(
-            "\"void io.cucumber.java.MethodScannerTest$PrivateStepDefinitionMethod.p()\" is not valid step definition.");
+            "\"io.cucumber.java.MethodScannerTest$PrivateStepDefinitionMethod.p()\" is not valid step definition.");
     }
 
     @Test
