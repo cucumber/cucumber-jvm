@@ -17,6 +17,7 @@ class MethodFormatTest {
     private Method methodWithoutArgs;
     private Method packagePrivateMethod;
     private Method protectedMethod;
+    private Method privateMethod;
 
     public void methodWithoutArgs() {
     }
@@ -33,6 +34,10 @@ class MethodFormatTest {
 
     }
 
+    protected void privateMethod() {
+
+    }
+
     @BeforeEach
     void lookupMethod() throws NoSuchMethodException {
         this.methodWithoutArgs = this.getClass().getMethod("methodWithoutArgs");
@@ -40,6 +45,7 @@ class MethodFormatTest {
             Map.class);
         this.packagePrivateMethod = this.getClass().getDeclaredMethod("packagePrivateMethod");
         this.protectedMethod = this.getClass().getDeclaredMethod("protectedMethod");
+        this.privateMethod = this.getClass().getDeclaredMethod("privateMethod");
     }
 
     @Test
@@ -58,6 +64,12 @@ class MethodFormatTest {
     void formatProtectedMethod() {
         assertThat(MethodFormat.FULL.format(protectedMethod),
             equalTo("io.cucumber.java.MethodFormatTest.protectedMethod()"));
+    }
+
+    @Test
+    void formatPrivateMethod() {
+        assertThat(MethodFormat.FULL.format(privateMethod),
+            equalTo("io.cucumber.java.MethodFormatTest.privateMethod()"));
     }
 
     @Test
