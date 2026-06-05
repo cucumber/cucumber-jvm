@@ -12,7 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [Java] Add optional names to `@Before`, `@After`, `@BeforeStep` and `@AfterStep` hooks and emit hook names in messages ([#2917](https://github.com/cucumber/cucumber-jvm/issues/2917), [#3173](https://github.com/cucumber/cucumber-jvm/pull/3173))
+- [Java] Declare step definitions with minimal ceremony ([#3200](https://github.com/cucumber/cucumber-jvm/issues/3200))
 - [JUnit Platform] Use `ParallelHierarchicalTestExecutorServiceFactory` ([#3105](https://github.com/cucumber/cucumber-jvm/pull/3105))
+
 
 ### Fixed
 - [JUnit Platform Engine] Accept partial matches with `cucumber.filter.name` and align the behavior with JUnit 4 and CLI ([#3174](https://github.com/cucumber/cucumber-jvm/pull/3174))
