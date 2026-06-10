@@ -17,7 +17,6 @@ import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GlueLoadingAdvisorTest {
 
@@ -144,7 +143,7 @@ class GlueLoadingAdvisorTest {
         advisor.logGlueLoadingSuggestions(gluePaths);
 
         // Then no hint is displayed
-        assertTrue(listener.getLogRecords().isEmpty());
+        assertThat(listener.getLogRecords()).isEmpty();
     }
 
     @Test
@@ -187,7 +186,7 @@ class GlueLoadingAdvisorTest {
         advisor.logGlueLoadingSuggestions(gluePaths);
 
         // Then no hint is displayed
-        assertTrue(listener.getLogRecords().isEmpty());
+        assertThat(listener.getLogRecords()).isEmpty();
     }
 
     @Test
@@ -199,7 +198,7 @@ class GlueLoadingAdvisorTest {
         advisor.logGlueLoadingSuggestions(gluePaths);
 
         // Then no hint is displayed
-        assertTrue(listener.getLogRecords().isEmpty());
+        assertThat(listener.getLogRecords()).isEmpty();
     }
 
     @Test
@@ -217,7 +216,7 @@ class GlueLoadingAdvisorTest {
         advisor.logGlueLoadingSuggestions(gluePaths);
 
         // Then no hint is displayed
-        assertTrue(listener.getLogRecords().isEmpty());
+        assertThat(listener.getLogRecords()).isEmpty();
     }
 
     public static class PublicStaticInnerClass {
