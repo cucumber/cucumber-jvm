@@ -12,8 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.net.URI;
-
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static java.lang.Thread.currentThread;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -38,7 +37,7 @@ final class PicoBackendTest {
     @Test
     void considers_but_does_not_add_annotated_configuration() {
         var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/picocontainer/annotationconfig")) //
+                .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
                 .build();
         backend.loadGlue(glue, request);
         backend.buildWorld();
@@ -48,7 +47,7 @@ final class PicoBackendTest {
     @Test
     void adds_unnested_provider_classes() {
         var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/picocontainer/annotationconfig")) //
+                .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
                 .build();
         backend.loadGlue(glue, request);
         backend.buildWorld();
@@ -59,7 +58,7 @@ final class PicoBackendTest {
     @Test
     void adds_nested_provider_classes() {
         var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/picocontainer/annotationconfig")) //
+                .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
                 .build();
         backend.loadGlue(glue, request);
         backend.buildWorld();
@@ -69,9 +68,9 @@ final class PicoBackendTest {
 
     @Test
     void finds_configured_classes_only_once_when_scanning_twice() {
-        var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/picocontainer/annotationconfig")) //
-                .gluePath(URI.create("classpath:io/cucumber/picocontainer/annotationconfig")) //
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
+                .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
                 .build();
         backend.loadGlue(glue, request);
         backend.buildWorld();

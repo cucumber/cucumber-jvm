@@ -1,6 +1,5 @@
 package io.cucumber.core.backend;
 
-import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,21 +9,27 @@ import java.util.Set;
  * location.
  */
 public interface GlueDiscoveryRequest {
-    List<URI> getGluePaths();
 
     static Builder builder() {
         return new Builder();
     }
 
+    <T extends GlueDiscoverySelector> List<T> getSelectorsByType(Class<T> selector);
+
     final class Builder {
-        private final Set<URI> gluePaths = new LinkedHashSet<>();
+        private final Set<GlueDiscoverySelector> gluePaths = new LinkedHashSet<>();
 
         private Builder() {
 
         }
 
-        public Builder gluePath(URI... gluePath) {
-            this.gluePaths.addAll(List.of(gluePath));
+        public Builder selectors(GlueDiscoverySelector... selectors) {
+            this.gluePaths.addAll(List.of(selectors));
+            return this;
+        }
+
+        public Builder selectors(List<? extends GlueDiscoverySelector> selectors) {
+            this.gluePaths.addAll(selectors);
             return this;
         }
 
@@ -34,15 +39,17 @@ public interface GlueDiscoveryRequest {
     }
 
     final class DefaultGlueDiscoveryRequest implements GlueDiscoveryRequest {
-        private final List<URI> gluePaths;
+        private final List<GlueDiscoverySelector> gluePaths;
 
-        public DefaultGlueDiscoveryRequest(List<URI> gluePaths) {
+        public DefaultGlueDiscoveryRequest(List<GlueDiscoverySelector> gluePaths) {
             this.gluePaths = gluePaths;
         }
 
         @Override
-        public List<URI> getGluePaths() {
-            return gluePaths;
+        public <T extends GlueDiscoverySelector> List<T> getSelectorsByType(Class<T> selectorType) {
+            return gluePaths.stream().filter(selectorType::isInstance) //
+                    .map(selectorType::cast) //
+                    .toList();
         }
     }
 

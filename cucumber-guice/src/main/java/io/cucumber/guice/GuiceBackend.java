@@ -4,6 +4,7 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 
@@ -24,7 +25,8 @@ final class GuiceBackend implements Backend {
 
     @Override
     public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
-        request.getGluePaths().stream()
+        request.getSelectorsByType(UriGlueDiscoverySelector.class).stream()
+                .map(UriGlueDiscoverySelector::uri)
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)

@@ -12,8 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 
-import java.net.URI;
-
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static java.lang.Thread.currentThread;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -37,7 +36,7 @@ final class SpringBackendTest {
     @Test
     void finds_annotation_context_configuration_by_classpath_url() {
         var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/spring/annotationconfig")) //
+                .selectors(selectUri("classpath:io/cucumber/spring/annotationconfig")) //
                 .build();
         backend.loadGlue(glue, request);
         backend.buildWorld();
@@ -47,8 +46,8 @@ final class SpringBackendTest {
     @Test
     void finds_annotaiton_context_configuration_once_by_classpath_url() {
         var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/spring/annotationconfig")) //
-                .gluePath(URI.create("classpath:io/cucumber/spring/annotationconfig")) //
+                .selectors(selectUri("classpath:io/cucumber/spring/annotationconfig")) //
+                .selectors(selectUri("classpath:io/cucumber/spring/annotationconfig")) //
                 .build();
         backend.loadGlue(glue, request);
         backend.buildWorld();
@@ -58,7 +57,7 @@ final class SpringBackendTest {
     @Test
     void ignoresAbstractClassWithCucumberContextConfiguration() {
         var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")) //
+                .selectors(selectUri("classpath:io/cucumber/spring/cucumbercontextconfigannotation")) //
                 .build();
         backend.loadGlue(glue, request);
         backend.buildWorld();
@@ -68,7 +67,7 @@ final class SpringBackendTest {
     @Test
     void ignoresInterfaceWithCucumberContextConfiguration() {
         var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")) //
+                .selectors(selectUri("classpath:io/cucumber/spring/cucumbercontextconfigannotation")) //
                 .build();
         backend.loadGlue(glue, request);
         backend.buildWorld();
@@ -78,7 +77,7 @@ final class SpringBackendTest {
     @Test
     void considersClassWithCucumberContextConfigurationMetaAnnotation() {
         var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")) //
+                .selectors(selectUri("classpath:io/cucumber/spring/cucumbercontextconfigannotation")) //
                 .build();
         backend.loadGlue(glue, request);
         backend.buildWorld();

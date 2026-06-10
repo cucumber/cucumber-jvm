@@ -1,6 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
@@ -169,13 +170,17 @@ class CucumberConfiguration implements
 
     @Override
     public GlueDiscoveryRequest getGlueDiscoveryRequest() {
-        return () -> configurationParameters
+        var selectors = configurationParameters
                 .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
                 .orElse(Collections.singletonList(CLASSPATH_SCHEME_PREFIX))
                 .stream()
                 .map(String::trim)
                 .map(GluePath::parse)
-                .collect(Collectors.toList());
+                .map(GlueDiscoverySelector::selectUri)
+                .toList();
+        return GlueDiscoveryRequest.builder()
+                .selectors(selectors)
+                .build();
     }
 
     boolean isParallelExecutionEnabled() {

@@ -4,6 +4,7 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
@@ -31,7 +32,9 @@ final class JavaBackend implements Backend {
     public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
         GlueAdaptor glueAdaptor = new GlueAdaptor(lookup, glue);
 
-        request.getGluePaths().stream()
+        request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
+                .stream() //
+                .map(GlueDiscoverySelector.UriGlueDiscoverySelector::uri) //
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)

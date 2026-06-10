@@ -9,8 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 
-import java.net.URI;
-
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static java.lang.Thread.currentThread;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -34,7 +33,7 @@ class Java8BackendTest {
     @Test
     void finds_step_definitions_by_classpath_url() {
         var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/java8/steps")) //
+                .selectors(selectUri("classpath:io/cucumber/java8/steps")) //
                 .build();
         backend.loadGlue(glue, request);
         backend.buildWorld();
@@ -44,8 +43,8 @@ class Java8BackendTest {
     @Test
     void finds_step_definitions_once_by_classpath_url() {
         var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/java8/steps")) //
-                .gluePath(URI.create("classpath:io/cucumber/java8/steps")) //
+                .selectors(selectUri("classpath:io/cucumber/java8/steps")) //
+                .selectors(selectUri("classpath:io/cucumber/java8/steps")) //
                 .build();
         backend.loadGlue(glue, request);
         backend.buildWorld();

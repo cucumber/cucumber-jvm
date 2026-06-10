@@ -50,7 +50,6 @@ public final class Runner {
         this.glue = new CachingGlue(bus);
         this.objectFactory = objectFactory;
         var request = runnerOptions.getGlueDiscoveryRequest();
-        log.debug(() -> "Loading glue from " + request.getGluePaths());
         for (Backend backend : backends) {
             log.debug(() -> "Loading glue for backend " + backend.getClass().getName());
 

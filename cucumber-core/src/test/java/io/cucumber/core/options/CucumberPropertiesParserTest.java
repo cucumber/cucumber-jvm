@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.logging.LogRecordListener;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.stream.Collectors.toList;
@@ -121,17 +123,17 @@ class CucumberPropertiesParserTest {
     void should_parse_glue() {
         properties.put(Constants.GLUE_PROPERTY_NAME, "com.example.steps");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getGlueDiscoveryRequest().getGluePaths(), contains(
-            URI.create("classpath:/com/example/steps")));
+        assertThat(options.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class), contains(
+            selectUri("classpath:/com/example/steps")));
     }
 
     @Test
     void should_parse_glue_list() {
         properties.put(Constants.GLUE_PROPERTY_NAME, "com.example.app.steps, com.example.other.steps");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getGlueDiscoveryRequest().getGluePaths(), contains(
-            URI.create("classpath:/com/example/app/steps"),
-            URI.create("classpath:/com/example/other/steps")));
+        assertThat(options.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class), contains(
+            selectUri("classpath:/com/example/app/steps"),
+            selectUri("classpath:/com/example/other/steps")));
     }
 
     @Test

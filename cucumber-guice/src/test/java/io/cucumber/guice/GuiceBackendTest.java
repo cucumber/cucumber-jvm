@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 
-import java.net.URI;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static java.lang.Thread.currentThread;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -36,7 +36,7 @@ class GuiceBackendTest {
     void finds_injector_source_impls_by_classpath_url() {
         GuiceBackend backend = new GuiceBackend(factory, classLoader);
         var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/guice/integration")) //
+                .selectors(selectUri("classpath:io/cucumber/guice/integration")) //
                 .build();
         backend.loadGlue(glue, request);
         verify(factory).addClass(YourInjectorSource.class);
@@ -45,18 +45,19 @@ class GuiceBackendTest {
     @Test
     void finds_injector_source_impls_once_by_classpath_url() {
         GuiceBackend backend = new GuiceBackend(factory, classLoader);
-        backend.loadGlue(glue, GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/guice/integration")) //
-                .gluePath(URI.create("classpath:io/cucumber/guice/integration")) //
-                .build());
+        GlueDiscoveryRequest request = GlueDiscoveryRequest.builder() //
+                .selectors(selectUri("classpath:io/cucumber/guice/integration")) //
+                .selectors(selectUri("classpath:io/cucumber/guice/integration")) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory, times(1)).addClass(YourInjectorSource.class);
     }
 
     @Test
     void world_and_snippet_methods_do_nothing() {
         GuiceBackend backend = new GuiceBackend(factory, classLoader);
-        var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/guice/integration")) //
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:io/cucumber/guice/integration")) //
                 .build();
         backend.loadGlue(glue, request);
         backend.buildWorld();
@@ -68,7 +69,7 @@ class GuiceBackendTest {
     void doesnt_save_anything_in_glue() {
         GuiceBackend backend = new GuiceBackend(factory, classLoader);
         var request = GlueDiscoveryRequest.builder() //
-                .gluePath(URI.create("classpath:io/cucumber/guice/integration")) //
+                .selectors(selectUri("classpath:io/cucumber/guice/integration")) //
                 .build();
         backend.loadGlue(glue, request);
         verify(factory).addClass(YourInjectorSource.class);
