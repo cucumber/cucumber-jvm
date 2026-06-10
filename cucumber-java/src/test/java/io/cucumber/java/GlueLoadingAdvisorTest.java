@@ -22,7 +22,6 @@ class GlueLoadingAdvisorTest {
 
     final java.util.List<URI> gluePaths = List.of(URI.create("classpath:/com"));
     final TestClock clock = new TestClock(Instant.now(), ZoneId.systemDefault());
-    final RuntimeOptionsBuilder optionsBuilder = new RuntimeOptionsBuilder();
     final LogRecordListener listener = new LogRecordListener();
 
     @BeforeEach
@@ -77,7 +76,7 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_default_options_non_public_static_inner_classes() {
-        RuntimeOptions options = optionsBuilder.build();
+        RuntimeOptions options = RuntimeOptions.defaultOptions();
         GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
 
         // When loading a lot of classes
@@ -103,7 +102,7 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_default_options() {
-        RuntimeOptions options = optionsBuilder.build();
+        RuntimeOptions options = RuntimeOptions.defaultOptions();
         GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
 
         // When loading a lot of classes
@@ -132,7 +131,7 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_default_options_glue_only_classes() {
-        RuntimeOptions options = optionsBuilder.build();
+        RuntimeOptions options = RuntimeOptions.defaultOptions();
         GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
 
         // When loading only classes with glue
@@ -148,7 +147,7 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_glue_path_is_default_package() {
-        RuntimeOptions options = optionsBuilder.build();
+        RuntimeOptions options = RuntimeOptions.defaultOptions();
         GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
 
         // When loading classes from root package
@@ -172,7 +171,7 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_no_display() {
-        RuntimeOptions options = optionsBuilder.setGlueHintEnabled(false).build();
+        RuntimeOptions options = new RuntimeOptionsBuilder().setGlueHintEnabled(false).build();
         GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
 
         // When glue loading hint is disabled
@@ -191,7 +190,8 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_no_glue_no_display() {
-        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(RuntimeOptions.defaultOptions());
+        RuntimeOptions options = RuntimeOptions.defaultOptions();
+        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options);
 
         // When loading a lot of classes
         clock.tick(Duration.ofSeconds(1));
@@ -203,7 +203,7 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_below_threshold() {
-        RuntimeOptions options = optionsBuilder.setGlueHintThreshold(Duration.ofMillis(201)).build();
+        RuntimeOptions options = new RuntimeOptionsBuilder().setGlueHintThreshold(Duration.ofMillis(201)).build();
         GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
 
         advisor.glueLoadingStarted();
