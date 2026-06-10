@@ -20,7 +20,7 @@ public final class Hooks {
     }
 
     @After
-    public void after() throws Exception {
+    public void after() {
 
     }
 }

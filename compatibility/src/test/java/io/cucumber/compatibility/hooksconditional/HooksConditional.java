@@ -25,7 +25,7 @@ public final class HooksConditional {
     }
 
     @After("@passing-hook")
-    public void after() throws Exception {
+    public void after() {
     }
 
 }

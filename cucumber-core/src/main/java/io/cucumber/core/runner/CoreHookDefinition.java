@@ -78,6 +78,10 @@ class CoreHookDefinition {
         return delegate.getHookType();
     }
 
+    Optional<String> getName() {
+        return delegate.getName();
+    }
+
     Optional<SourceReference> getDefinitionLocation() {
         return delegate.getSourceReference();
     }

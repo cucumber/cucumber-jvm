@@ -3,13 +3,13 @@ package io.cucumber.spring;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 
 import java.lang.reflect.Modifier;
-import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Supplier;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
@@ -25,8 +25,10 @@ final class SpringBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<URI> gluePaths) {
-        gluePaths.stream()
+    public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
+        request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
+                .stream() //
+                .map(GlueDiscoverySelector.UriGlueDiscoverySelector::uri)
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)

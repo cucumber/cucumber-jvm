@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.eventbus.UuidGenerator;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -48,7 +50,9 @@ class CucumberOptionsAnnotationParserTest {
         assertAll(
             () -> assertThat(runtimeOptions.getObjectFactoryClass(), is(nullValue())),
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
-            () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options"))));
+            () -> assertThat(
+                runtimeOptions.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class),
+                contains(selectUri("classpath:/io/cucumber/core/options"))));
 
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
@@ -88,7 +92,9 @@ class CucumberOptionsAnnotationParserTest {
 
         assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
-            () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options"))),
+            () -> assertThat(
+                runtimeOptions.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class),
+                contains(selectUri("classpath:/io/cucumber/core/options"))),
             () -> assertThat(plugins.getPlugins(), is(empty())));
     }
 
@@ -213,16 +219,17 @@ class CucumberOptionsAnnotationParserTest {
     void create_with_glue() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithGlue.class).build();
 
-        assertThat(runtimeOptions.getGlue(),
-            contains(uri("classpath:/app/features/user/registration"), uri("classpath:/app/features/hooks")));
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class),
+            contains(selectUri("classpath:/app/features/user/registration"),
+                selectUri("classpath:/app/features/hooks")));
     }
 
     @Test
     void create_with_extra_glue() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithExtraGlue.class).build();
 
-        assertThat(runtimeOptions.getGlue(),
-            contains(uri("classpath:/app/features/hooks"), uri("classpath:/io/cucumber/core/options")));
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class),
+            contains(selectUri("classpath:/app/features/hooks"), selectUri("classpath:/io/cucumber/core/options")));
 
     }
 
@@ -232,17 +239,18 @@ class CucumberOptionsAnnotationParserTest {
                 .parse(SubClassWithExtraGlueOfExtraGlue.class)
                 .build();
 
-        assertThat(runtimeOptions.getGlue(),
-            contains(uri("classpath:/app/features/user/hooks"), uri("classpath:/app/features/hooks"),
-                uri("classpath:/io/cucumber/core/options")));
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class),
+            contains(selectUri("classpath:/app/features/user/hooks"), selectUri("classpath:/app/features/hooks"),
+                selectUri("classpath:/io/cucumber/core/options")));
     }
 
     @Test
     void create_with_extra_glue_in_subclass_of_glue() {
         RuntimeOptions runtimeOptions = parser().parse(SubClassWithExtraGlueOfGlue.class).build();
 
-        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/app/features/user/hooks"),
-            uri("classpath:/app/features/user/registration"), uri("classpath:/app/features/hooks")));
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class),
+            contains(selectUri("classpath:/app/features/user/hooks"),
+                selectUri("classpath:/app/features/user/registration"), selectUri("classpath:/app/features/hooks")));
     }
 
     @Test

@@ -1,5 +1,7 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
@@ -149,11 +151,6 @@ public final class RuntimeOptions implements
     }
 
     @Override
-    public List<URI> getGlue() {
-        return unmodifiableList(glue);
-    }
-
-    @Override
     public boolean isDryRun() {
         return dryRun;
     }
@@ -193,6 +190,13 @@ public final class RuntimeOptions implements
     @Override
     public @Nullable Class<? extends UuidGenerator> getUuidGeneratorClass() {
         return uuidGeneratorClass;
+    }
+
+    @Override
+    public GlueDiscoveryRequest getGlueDiscoveryRequest() {
+        return GlueDiscoveryRequest.builder() //
+                .selectors(glue.stream().map(GlueDiscoverySelector::selectUri).toList()) //
+                .build();
     }
 
     void setUuidGeneratorClass(Class<? extends UuidGenerator> uuidGeneratorClass) {

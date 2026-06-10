@@ -25,7 +25,7 @@ public @interface WithLogRecordListener {
         }
 
         private LogRecordListener getLogRecordListener(ExtensionContext context) {
-            return getContextStore(context).getOrComputeIfAbsent(LogRecordListener.class);
+            return getContextStore(context).computeIfAbsent(LogRecordListener.class);
         }
 
         @Override

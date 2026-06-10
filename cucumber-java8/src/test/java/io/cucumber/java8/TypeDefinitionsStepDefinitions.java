@@ -16,9 +16,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @SuppressWarnings("UnnecessaryStringBuilder")
-public class TypeDefinitionsStepDefinitions implements En {
+class TypeDefinitionsStepDefinitions implements En {
 
-    public TypeDefinitionsStepDefinitions() {
+    TypeDefinitionsStepDefinitions() {
         Given("docstring, defined by lambda",
             (StringBuilder builder) -> assertThat(builder.getClass(), equalTo(StringBuilder.class)));
         DocStringType("doc", (String docString) -> new StringBuilder(docString));
@@ -118,13 +118,13 @@ public class TypeDefinitionsStepDefinitions implements En {
 
     }
 
-    public static final class Author {
+    static final class Author {
 
         private final String name;
         private final String surname;
         private final String famousBook;
 
-        public Author(String name, String surname, String famousBook) {
+        Author(String name, String surname, String famousBook) {
             this.name = name;
             this.surname = surname;
             this.famousBook = famousBook;
@@ -158,11 +158,11 @@ public class TypeDefinitionsStepDefinitions implements En {
 
     }
 
-    public static final class Point {
+    static final class Point {
 
         private final int x, y;
 
-        public Point(int x, int y) {
+        Point(int x, int y) {
             this.x = x;
             this.y = y;
         }
@@ -174,21 +174,21 @@ public class TypeDefinitionsStepDefinitions implements En {
 
     }
 
-    public static final class Book {
+    static final class Book {
 
         private final String name;
         private final String mainCharacter;
 
-        public Book(String name, String mainCharacter) {
+        Book(String name, String mainCharacter) {
             this.name = name;
             this.mainCharacter = mainCharacter;
         }
 
-        public String getName() {
+        String getName() {
             return name;
         }
 
-        public String getMainCharacter() {
+        String getMainCharacter() {
             return mainCharacter;
         }
 
@@ -214,11 +214,11 @@ public class TypeDefinitionsStepDefinitions implements En {
 
     }
 
-    public static final class Cell {
+    static final class Cell {
 
         private final String name;
 
-        public Cell(String name) {
+        Cell(String name) {
             this.name = name;
         }
 
@@ -243,18 +243,18 @@ public class TypeDefinitionsStepDefinitions implements En {
 
     }
 
-    public static final class Literature {
+    static final class Literature {
 
         private final List<String> types;
         private final List<String> characters;
 
-        public Literature(DataTable dataTable) {
+        Literature(DataTable dataTable) {
             dataTable = dataTable.subTable(1, 0); // throw away headers
             types = dataTable.transpose().cells().get(0);
             characters = dataTable.transpose().cells().get(1);
         }
 
-        public Literature(List<String> types, List<String> characters) {
+        Literature(List<String> types, List<String> characters) {
             this.types = types;
             this.characters = characters;
         }

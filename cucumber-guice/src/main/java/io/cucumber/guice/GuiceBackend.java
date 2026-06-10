@@ -3,14 +3,12 @@ package io.cucumber.guice;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.Snippet;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
-import org.jspecify.annotations.Nullable;
 
-import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Supplier;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
@@ -26,8 +24,9 @@ final class GuiceBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<URI> gluePaths) {
-        gluePaths.stream()
+    public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
+        request.getSelectorsByType(UriGlueDiscoverySelector.class).stream()
+                .map(UriGlueDiscoverySelector::uri)
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
@@ -36,20 +35,4 @@ final class GuiceBackend implements Backend {
                 .distinct()
                 .forEach(container::addClass);
     }
-
-    @Override
-    public void buildWorld() {
-
-    }
-
-    @Override
-    public void disposeWorld() {
-
-    }
-
-    @Override
-    public @Nullable Snippet getSnippet() {
-        return null;
-    }
-
 }

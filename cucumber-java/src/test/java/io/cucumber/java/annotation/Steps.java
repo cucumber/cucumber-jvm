@@ -5,7 +5,7 @@ import io.cucumber.java.en.Given;
 public final class Steps {
 
     @Given("I have {int} cukes in the belly")
-    public void I_have_cukes_in_the_belly(int arg1) {
+    void I_have_cukes_in_the_belly(int arg1) {
     }
 
 }

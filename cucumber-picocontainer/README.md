@@ -23,7 +23,7 @@ and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency managemen
 PicoContainer uses constructor dependency injection to create instances
 of step definition classes and their dependencies.
 
-In the example bellow to create an instance of `StepDefinition` an instance of
+In the example bellow, to create an instance of `StepDefinition` an instance of
 `Belly` is needed. So `Belly` is a dependency of `StepDefinition`. `Belly` has
 no dependencies and can be created with the default constructor.
 
@@ -31,6 +31,8 @@ Once an instance of `Belly` has been created, this can be used to create an
 instance of `StepDefinition`. This instance is then used to invoke the Given/
 When/Then methods on.
 
+Note: _When using `cucumber-pico`, classes declaring step definitions must be
+public and have a public constructor._ 
 
 ```java
 package com.example.app;
@@ -70,12 +72,12 @@ public class StepDefinition {
     }
 
     @Given("I have {int} {word} in my belly")
-    public void I_have_n_things_in_my_belly(int n, String what) {
+    void I_have_n_things_in_my_belly(int n, String what) {
         belly.setContents(Collections.nCopies(n, what));
     }
 
     @Then("there are {int} cukes in my belly")
-    public void checkCukes(int n) {
+    void checkCukes(int n) {
         assertEquals(belly.getContents(), Collections.nCopies(n, "cukes"));
     }
 }

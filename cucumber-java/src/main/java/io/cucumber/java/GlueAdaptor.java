@@ -31,14 +31,16 @@ final class GlueAdaptor {
         } else if (annotationType.equals(Before.class)) {
             Before before = (Before) annotation;
             String tagExpression = before.value();
-            glue.addBeforeHook(new JavaHookDefinition(BEFORE, method, tagExpression, before.order(), lookup));
+            glue.addBeforeHook(
+                new JavaHookDefinition(BEFORE, method, tagExpression, before.order(), before.name(), lookup));
         } else if (annotationType.equals(BeforeAll.class)) {
             BeforeAll beforeAll = (BeforeAll) annotation;
             glue.addBeforeAllHook(new JavaStaticHookDefinition(method, beforeAll.order(), lookup));
         } else if (annotationType.equals(After.class)) {
             After after = (After) annotation;
             String tagExpression = after.value();
-            glue.addAfterHook(new JavaHookDefinition(AFTER, method, tagExpression, after.order(), lookup));
+            glue.addAfterHook(
+                new JavaHookDefinition(AFTER, method, tagExpression, after.order(), after.name(), lookup));
         } else if (annotationType.equals(AfterAll.class)) {
             AfterAll afterAll = (AfterAll) annotation;
             glue.addAfterAllHook(new JavaStaticHookDefinition(method, afterAll.order(), lookup));
@@ -46,12 +48,14 @@ final class GlueAdaptor {
             BeforeStep beforeStep = (BeforeStep) annotation;
             String tagExpression = beforeStep.value();
             glue.addBeforeStepHook(
-                new JavaHookDefinition(BEFORE_STEP, method, tagExpression, beforeStep.order(), lookup));
+                new JavaHookDefinition(BEFORE_STEP, method, tagExpression, beforeStep.order(), beforeStep.name(),
+                    lookup));
         } else if (annotationType.equals(AfterStep.class)) {
             AfterStep afterStep = (AfterStep) annotation;
             String tagExpression = afterStep.value();
             glue.addAfterStepHook(
-                new JavaHookDefinition(AFTER_STEP, method, tagExpression, afterStep.order(), lookup));
+                new JavaHookDefinition(AFTER_STEP, method, tagExpression, afterStep.order(), afterStep.name(),
+                    lookup));
         } else if (annotationType.equals(ParameterType.class)) {
             ParameterType parameterType = (ParameterType) annotation;
             String pattern = parameterType.value();

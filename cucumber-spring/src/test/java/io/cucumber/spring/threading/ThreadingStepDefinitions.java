@@ -18,8 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 @CucumberContextConfiguration
 @ContextConfiguration("classpath:cucumber.xml")
-@SuppressWarnings("DesignForExtension")
-public class ThreadingStepDefinitions {
+class ThreadingStepDefinitions {
 
     static final int concurrency = 5;
     static final ConcurrentHashMap<Thread, ThreadingStepDefinitions> map = new ConcurrentHashMap<>();
@@ -27,17 +26,17 @@ public class ThreadingStepDefinitions {
     private static final CountDownLatch latch = new CountDownLatch(2);
 
     @Given("I am a step definition")
-    public void iAmAStepDefinition() {
+    void iAmAStepDefinition() {
         map.put(currentThread(), this);
     }
 
     @When("when executed in parallel")
-    public void whenExecutedInParallel() throws Throwable {
+    void whenExecutedInParallel() throws Throwable {
         latch.await(1, TimeUnit.SECONDS);
     }
 
     @Then("I should not be shared between threads")
-    public void iShouldNotBeSharedBetweenThreads() {
+    void iShouldNotBeSharedBetweenThreads() {
         for (Map.Entry<Thread, ThreadingStepDefinitions> entries : map.entrySet()) {
             if (entries.getKey().equals(currentThread())) {
                 assertSame(entries.getValue(), this);

@@ -251,6 +251,36 @@
             "oldValue": "org.apiguardian.api.API.Status.STABLE",
             "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
             "justification": "Cucumber JUnit (for JUnit 4) was deprecated. Use Cucumber JUnit Platform Engine instead (JUnit 5+)"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method java.util.List<java.net.URI> io.cucumber.core.options.RuntimeOptions::getGlue()",
+            "justification": "Internal API. Replaced with GlueDiscovery request"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method java.util.List<java.net.URI> io.cucumber.core.runner.Options::getGlue()",
+            "justification": "Internal API. Replaced with GlueDiscovery request"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.addedToInterface",
+            "new": "method io.cucumber.core.backend.GlueDiscoveryRequest io.cucumber.core.runner.Options::getGlueDiscoveryRequest()",
+            "justification": "Internal API."
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.GlueDiscoveryRequest",
+            "justification": "Glue Discovery request API"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.GlueDiscoverySelector",
+            "justification": "Glue Discovery request API"
           }
         ]
       }
@@ -682,6 +712,14 @@
             "attribute": "since",
             "oldValue": "\"5.13.3\"",
             "newValue": "\"6.0\"",
+            "justification": "JUnit 6 Upgrade"
+          },
+          {
+            "ignore": true,
+            "code": "java.field.serialVersionUIDUnchanged",
+            "old": "field org.junit.platform.engine.UniqueId.serialVersionUID",
+            "new": "field org.junit.platform.engine.UniqueId.serialVersionUID",
+            "serialVersionUID": "1",
             "justification": "JUnit 6 Upgrade"
           }
         ]

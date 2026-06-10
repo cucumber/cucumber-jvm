@@ -162,6 +162,10 @@ class GlueAdaptorTest {
             () -> assertThat(beforeStepHook, notNullValue()),
             () -> assertThat(afterHook, notNullValue()),
             () -> assertThat(beforeHook, notNullValue()),
+            () -> assertThat(afterStepHook.getName().orElse(null), is("after-step")),
+            () -> assertThat(beforeStepHook.getName().orElse(null), is("before-step")),
+            () -> assertThat(afterHook.getName().orElse(null), is("after")),
+            () -> assertThat(beforeHook.getName().orElse(null), is("before")),
             () -> assertThat(beforeAllHook, notNullValue()),
             () -> assertThat(afterAllHook, notNullValue()),
             () -> assertThat(docStringTypeDefinition, notNullValue()));

@@ -3,15 +3,15 @@ package io.cucumber.java;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.Options;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 
-import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Supplier;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
@@ -32,11 +32,13 @@ final class JavaBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<URI> gluePaths) {
+    public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
         GlueAdaptor glueAdaptor = new GlueAdaptor(lookup, glue);
         GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options);
 
-        gluePaths.stream()
+        request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
+                .stream() //
+                .map(GlueDiscoverySelector.UriGlueDiscoverySelector::uri) //
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
@@ -52,16 +54,6 @@ final class JavaBackend implements Backend {
                 });
 
         advisor.logGlueLoadingAdvices(gluePaths);
-    }
-
-    @Override
-    public void buildWorld() {
-
-    }
-
-    @Override
-    public void disposeWorld() {
-
     }
 
     @Override

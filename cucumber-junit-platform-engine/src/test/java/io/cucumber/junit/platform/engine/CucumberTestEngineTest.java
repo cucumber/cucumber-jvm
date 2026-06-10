@@ -51,6 +51,8 @@ import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_DISCOVE
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PARALLEL_CONFIG_EXECUTOR_SERVICE_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
 import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
 import static io.cucumber.junit.platform.engine.CucumberEngineDescriptor.ENGINE_ID;
@@ -691,6 +693,51 @@ class CucumberTestEngineTest {
     }
 
     @Test
+    void anchoredNamePatternMatchesExactName() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(FILTER_NAME_PROPERTY_NAME, "^A single scenario$")
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(1, event(test(), finishedSuccessfully()));
+    }
+
+    @Test
+    void anchoredNamePatternDoesNotMatchPartOfName() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(FILTER_NAME_PROPERTY_NAME, "^A single$")
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(1, event(test(),
+                    event(skippedWithReason("'cucumber.filter.name=^A single$' did not match this scenario"))));
+    }
+
+    @Test
+    void nonAnchoredNamePatternMatchesPartOfName() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(FILTER_NAME_PROPERTY_NAME, "single")
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(1, event(test(), finishedSuccessfully()));
+    }
+
+    @Test
+    void wildcardNamePatternMatchesPartOfName() {
+        EngineTestKit.engine(ENGINE_ID)
+                .configurationParameter(FILTER_NAME_PROPERTY_NAME, "single .*")
+                .selectors(selectFile("src/test/resources/io/cucumber/junit/platform/engine/single.feature"))
+                .execute()
+                .testEvents()
+                .assertThatEvents()
+                .haveExactly(1, event(test(), finishedSuccessfully()));
+    }
+
+    @Test
     void cucumberTagsAreConvertedToJunitTags() {
         EngineTestKit.engine(ENGINE_ID)
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/scenario-outline.feature"))
@@ -1134,6 +1181,40 @@ class CucumberTestEngineTest {
                 .assertThatEvents()
                 .haveExactly(2, event(feature("single.feature", "A feature with a single scenario")))
                 .haveExactly(2, event(scenario("scenario:3", "A single scenario")));
+    }
+
+    @Test
+    void supportsParallelExecutionWithForkJoinPool() {
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/rule.feature"))
+                .configurationParameter(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, "true")
+                .configurationParameter(PARALLEL_CONFIG_EXECUTOR_SERVICE_PROPERTY_NAME, "FORK_JOIN_POOL")
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveExactly(1, event( //
+                    scenario("scenario:5", "An example of this rule"), //
+                    finishedSuccessfully()))
+                .haveExactly(1, event( //
+                    scenario("scenario:11", "An other example of this rule"), //
+                    finishedSuccessfully()));
+    }
+
+    @Test
+    void supportsParallelExecutionWithWorkerThreadPool() {
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/rule.feature"))
+                .configurationParameter(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, "true")
+                .configurationParameter(PARALLEL_CONFIG_EXECUTOR_SERVICE_PROPERTY_NAME, "WORKER_THREAD_POOL")
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveExactly(1, event( //
+                    scenario("scenario:5", "An example of this rule"), //
+                    finishedSuccessfully()))
+                .haveExactly(1, event( //
+                    scenario("scenario:11", "An other example of this rule"), //
+                    finishedSuccessfully()));
     }
 
     @Suite

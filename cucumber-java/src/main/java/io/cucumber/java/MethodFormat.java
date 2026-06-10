@@ -14,7 +14,8 @@ final class MethodFormat {
 
     static final MethodFormat FULL = new MethodFormat("%qc.%m(%qa)");
     private static final Pattern METHOD_PATTERN = Pattern
-            .compile("((?:static\\s|public\\s)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
+            .compile(
+                "((?:static\\s|public\\s|protected\\s|private\\s|)+)([^\\s]*)\\s\\.?(.*)\\.([^\\(]*)\\(([^\\)]*)\\)(?: throws )?(.*)");
     private final MessageFormat format;
 
     /**

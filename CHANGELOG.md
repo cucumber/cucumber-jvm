@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [Java] Add optional names to `@Before`, `@After`, `@BeforeStep` and `@AfterStep` hooks and emit hook names in messages ([#2917](https://github.com/cucumber/cucumber-jvm/issues/2917), [#3173](https://github.com/cucumber/cucumber-jvm/pull/3173))
+- [Java] Declare step definitions with minimal ceremony ([#3200](https://github.com/cucumber/cucumber-jvm/issues/3200))
+- [Java] Display hints when the glue packages are not efficiently configured ([#3151](https://github.com/cucumber/cucumber-jvm/pull/3151), Julien Kronegg)
+- [JUnit Platform] Use `ParallelHierarchicalTestExecutorServiceFactory` ([#3105](https://github.com/cucumber/cucumber-jvm/pull/3105))
+
+
+### Fixed
+- [JUnit Platform Engine] Accept partial matches with `cucumber.filter.name` and align the behavior with JUnit 4 and CLI ([#3174](https://github.com/cucumber/cucumber-jvm/pull/3174))
+- [JUnit Platform Engine] Don't require global read lock ([#3103](https://github.com/cucumber/cucumber-jvm/pull/3103))
+
 ### Changed
 - [All] Set baseline to Java 17 ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
 - [All] Adopt [JSpecify](https://jspecify.dev/) to declare nullability ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
@@ -32,8 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [All] Classes not designed for extension are now final. See [api-changes.json](./.revapi/api-changes.json) for details.
 - [All] Utility classes are no longer instantiatable. See [api-changes.json](./.revapi/api-changes.json) for details.
 
-### Added
-- [Java] Display hints when the glue packages are not efficiently configured ([#3151](https://github.com/cucumber/cucumber-jvm/pull/3151), Julien Kronegg)
+### Removed
+- [OpenEJB] Removed `cucumber-openejb` in favor of `cucumber-jakarta-openejb` ([#3189](https://github.com/cucumber/cucumber-jvm/pull/3189))
+- [OpenEJB] Removed `cucumber-cdi2` in favor of `cucumber-jakarta-cdi` ([#3192](https://github.com/cucumber/cucumber-jvm/pull/3192))
+- [OpenEJB] Removed `cucumber-deltaspike` without replacement ([#3193](https://github.com/cucumber/cucumber-jvm/pull/3193))
+
+## [7.34.3] - 2026-03-04
+### Fixed
+- [Core] Update dependency io.cucumber:messages-ndjson to v0.3.2
+- [Core] Update dependency com.fasterxml.jackson:jackson-bom to v2.21.1
 
 ## [7.34.2] - 2026-01-29
 ### Fixed
@@ -41,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [7.34.1] - 2026-01-28
 ### Fixed
-- Ensure dependencies converge ([#3157](https://github.com/cucumber/cucumber-jvm/issues/3157)
+- Ensure dependencies converge ([#3157](https://github.com/cucumber/cucumber-jvm/issues/3157))
 
 ## [7.34.0] - 2026-01-28
 ### Added
@@ -613,7 +631,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.2...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.3...HEAD
+[7.34.3]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.2...v7.34.3
 [7.34.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.1...v7.34.2
 [7.34.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.0...v7.34.1
 [7.34.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.33.0...v7.34.0

@@ -55,8 +55,6 @@ final class CompatibilityTest {
     private static final List<String> unsupportedTestCases = Arrays.asList(
         // exception: not applicable
         "test.feature-run-exception",
-        // exception: Cucumber JVM does not support named hooks
-        "hooks-named",
         // exception: Cucumber executes all hooks,
         // but skipped hooks can skip a scenario
         "hooks-skipped",
@@ -71,8 +69,10 @@ final class CompatibilityTest {
         "global-hooks-afterall-error",
         "global-hooks-attachments",
         "global-hooks-beforeall-error",
-        // exception: cucumber can't test runs intentionally
-        "test-run-exception");
+        // exception: Cucumber JVM can't fail test runs intentionally
+        "test-run-exception",
+        // exception: Cucumber JVM does not continue after any failed step
+        "failedish-combinations");
 
     private static final Map<String, Map<Pattern, Matcher<?>>> divergingExpectations = createDivergingExpectations();
 
@@ -134,7 +134,6 @@ final class CompatibilityTest {
         pickle.put(Pattern.compile("/steps/.*/id"), isA(TextNode.class));
         pickle.put(Pattern.compile("/steps/.*/astNodeIds/.*"), isA(TextNode.class));
         pickle.put(Pattern.compile("/tags/.*/astNodeId"), isA(TextNode.class));
-        pickle.put(Pattern.compile("/name"), isA(TextNode.class));
         exceptions.put("pickle", pickle);
 
         Map<Pattern, Matcher<?>> stepDefinition = new LinkedHashMap<>();

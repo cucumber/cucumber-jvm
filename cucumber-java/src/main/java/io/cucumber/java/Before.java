@@ -24,6 +24,13 @@ public @interface Before {
     String value() default "";
 
     /**
+     * Name of this hook, used for reporting.
+     *
+     * @return the hook name
+     */
+    String name() default "";
+
+    /**
      * The order in which this hook should run. Lower numbers are run first. The
      * default order is 10000.
      *

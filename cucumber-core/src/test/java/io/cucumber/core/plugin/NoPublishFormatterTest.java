@@ -10,20 +10,19 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.util.UUID;
 
 import static io.cucumber.core.plugin.Bytes.bytes;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 class NoPublishFormatterTest {
     @Test
-    public void should_print_banner() throws UnsupportedEncodingException {
+    void should_print_banner() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(bytes, false, StandardCharsets.UTF_8.name());
+        PrintStream out = new PrintStream(bytes, false, UTF_8);
         EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
         NoPublishFormatter noPublishFormatter = new NoPublishFormatter(out);

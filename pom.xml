@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.cucumber</groupId>
         <artifactId>cucumber-parent</artifactId>
-        <version>5.1.1</version>
+        <version>5.4.1</version>
         <relativePath/>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
@@ -16,7 +16,6 @@
 
     <properties>
         <project.build.outputTimestamp>1769807296</project.build.outputTimestamp>
-        <project.rootdir>${project.basedir}</project.rootdir>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
@@ -28,9 +27,7 @@
     <modules>
         <module>cucumber-archetype</module>
         <module>cucumber-bom</module>
-        <module>cucumber-cdi2</module>
         <module>cucumber-core</module>
-        <module>cucumber-deltaspike</module>
         <module>cucumber-gherkin</module>
         <module>cucumber-gherkin-messages</module>
         <module>cucumber-guice</module>
@@ -40,7 +37,6 @@
         <module>cucumber-java</module>
         <module>cucumber-junit</module>
         <module>cucumber-junit-platform-engine</module>
-        <module>cucumber-openejb</module>
         <module>cucumber-picocontainer</module>
         <module>cucumber-plugin</module>
         <module>cucumber-spring</module>

@@ -4,10 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 
 import static io.cucumber.core.plugin.Bytes.bytes;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,9 +14,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 class BannerTest {
 
     @Test
-    void printsAnsiBanner() throws UnsupportedEncodingException {
+    void printsAnsiBanner() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        Banner banner = new Banner(new PrintStream(bytes, false, StandardCharsets.UTF_8.name()), false);
+        Banner banner = new Banner(new PrintStream(bytes, false, UTF_8), false);
 
         banner.print(asList(
             new Banner.Line("Bla"),
@@ -29,18 +28,18 @@ class BannerTest {
             new Banner.Line("Bla Bla")), AnsiEscapes.CYAN);
 
         assertThat(bytes, bytes(equalTo("""
-                [36m┌─────────────┐[0m
-                [36m│[0m Bla         [36m│[0m
-                [36m│[0m Bla [34mBla[0m [31mBla[0m [36m│[0m
-                [36m│[0m Bla Bla     [36m│[0m
-                [36m└─────────────┘[0m
+                \u001B[36m┌─────────────┐\u001B[0m
+                \u001B[36m│\u001B[0m Bla         \u001B[36m│\u001B[0m
+                \u001B[36m│\u001B[0m Bla \u001B[34mBla\u001B[0m \u001B[31mBla\u001B[0m \u001B[36m│\u001B[0m
+                \u001B[36m│\u001B[0m Bla Bla     \u001B[36m│\u001B[0m
+                \u001B[36m└─────────────┘\u001B[0m
                 """)));
     }
 
     @Test
-    void printsMonochromeBanner() throws Exception {
+    void printsMonochromeBanner() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        Banner banner = new Banner(new PrintStream(bytes, false, StandardCharsets.UTF_8.name()), true);
+        Banner banner = new Banner(new PrintStream(bytes, false, UTF_8), true);
 
         banner.print(asList(
             new Banner.Line("Bla"),
