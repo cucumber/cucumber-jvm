@@ -281,6 +281,19 @@
             "code": "java.class.externalClassExposedInAPI",
             "new": "interface io.cucumber.core.backend.GlueDiscoverySelector",
             "justification": "Glue Discovery request API"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.addedToInterface",
+            "new": "method int io.cucumber.core.backend.Options::getGlueHintThreshold()",
+            "justification": "New feature"
+
+          },
+          {
+            "ignore": true,
+            "code": "java.method.addedToInterface",
+            "new": "method boolean io.cucumber.core.backend.Options::isGlueHintEnabled()",
+            "justification": "New feature"
           }
         ]
       }
