@@ -20,7 +20,9 @@ public final class BackendServiceLoader implements BackendSupplier {
     private final Supplier<ClassLoader> classLoaderSupplier;
     private final ObjectFactorySupplier objectFactorySupplier;
 
-    public BackendServiceLoader(Supplier<ClassLoader> classLoaderSupplier, ObjectFactorySupplier objectFactorySupplier) {
+    public BackendServiceLoader(
+            Supplier<ClassLoader> classLoaderSupplier, ObjectFactorySupplier objectFactorySupplier
+    ) {
         this.classLoaderSupplier = classLoaderSupplier;
         this.objectFactorySupplier = objectFactorySupplier;
     }
