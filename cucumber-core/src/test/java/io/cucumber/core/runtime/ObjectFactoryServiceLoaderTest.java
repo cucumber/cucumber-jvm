@@ -5,6 +5,7 @@ import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.Options;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.options.RuntimeOptions;
+import io.cucumber.core.options.RuntimeOptionsBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -78,8 +79,9 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void shouldLoadSelectedObjectFactoryService() {
-        RuntimeOptions options = RuntimeOptions.defaultOptions();
-        options.setObjectFactoryClass(DefaultObjectFactory.class);
+        RuntimeOptions options = new RuntimeOptionsBuilder() //
+                .setObjectFactoryClass(DefaultObjectFactory.class) //
+                .build();
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             ObjectFactoryServiceLoaderTest.class::getClassLoader,
             options);
@@ -119,8 +121,9 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void test_case_5() {
-        RuntimeOptions options = RuntimeOptions.defaultOptions();
-        options.setObjectFactoryClass(DefaultObjectFactory.class);
+        RuntimeOptions options = new RuntimeOptionsBuilder() //
+                .setObjectFactoryClass(DefaultObjectFactory.class) //
+                .build();
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             () -> new ServiceLoaderTestClassLoader(ObjectFactory.class,
                 DefaultObjectFactory.class,
@@ -156,8 +159,9 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void test_case_7() {
-        RuntimeOptions options = RuntimeOptions.defaultOptions();
-        options.setObjectFactoryClass(OtherFactory.class);
+        RuntimeOptions options = new RuntimeOptionsBuilder() //
+                .setObjectFactoryClass(OtherFactory.class) //
+                .build();
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             () -> new ServiceLoaderTestClassLoader(ObjectFactory.class,
                 DefaultObjectFactory.class,
@@ -172,8 +176,9 @@ class ObjectFactoryServiceLoaderTest {
      */
     @Test
     void shouldThrowIfSelectedObjectFactoryServiceCouldNotBeLoaded() {
-        RuntimeOptions options = RuntimeOptions.defaultOptions();
-        options.setObjectFactoryClass(OtherFactory.class);
+        RuntimeOptions options = new RuntimeOptionsBuilder() //
+                .setObjectFactoryClass(OtherFactory.class) //
+                .build();
         ObjectFactoryServiceLoader loader = new ObjectFactoryServiceLoader(
             () -> new ServiceLoaderTestClassLoader(ObjectFactory.class),
             options);

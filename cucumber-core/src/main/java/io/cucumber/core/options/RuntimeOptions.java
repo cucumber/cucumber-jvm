@@ -183,7 +183,7 @@ public final class RuntimeOptions implements
         return objectFactoryClass;
     }
 
-    public void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
+    void setObjectFactoryClass(Class<? extends ObjectFactory> objectFactoryClass) {
         this.objectFactoryClass = objectFactoryClass;
     }
 
