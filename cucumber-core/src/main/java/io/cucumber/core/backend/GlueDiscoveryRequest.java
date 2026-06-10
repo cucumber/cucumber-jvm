@@ -5,6 +5,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * A request for a {@link Backend} to discover {@link Glue} code in specific
+ * location.
+ */
 public interface GlueDiscoveryRequest {
     List<URI> getGluePaths();
 
