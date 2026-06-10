@@ -196,6 +196,7 @@ class CucumberConfiguration implements
                 .map(GlueDiscoverySelector::selectUri)
                 .toList();
         return GlueDiscoveryRequest.builder()
+                .options(this)
                 .selectors(selectors)
                 .build();
     }

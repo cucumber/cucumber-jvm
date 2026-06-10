@@ -6,7 +6,6 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.backend.Options;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
@@ -22,19 +21,17 @@ final class JavaBackend implements Backend {
     private final Lookup lookup;
     private final Container container;
     private final ClasspathScanner classFinder;
-    private final Options options;
 
-    JavaBackend(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderSupplier, Options options) {
+    JavaBackend(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderSupplier) {
         this.lookup = lookup;
         this.container = container;
         this.classFinder = new ClasspathScanner(classLoaderSupplier);
-        this.options = options;
     }
 
     @Override
     public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
         GlueAdaptor glueAdaptor = new GlueAdaptor(lookup, glue);
-        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options);
+        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(request.getOptions());
 
         var gluePaths = request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
                 .stream() //

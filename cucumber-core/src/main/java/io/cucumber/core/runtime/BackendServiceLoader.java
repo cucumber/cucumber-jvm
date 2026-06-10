@@ -3,7 +3,6 @@ package io.cucumber.core.runtime;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.backend.Options;
 import io.cucumber.core.exception.CucumberException;
 
 import java.util.ArrayList;
@@ -20,15 +19,13 @@ public final class BackendServiceLoader implements BackendSupplier {
 
     private final Supplier<ClassLoader> classLoaderSupplier;
     private final ObjectFactorySupplier objectFactorySupplier;
-    private final Options options;
 
     public BackendServiceLoader(
-            Supplier<ClassLoader> classLoaderSupplier, Options runtimeOptions,
+            Supplier<ClassLoader> classLoaderSupplier,
             ObjectFactorySupplier objectFactorySupplier
     ) {
         this.classLoaderSupplier = classLoaderSupplier;
         this.objectFactorySupplier = objectFactorySupplier;
-        this.options = runtimeOptions;
     }
 
     @Override
@@ -50,7 +47,7 @@ public final class BackendServiceLoader implements BackendSupplier {
         List<Backend> backends = new ArrayList<>();
         for (BackendProviderService backendProviderService : serviceLoader) {
             ObjectFactory objectFactory = objectFactorySupplier.get();
-            backends.add(backendProviderService.create(objectFactory, objectFactory, classLoaderSupplier, options));
+            backends.add(backendProviderService.create(objectFactory, objectFactory, classLoaderSupplier));
         }
         return backends;
     }

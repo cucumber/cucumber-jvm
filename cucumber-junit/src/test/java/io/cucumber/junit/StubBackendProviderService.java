@@ -7,7 +7,6 @@ import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Lookup;
-import io.cucumber.core.backend.Options;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StaticHookDefinition;
@@ -28,7 +27,7 @@ public final class StubBackendProviderService implements BackendProviderService 
     static final List<Consumer<String>> callbacks = new ArrayList<>();
 
     @Override
-    public Backend create(Lookup lookup, Container container, Supplier<ClassLoader> classLoader, Options options) {
+    public Backend create(Lookup lookup, Container container, Supplier<ClassLoader> classLoader) {
         return new StubBackend();
     }
 

@@ -195,6 +195,7 @@ public final class RuntimeOptions implements
     @Override
     public GlueDiscoveryRequest getGlueDiscoveryRequest() {
         return GlueDiscoveryRequest.builder() //
+                .options(this)
                 .selectors(glue.stream().map(GlueDiscoverySelector::selectUri).toList()) //
                 .build();
     }

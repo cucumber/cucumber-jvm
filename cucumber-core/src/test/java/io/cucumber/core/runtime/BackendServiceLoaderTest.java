@@ -26,15 +26,13 @@ class BackendServiceLoaderTest {
 
     @Test
     void should_create_a_backend() {
-        BackendSupplier backendSupplier = new BackendServiceLoader(classLoaderSupplier, this.runtimeOptions,
-            objectFactory);
+        BackendSupplier backendSupplier = new BackendServiceLoader(classLoaderSupplier, objectFactory);
         assertThat(backendSupplier.get().iterator().next(), is(notNullValue()));
     }
 
     @Test
     void should_throw_an_exception_when_no_backend_could_be_found() {
-        BackendServiceLoader backendSupplier = new BackendServiceLoader(classLoaderSupplier, this.runtimeOptions,
-            objectFactory);
+        BackendServiceLoader backendSupplier = new BackendServiceLoader(classLoaderSupplier, objectFactory);
 
         Executable testMethod = () -> backendSupplier.get(emptyList()).iterator().next();
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
