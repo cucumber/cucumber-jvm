@@ -171,17 +171,17 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_no_display() {
+        // Given glue loading hint is disabled
         RuntimeOptions options = new RuntimeOptionsBuilder().setGlueHintEnabled(false).build();
         GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
 
-        // When glue loading hint is disabled
+        // When loading a lot of classes
         advisor.glueLoadingStarted();
         advisor.addGlueClass(GlueLoadingAdvisor.class);
         advisor.addGlueClass(Steps.class);
         advisor.addContainerClass(Steps.class);
         advisor.addGlueClass(PublicStaticInnerClass.class);
         clock.tick(Duration.ofSeconds(1));
-        // When loading a lot of classes
         advisor.logGlueLoadingSuggestions(gluePaths);
 
         // Then no hint is displayed
@@ -193,7 +193,7 @@ class GlueLoadingAdvisorTest {
         RuntimeOptions options = RuntimeOptions.defaultOptions();
         GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options);
 
-        // When loading a lot of classes
+        // When loading no classes
         clock.tick(Duration.ofSeconds(1));
         advisor.logGlueLoadingSuggestions(gluePaths);
 
