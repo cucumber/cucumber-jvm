@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
  * This class gives advices to the developer to improve the glue loading
  * performance.
  */
-public final class GlueLoadingAdvisor {
+final class GlueLoadingAdvisor {
     private static final Logger log = LoggerFactory.getLogger(GlueLoadingAdvisor.class);
     final Set<Class<?>> containerClasses = new HashSet<>();
     final Set<Class<?>> glueClasses = new HashSet<>();
     final Options options;
     long t0 = System.currentTimeMillis();
 
-    public GlueLoadingAdvisor(Options options) {
+    GlueLoadingAdvisor(Options options) {
         this.options = options;
     }
 
@@ -37,7 +37,7 @@ public final class GlueLoadingAdvisor {
      * 
      * @param gluePaths the glue paths that have been scanned for glue classes.
      */
-    public void logGlueLoadingAdvices(List<URI> gluePaths) {
+    void logGlueLoadingAdvices(List<URI> gluePaths) {
         if (options.isGlueHintEnabled()) {
             int glueClassCount = glueClasses.size();
             if (glueClassCount > 0) {
@@ -123,7 +123,7 @@ public final class GlueLoadingAdvisor {
      * 
      * @param glueClass the class coming from the glue package
      */
-    public void addGlueClass(Class<?> glueClass) {
+    void addGlueClass(Class<?> glueClass) {
         glueClasses.add(glueClass);
     }
 
@@ -132,7 +132,7 @@ public final class GlueLoadingAdvisor {
      * 
      * @param containerClass the class that have been added to the container
      */
-    public void addContainerClass(Class<?> containerClass) {
+    void addContainerClass(Class<?> containerClass) {
         containerClasses.add(containerClass);
     }
 }
