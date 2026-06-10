@@ -13,8 +13,8 @@ public interface Backend {
      * Invoked once before all features. This is where steps and hooks should be
      * loaded.
      *
-     * @param glue      Glue that provides the steps to be executed.
-     * @param request   The request to discover glue for.
+     * @param glue    Glue that provides the steps to be executed.
+     * @param request A request to discover glue code in specific locations.
      */
     default void loadGlue(Glue glue, GlueDiscoveryRequest request) {
         loadGlue(glue, request.getGluePaths());
@@ -24,8 +24,10 @@ public interface Backend {
      * Invoked once before all features. This is where steps and hooks should be
      * loaded.
      *
-     * @param glue      Glue that provides the steps to be executed.
-     * @param gluePaths The locations for the glue to be loaded.
+     * @param      glue      Glue that provides the steps to be executed.
+     * @param      gluePaths The locations for the glue to be loaded.
+     * @deprecated           use {@link #loadGlue(Glue, GlueDiscoveryRequest)}
+     *                       instead.
      */
     @Deprecated
     default void loadGlue(Glue glue, List<URI> gluePaths) {

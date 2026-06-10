@@ -148,11 +148,6 @@ public final class RuntimeOptions implements
     }
 
     @Override
-    public List<URI> getGlue() {
-        return unmodifiableList(glue);
-    }
-
-    @Override
     public boolean isDryRun() {
         return dryRun;
     }

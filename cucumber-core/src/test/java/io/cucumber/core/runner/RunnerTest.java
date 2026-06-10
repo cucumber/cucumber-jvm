@@ -18,9 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 
-import java.net.URI;
 import java.time.Clock;
-import java.util.List;
 import java.util.UUID;
 
 import static java.util.Collections.emptyList;
@@ -62,7 +60,7 @@ class RunnerTest {
             glue.addBeforeHook(beforeHook);
             glue.addAfterHook(afterHook);
             return null;
-        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
+        }).when(backend).loadGlue(any(Glue.class), any(GlueDiscoveryRequest.class));
 
         Runner runner = new Runner(bus, singletonList(backend), objectFactory, runtimeOptions);
         runner.runBeforeAllHooks();

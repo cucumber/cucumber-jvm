@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 
-import java.net.URI;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;

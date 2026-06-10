@@ -11,7 +11,6 @@ import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StepDefinition;
 
 import java.lang.reflect.Type;
-import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;

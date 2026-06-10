@@ -125,7 +125,7 @@ class CucumberConfigurationTest {
             Constants.GLUE_PROPERTY_NAME,
             "com.example.app, com.example.glue");
 
-        assertThat(new CucumberConfiguration(config, issueReporter).getGlue(),
+        assertThat(new CucumberConfiguration(config, issueReporter).getGlueDiscoveryRequest().getGluePaths(),
             contains(
                 URI.create("classpath:/com/example/app"),
                 URI.create("classpath:/com/example/glue")));

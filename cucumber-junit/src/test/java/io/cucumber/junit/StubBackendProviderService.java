@@ -14,7 +14,6 @@ import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 
 import java.lang.reflect.Type;
-import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;

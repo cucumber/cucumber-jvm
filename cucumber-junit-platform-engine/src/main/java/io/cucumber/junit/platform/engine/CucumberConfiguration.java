@@ -1,5 +1,6 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
@@ -21,7 +22,6 @@ import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
 import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.hierarchical.Node.ExecutionMode;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -140,17 +140,6 @@ class CucumberConfiguration implements
     }
 
     @Override
-    public List<URI> getGlue() {
-        return configurationParameters
-                .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
-                .orElse(Collections.singletonList(CLASSPATH_SCHEME_PREFIX))
-                .stream()
-                .map(String::trim)
-                .map(GluePath::parse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public boolean isDryRun() {
         return configurationParameters
                 .getBoolean(EXECUTION_DRY_RUN_PROPERTY_NAME)
@@ -176,6 +165,17 @@ class CucumberConfiguration implements
         return configurationParameters
                 .get(UUID_GENERATOR_PROPERTY_NAME, UuidGeneratorParser::parseUuidGenerator)
                 .orElse(null);
+    }
+
+    @Override
+    public GlueDiscoveryRequest getGlueDiscoveryRequest() {
+        return () -> configurationParameters
+                .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
+                .orElse(Collections.singletonList(CLASSPATH_SCHEME_PREFIX))
+                .stream()
+                .map(String::trim)
+                .map(GluePath::parse)
+                .collect(Collectors.toList());
     }
 
     boolean isParallelExecutionEnabled() {

@@ -121,7 +121,7 @@ class CucumberPropertiesParserTest {
     void should_parse_glue() {
         properties.put(Constants.GLUE_PROPERTY_NAME, "com.example.steps");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getGlue(), contains(
+        assertThat(options.getGlueDiscoveryRequest().getGluePaths(), contains(
             URI.create("classpath:/com/example/steps")));
     }
 
@@ -129,7 +129,7 @@ class CucumberPropertiesParserTest {
     void should_parse_glue_list() {
         properties.put(Constants.GLUE_PROPERTY_NAME, "com.example.app.steps, com.example.other.steps");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getGlue(), contains(
+        assertThat(options.getGlueDiscoveryRequest().getGluePaths(), contains(
             URI.create("classpath:/com/example/app/steps"),
             URI.create("classpath:/com/example/other/steps")));
     }

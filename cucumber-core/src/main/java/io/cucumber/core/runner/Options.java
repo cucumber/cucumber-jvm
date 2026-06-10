@@ -6,15 +6,7 @@ import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.snippets.SnippetType;
 import org.jspecify.annotations.Nullable;
 
-import java.net.URI;
-import java.util.List;
-
 public interface Options {
-
-    @Deprecated
-    default List<URI> getGlue(){
-        return getGlueDiscoveryRequest().getGluePaths();
-    }
 
     boolean isDryRun();
 

@@ -1,6 +1,7 @@
 package io.cucumber.java8;
 
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.java8.steps.Steps;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,8 +12,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import java.net.URI;
 
 import static java.lang.Thread.currentThread;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -34,15 +33,21 @@ class Java8BackendTest {
 
     @Test
     void finds_step_definitions_by_classpath_url() {
-        backend.loadGlue(glue, singletonList(URI.create("classpath:io/cucumber/java8/steps")));
+        var request = GlueDiscoveryRequest.builder() //
+                .gluePath(URI.create("classpath:io/cucumber/java8/steps")) //
+                .build();
+        backend.loadGlue(glue, request);
         backend.buildWorld();
         verify(factory).addClass(Steps.class);
     }
 
     @Test
     void finds_step_definitions_once_by_classpath_url() {
-        backend.loadGlue(glue,
-            asList(URI.create("classpath:io/cucumber/java8/steps"), URI.create("classpath:io/cucumber/java8/steps")));
+        var request = GlueDiscoveryRequest.builder() //
+                .gluePath(URI.create("classpath:io/cucumber/java8/steps")) //
+                .gluePath(URI.create("classpath:io/cucumber/java8/steps")) //
+                .build();
+        backend.loadGlue(glue, request);
         backend.buildWorld();
         verify(factory, times(1)).addClass(Steps.class);
     }

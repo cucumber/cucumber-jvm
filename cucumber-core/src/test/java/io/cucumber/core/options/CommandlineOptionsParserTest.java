@@ -205,7 +205,7 @@ class CommandlineOptionsParserTest {
         RuntimeOptions options = parser
                 .parse("--glue", "somewhere")
                 .build();
-        assertThat(options.getGlue(), contains(uri("classpath:/somewhere")));
+        assertThat(options.getGlueDiscoveryRequest().getGluePaths(), contains(uri("classpath:/somewhere")));
     }
 
     @Test
@@ -526,7 +526,7 @@ class CommandlineOptionsParserTest {
                 .parse()
                 .addDefaultGlueIfAbsent()
                 .build();
-        assertThat(options.getGlue(), is(singletonList(rootPackageUri())));
+        assertThat(options.getGlueDiscoveryRequest().getGluePaths(), is(singletonList(rootPackageUri())));
     }
 
     @Test

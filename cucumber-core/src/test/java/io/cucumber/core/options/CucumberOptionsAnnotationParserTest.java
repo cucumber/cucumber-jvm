@@ -48,7 +48,8 @@ class CucumberOptionsAnnotationParserTest {
         assertAll(
             () -> assertThat(runtimeOptions.getObjectFactoryClass(), is(nullValue())),
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
-            () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options"))));
+            () -> assertThat(runtimeOptions.getGlueDiscoveryRequest().getGluePaths(),
+                contains(uri("classpath:/io/cucumber/core/options"))));
 
         Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
         plugins.setEventBusOnEventListenerPlugins(new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID));
@@ -88,7 +89,8 @@ class CucumberOptionsAnnotationParserTest {
 
         assertAll(
             () -> assertThat(runtimeOptions.getFeaturePaths(), contains(uri("classpath:/io/cucumber/core/options"))),
-            () -> assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/io/cucumber/core/options"))),
+            () -> assertThat(runtimeOptions.getGlueDiscoveryRequest().getGluePaths(),
+                contains(uri("classpath:/io/cucumber/core/options"))),
             () -> assertThat(plugins.getPlugins(), is(empty())));
     }
 
@@ -213,7 +215,7 @@ class CucumberOptionsAnnotationParserTest {
     void create_with_glue() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithGlue.class).build();
 
-        assertThat(runtimeOptions.getGlue(),
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getGluePaths(),
             contains(uri("classpath:/app/features/user/registration"), uri("classpath:/app/features/hooks")));
     }
 
@@ -221,7 +223,7 @@ class CucumberOptionsAnnotationParserTest {
     void create_with_extra_glue() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithExtraGlue.class).build();
 
-        assertThat(runtimeOptions.getGlue(),
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getGluePaths(),
             contains(uri("classpath:/app/features/hooks"), uri("classpath:/io/cucumber/core/options")));
 
     }
@@ -232,7 +234,7 @@ class CucumberOptionsAnnotationParserTest {
                 .parse(SubClassWithExtraGlueOfExtraGlue.class)
                 .build();
 
-        assertThat(runtimeOptions.getGlue(),
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getGluePaths(),
             contains(uri("classpath:/app/features/user/hooks"), uri("classpath:/app/features/hooks"),
                 uri("classpath:/io/cucumber/core/options")));
     }
@@ -241,8 +243,9 @@ class CucumberOptionsAnnotationParserTest {
     void create_with_extra_glue_in_subclass_of_glue() {
         RuntimeOptions runtimeOptions = parser().parse(SubClassWithExtraGlueOfGlue.class).build();
 
-        assertThat(runtimeOptions.getGlue(), contains(uri("classpath:/app/features/user/hooks"),
-            uri("classpath:/app/features/user/registration"), uri("classpath:/app/features/hooks")));
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getGluePaths(),
+            contains(uri("classpath:/app/features/user/hooks"),
+                uri("classpath:/app/features/user/registration"), uri("classpath:/app/features/hooks")));
     }
 
     @Test
