@@ -6,6 +6,7 @@ import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -101,7 +102,7 @@ public final class CucumberPropertiesParser {
 
         parse(properties,
             GLUE_HINT_THRESHOLD_PROPERTY_NAME,
-            Integer::parseInt,
+            Duration::parse,
             builder::setGlueHintThreshold);
 
         parse(properties,

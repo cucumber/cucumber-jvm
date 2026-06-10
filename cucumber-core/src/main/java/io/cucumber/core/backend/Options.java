@@ -2,6 +2,8 @@ package io.cucumber.core.backend;
 
 import org.jspecify.annotations.Nullable;
 
+import java.time.Duration;
+
 public interface Options {
 
     @Nullable
@@ -9,6 +11,6 @@ public interface Options {
 
     boolean isGlueHintEnabled();
 
-    int getGlueHintThreshold();
+    Duration getGlueHintThreshold();
 
 }

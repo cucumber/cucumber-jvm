@@ -23,6 +23,7 @@ import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
 import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.hierarchical.Node.ExecutionMode;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -164,11 +165,11 @@ class CucumberConfiguration implements
     }
 
     @Override
-    public int getGlueHintThreshold() {
+    public Duration getGlueHintThreshold() {
         return configurationParameters
                 .get(GLUE_HINT_THRESHOLD_PROPERTY_NAME)
-                .map(Integer::parseInt)
-                .orElse(100);
+                .map(Duration::parse)
+                .orElseGet(() -> Duration.ofMillis(100));
     }
 
     @Override

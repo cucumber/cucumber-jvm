@@ -38,6 +38,8 @@ final class JavaBackend implements Backend {
                 .map(GlueDiscoverySelector.UriGlueDiscoverySelector::uri) //
                 .toList();
 
+        advisor.glueLoadingStarted();
+
         gluePaths.stream() //
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
@@ -53,7 +55,7 @@ final class JavaBackend implements Backend {
                     });
                 });
 
-        advisor.logGlueLoadingAdvices(gluePaths);
+        advisor.logGlueLoadingSuggestions(gluePaths);
     }
 
     @Override

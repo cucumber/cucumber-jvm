@@ -133,6 +133,7 @@ public final class Constants {
      * @see io.cucumber.core.feature.GluePath
      */
     public static final String GLUE_PROPERTY_NAME = io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
+
     /**
      * Property name to enable displaying cucumber glue loading hints: {@value}
      * <p>
@@ -141,7 +142,7 @@ public final class Constants {
      * <p>
      * Valid values are {@code true}, {@code false} (default is true).
      */
-    @API(status = Status.EXPERIMENTAL, since = "7.34.0")
+    @API(status = API.Status.EXPERIMENTAL, since = "8.0.0")
     public static final String GLUE_HINT_ENABLED_PROPERTY_NAME = io.cucumber.core.options.Constants.GLUE_HINT_ENABLED_PROPERTY_NAME;
 
     /**
@@ -151,9 +152,9 @@ public final class Constants {
      * Enabling this will make the hints to be displayed if the expected gain is
      * above the threshold.
      * <p>
-     * The threshold is in milliseconds.
+     * The threshold is an ISO-8601 duration string. Defaults to {@code PT0.1S}
      */
-    @API(status = Status.EXPERIMENTAL, since = "7.34.0")
+    @API(status = API.Status.EXPERIMENTAL, since = "8.0.0")
     public static final String GLUE_HINT_THRESHOLD_PROPERTY_NAME = io.cucumber.core.options.Constants.GLUE_HINT_THRESHOLD_PROPERTY_NAME;
 
     /**

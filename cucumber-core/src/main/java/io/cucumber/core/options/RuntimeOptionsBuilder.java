@@ -11,6 +11,7 @@ import io.cucumber.tagexpressions.Expression;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +32,7 @@ public final class RuntimeOptionsBuilder {
     private @Nullable SnippetType parsedSnippetType = null;
     private @Nullable Boolean parsedWip = null;
     private @Nullable Boolean parsedGlueHint = null;
-    private @Nullable Integer parsedGlueHintThreshold = null;
+    private @Nullable Duration parsedGlueHintThreshold = null;
     private @Nullable PickleOrder parsedPickleOrder = null;
     private @Nullable Integer parsedCount = null;
     private @Nullable Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
@@ -234,8 +235,8 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-    public RuntimeOptionsBuilder setGlueHintThreshold(int thresholdInMs) {
-        this.parsedGlueHintThreshold = thresholdInMs;
+    public RuntimeOptionsBuilder setGlueHintThreshold(Duration threshold) {
+        this.parsedGlueHintThreshold = threshold;
         return this;
     }
 

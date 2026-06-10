@@ -471,8 +471,8 @@ cucumber.glue.hint.enabled=                                    # true or false
                                                                # default: true
                                                                # enable displaying glue hint in case of inneficient configuration.
 
-cucumber.glue.hint.threshold=                                  # threshold value in milliseconds
-                                                               # default: 100
+cucumber.glue.hint.threshold=                                  # threshold value as an ISO-8601 duration string
+                                                               # default: PT0.1S
                                                                # if the expected gain is higher than this value, the glue hint is displayed.
 
 cucumber.junit-platform.discovery.as-root-engine               # true or false

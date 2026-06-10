@@ -15,6 +15,7 @@ import io.cucumber.tagexpressions.Expression;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -50,7 +51,7 @@ public final class RuntimeOptions implements
     private boolean monochrome = false;
     private boolean wip = false;
     private boolean glueHint = true;
-    private int glueHintThreshold = 100;
+    private Duration glueHintThreshold = Duration.ofMillis(100);
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
     private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
@@ -165,16 +166,16 @@ public final class RuntimeOptions implements
         return glueHint;
     }
 
-    public void setGlueHintEnabled(boolean glueHint) {
+    void setGlueHintEnabled(boolean glueHint) {
         this.glueHint = glueHint;
     }
 
     @Override
-    public int getGlueHintThreshold() {
+    public Duration getGlueHintThreshold() {
         return glueHintThreshold;
     }
 
-    public void setGlueHintThreshold(int glueHintThreshold) {
+    void setGlueHintThreshold(Duration glueHintThreshold) {
         this.glueHintThreshold = glueHintThreshold;
     }
 

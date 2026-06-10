@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -155,9 +156,9 @@ class CucumberPropertiesParserTest {
 
     @Test
     void should_parse_glue_hint_threshold_specific_value() {
-        properties.put(Constants.GLUE_HINT_THRESHOLD_PROPERTY_NAME, "1237");
+        properties.put(Constants.GLUE_HINT_THRESHOLD_PROPERTY_NAME, "PT0.123S");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertEquals(1237, options.getGlueHintThreshold());
+        assertEquals(Duration.ofMillis(123), options.getGlueHintThreshold());
     }
 
     @Test

@@ -2,6 +2,7 @@ package io.cucumber.core.backend;
 
 import org.jspecify.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,8 +60,8 @@ public interface GlueDiscoveryRequest {
             }
 
             @Override
-            public int getGlueHintThreshold() {
-                return 0;
+            public Duration getGlueHintThreshold() {
+                return Duration.ZERO;
             }
         }
     }
