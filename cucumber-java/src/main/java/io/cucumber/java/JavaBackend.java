@@ -36,9 +36,12 @@ final class JavaBackend implements Backend {
         GlueAdaptor glueAdaptor = new GlueAdaptor(lookup, glue);
         GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options);
 
-        request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
+        var gluePaths = request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
                 .stream() //
                 .map(GlueDiscoverySelector.UriGlueDiscoverySelector::uri) //
+                .toList();
+
+        gluePaths.stream() //
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
