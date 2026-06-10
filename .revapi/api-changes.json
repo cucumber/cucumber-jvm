@@ -269,6 +269,18 @@
             "code": "java.method.addedToInterface",
             "new": "method io.cucumber.core.backend.GlueDiscoveryRequest io.cucumber.core.runner.Options::getGlueDiscoveryRequest()",
             "justification": "Internal API."
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.GlueDiscoveryRequest",
+            "justification": "Glue Discovery request API"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.GlueDiscoverySelector",
+            "justification": "Glue Discovery request API"
           }
         ]
       }
