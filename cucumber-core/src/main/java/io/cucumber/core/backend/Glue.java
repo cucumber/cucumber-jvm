@@ -6,8 +6,8 @@ import org.apiguardian.api.API;
  * A container of glue code.
  * <p>
  * Glue code connects steps in files to executable code. It also includes
- * before-, after-, each and all hooks, parameter types, data table types
- * and docstrings.
+ * before-, after-, each and all hooks, parameter types, data table types and
+ * docstrings.
  * <p>
  * Glue is provided by a {@link Backend} implementation which discovers it on
  * request.
