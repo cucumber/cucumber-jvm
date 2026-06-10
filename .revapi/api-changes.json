@@ -251,6 +251,24 @@
             "oldValue": "org.apiguardian.api.API.Status.STABLE",
             "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
             "justification": "Cucumber JUnit (for JUnit 4) was deprecated. Use Cucumber JUnit Platform Engine instead (JUnit 5+)"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method java.util.List<java.net.URI> io.cucumber.core.options.RuntimeOptions::getGlue()",
+            "justification": "Internal API. Replaced with GlueDiscovery request"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method java.util.List<java.net.URI> io.cucumber.core.runner.Options::getGlue()",
+            "justification": "Internal API. Replaced with GlueDiscovery request"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.addedToInterface",
+            "new": "method io.cucumber.core.backend.GlueDiscoveryRequest io.cucumber.core.runner.Options::getGlueDiscoveryRequest()",
+            "justification": "Internal API."
           }
         ]
       }
