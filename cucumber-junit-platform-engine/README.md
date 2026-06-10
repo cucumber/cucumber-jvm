@@ -467,11 +467,11 @@ cucumber.filter.tags=                                          # a cucumber tag 
 cucumber.glue=                                                 # comma separated package names.
                                                                # example: com.example.glue  
 
-cucumber.glue.hint.enabled=                                         # true or false
+cucumber.glue.hint.enabled=                                    # true or false
                                                                # default: true
                                                                # enable displaying glue hint in case of inneficient configuration.
 
-cucumber.glue.hint.threshold=                                       # threshold value in milliseconds
+cucumber.glue.hint.threshold=                                  # threshold value in milliseconds
                                                                # default: 100
                                                                # if the expected gain is higher than this value, the glue hint is displayed.
 

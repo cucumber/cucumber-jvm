@@ -10,9 +10,7 @@ import java.util.function.Supplier;
 public final class GuiceBackendProviderService implements BackendProviderService {
 
     @Override
-    public Backend create(
-            Lookup lookup, Container container, Supplier<ClassLoader> classLoaderSupplier
-    ) {
+    public Backend create(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderSupplier) {
         return new GuiceBackend(container, classLoaderSupplier);
     }
 

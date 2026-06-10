@@ -41,10 +41,6 @@ class JavaBackendTest {
     private JavaBackend backend;
 
     @BeforeEach
-    void setUp() {
-    }
-
-    @BeforeEach
     void createBackend() {
         this.backend = new JavaBackend(factory, factory, currentThread()::getContextClassLoader);
     }

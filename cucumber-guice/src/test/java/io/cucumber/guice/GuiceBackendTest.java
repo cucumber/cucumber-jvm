@@ -79,8 +79,7 @@ class GuiceBackendTest {
     @Test
     void backend_service_creates_backend() {
         BackendProviderService backendProviderService = new GuiceBackendProviderService();
-        assertThat(backendProviderService.create(factory, factory, classLoader),
-            is(notNullValue()));
+        assertThat(backendProviderService.create(factory, factory, classLoader), is(notNullValue()));
     }
 
 }
