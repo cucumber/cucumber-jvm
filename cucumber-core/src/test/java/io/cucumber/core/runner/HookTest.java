@@ -13,7 +13,6 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.TestSnippet;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 
 import java.time.Clock;
@@ -65,7 +64,7 @@ class HookTest {
 
         InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(backend).buildWorld();
-        inOrder.verify(hook).execute(ArgumentMatchers.any());
+        inOrder.verify(hook).execute(any());
         inOrder.verify(backend).disposeWorld();
     }
 

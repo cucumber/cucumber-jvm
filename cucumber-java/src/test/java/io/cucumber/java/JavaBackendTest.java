@@ -13,12 +13,12 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 
-import java.net.URI;
 import java.util.List;
 
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectClass;
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -48,52 +48,61 @@ class JavaBackendTest {
 
     @Test
     void finds_step_definitions_by_classpath_url() {
-        TestGlueDiscoveryRequest request = new TestGlueDiscoveryRequest(URI.create("classpath:io/cucumber/java/steps"));
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:io/cucumber/java/steps")) //
+                .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
-        verify(factory).addClass(Steps.class);
-    }
-
-    @Test
-    void finds_step_definitions_by_class_name() {
-        TestGlueDiscoveryRequest request = new TestGlueDiscoveryRequest(Steps.class.getName());
-        backend.loadGlue(glue, request);
-        backend.buildWorld();
         verify(factory).addClass(Steps.class);
     }
 
     @Test
     void finds_step_definitions_once_by_classpath_url() {
-        TestGlueDiscoveryRequest request = new TestGlueDiscoveryRequest(URI.create("classpath:io/cucumber/java/steps"),
-            URI.create("classpath:io/cucumber/java/steps"));
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:io/cucumber/java/steps"))
+                .selectors(selectUri("classpath:io/cucumber/java/steps")) //
+                .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
         verify(factory, times(1)).addClass(Steps.class);
     }
 
     @Test
     void finds_step_definitions_once_by_class_name() {
-        TestGlueDiscoveryRequest request = new TestGlueDiscoveryRequest(Steps.class.getName(), Steps.class.getName());
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectClass(Steps.class.getName()))
+                .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
         verify(factory, times(1)).addClass(Steps.class);
     }
 
     @Test
     void detects_subclassed_glue_and_throws_exception() {
-        TestGlueDiscoveryRequest request = new TestGlueDiscoveryRequest(
-            URI.create("classpath:io/cucumber/java/steps"),
-            URI.create("classpath:io/cucumber/java/incorrectlysubclassedsteps"));
-        Executable testMethod = () -> backend.loadGlue(glue, request);
+        Executable testMethod = () -> {
+            var request = GlueDiscoveryRequest.builder()
+                    .selectors(selectUri("classpath:io/cucumber/java/steps")) //
+                    .selectors(selectUri("classpath:io/cucumber/java/incorrectlysubclassedsteps")) //
+                    .build();
+            backend.loadGlue(glue, request);
+        };
         InvalidMethodException expectedThrown = assertThrows(InvalidMethodException.class, testMethod);
         assertThat(expectedThrown.getMessage(), is(equalTo(
-            "You're not allowed to extend classes that define Step Definitions or hooks. class io.cucumber.java.incorrectlysubclassedsteps.SubclassesSteps extends class io.cucumber.java.steps.Steps")));
+            """
+                    "io.cucumber.java.incorrectlysubclassedsteps.SubclassesSteps" extends "io.cucumber.java.steps.Steps" which declares a step definition or hook "io.cucumber.java.steps.Steps.test()".
+
+                    It is not possible to extend classes that define step definitions or hooks.
+
+                    If you are trying to share state between steps consider using dependency injection such as:
+                         * cucumber-picocontainer
+                         * cucumber-spring
+                         * cucumber-jakarta-cdi
+                         * ...etc
+                    """)));
     }
 
     @Test
     void detects_repeated_annotations() {
-        TestGlueDiscoveryRequest request = new TestGlueDiscoveryRequest(
-            URI.create("classpath:io/cucumber/java/repeatable"));
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectUri("classpath:io/cucumber/java/repeatable")) //
+                .build();
         backend.loadGlue(glue, request);
         verify(glue, times(2)).addStepDefinition(stepDefinition.capture());
 
@@ -103,31 +112,6 @@ class JavaBackendTest {
                 .collect(toList());
         assertThat(patterns, equalTo(asList("test", "test again")));
 
-    }
-
-    private static final class TestGlueDiscoveryRequest implements GlueDiscoveryRequest {
-        private final List<URI> gluePaths;
-        private final List<String> glueClassNames;
-
-        TestGlueDiscoveryRequest(URI... gluePaths) {
-            this.gluePaths = List.of(gluePaths);
-            this.glueClassNames = emptyList();
-        }
-
-        TestGlueDiscoveryRequest(String... glueClassNames) {
-            this.gluePaths = emptyList();
-            this.glueClassNames = List.of(glueClassNames);
-        }
-
-        @Override
-        public List<URI> getGlue() {
-            return gluePaths;
-        }
-
-        @Override
-        public List<String> getGlueClassNames() {
-            return glueClassNames;
-        }
     }
 
 }

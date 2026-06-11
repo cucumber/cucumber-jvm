@@ -4,6 +4,8 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector.ClassGlueDiscoverySelector;
+import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 
@@ -24,19 +26,21 @@ final class PicoBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, GlueDiscoveryRequest glueDiscoveryRequest) {
-        Stream<Class<?>> glueClasses = glueDiscoveryRequest.getGlue()
-                .stream()
+    public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
+        var packageClasses = request.getSelectorsByType(UriGlueDiscoverySelector.class) //
+                .stream() //
+                .map(UriGlueDiscoverySelector::uri)
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream);
 
-        Stream<Class<?>> explicitClasses = glueDiscoveryRequest.getGlueClassNames()
-                .stream()
+        var explicitClasses = request.getSelectorsByType(ClassGlueDiscoverySelector.class) //
+                .stream() //
+                .map(ClassGlueDiscoverySelector::name)
                 .map(classFinder::loadClass);
 
-        Stream.concat(glueClasses, explicitClasses)
+        Stream.concat(packageClasses, explicitClasses)
                 .filter(PicoBackend::hasCucumberPicoProvider)
                 .distinct()
                 .forEach(container::addClass);

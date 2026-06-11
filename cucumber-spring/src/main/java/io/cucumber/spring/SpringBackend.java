@@ -4,6 +4,7 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 
@@ -25,19 +26,21 @@ final class SpringBackend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, GlueDiscoveryRequest glueDiscoveryRequest) {
-        Stream<Class<?>> glueClasses = glueDiscoveryRequest.getGlue()
-                .stream()
+    public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
+        var packageClasses = request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
+                .stream() //
+                .map(GlueDiscoverySelector.UriGlueDiscoverySelector::uri)
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(classFinder::scanForClassesInPackage)
                 .flatMap(Collection::stream);
 
-        Stream<Class<?>> explicitClasses = glueDiscoveryRequest.getGlueClassNames()
-                .stream()
+        var explicitClasses = request.getSelectorsByType(GlueDiscoverySelector.ClassGlueDiscoverySelector.class) //
+                .stream() //
+                .map(GlueDiscoverySelector.ClassGlueDiscoverySelector::name)
                 .map(classFinder::loadClass);
 
-        Stream.concat(glueClasses, explicitClasses)
+        Stream.concat(packageClasses, explicitClasses)
                 .filter(SpringFactory::hasCucumberContextConfiguration)
                 .filter(this::checkIfOfClassTypeAndNotAbstract)
                 .distinct()

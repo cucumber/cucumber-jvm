@@ -24,12 +24,12 @@ public class BellyMetaStepDefinitions {
     }
 
     @Then("I have a meta belly")
-    public void I_have_belly() {
+    void I_have_belly() {
         assertNotNull(belly);
     }
 
     @Then("I have a meta belly bean")
-    public void I_have_belly_bean() {
+    void I_have_belly_bean() {
         assertNotNull(bellyBean);
     }
 

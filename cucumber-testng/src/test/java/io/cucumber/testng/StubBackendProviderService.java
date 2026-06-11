@@ -34,7 +34,7 @@ public final class StubBackendProviderService implements BackendProviderService 
         }
 
         @Override
-        public void loadGlue(Glue glue, GlueDiscoveryRequest glueDiscoveryRequest) {
+        public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
             glue.addStepDefinition(createStepDefinition("a scenario"));
             glue.addStepDefinition(createStepDefinition("a scenario outline"));
             glue.addStepDefinition(createStepDefinition("it is executed"));
@@ -82,14 +82,6 @@ public final class StubBackendProviderService implements BackendProviderService 
                     return "stubbed location";
                 }
             };
-        }
-
-        @Override
-        public void buildWorld() {
-        }
-
-        @Override
-        public void disposeWorld() {
         }
 
         @Override

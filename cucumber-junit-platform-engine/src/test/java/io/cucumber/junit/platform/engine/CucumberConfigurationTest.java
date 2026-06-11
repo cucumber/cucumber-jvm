@@ -1,6 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.backend.DefaultObjectFactory;
+import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
@@ -9,11 +10,11 @@ import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -125,10 +126,12 @@ class CucumberConfigurationTest {
             Constants.GLUE_PROPERTY_NAME,
             "com.example.app, com.example.glue");
 
-        assertThat(new CucumberConfiguration(config, issueReporter).getGlue(),
+        assertThat(
+            new CucumberConfiguration(config, issueReporter).getGlueDiscoveryRequest()
+                    .getSelectorsByType(UriGlueDiscoverySelector.class),
             contains(
-                URI.create("classpath:/com/example/app"),
-                URI.create("classpath:/com/example/glue")));
+                selectUri("classpath:/com/example/app"),
+                selectUri("classpath:/com/example/glue")));
     }
 
     @Test

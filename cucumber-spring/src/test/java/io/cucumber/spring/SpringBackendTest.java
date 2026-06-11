@@ -12,11 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 
-import java.net.URI;
-import java.util.List;
-
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectClass;
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static java.lang.Thread.currentThread;
-import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -38,75 +36,57 @@ final class SpringBackendTest {
 
     @Test
     void finds_annotation_context_configuration_by_classpath_url() {
-        backend.loadGlue(glue,
-            new TestGlueDiscoveryRequest(URI.create("classpath:io/cucumber/spring/annotationconfig")));
-        backend.buildWorld();
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectUri("classpath:io/cucumber/spring/annotationconfig")) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory).addClass(AnnotationContextConfiguration.class);
     }
 
     @Test
     void finds_annotation_context_configuration_by_classname() {
-        backend.loadGlue(glue, new TestGlueDiscoveryRequest(AnnotationContextConfiguration.class.getName()));
-        backend.buildWorld();
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectClass(AnnotationContextConfiguration.class.getName())) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory).addClass(AnnotationContextConfiguration.class);
     }
 
     @Test
     void finds_annotaiton_context_configuration_once_by_classpath_url() {
-        backend.loadGlue(glue, new TestGlueDiscoveryRequest(
-            URI.create("classpath:io/cucumber/spring/annotationconfig"),
-            URI.create("classpath:io/cucumber/spring/annotationconfig")));
-        backend.buildWorld();
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectUri("classpath:io/cucumber/spring/annotationconfig")) //
+                .selectors(selectUri("classpath:io/cucumber/spring/annotationconfig")) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory, times(1)).addClass(AnnotationContextConfiguration.class);
     }
 
     @Test
     void ignoresAbstractClassWithCucumberContextConfiguration() {
-        backend.loadGlue(glue, new TestGlueDiscoveryRequest(
-            URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")));
-        backend.buildWorld();
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectUri("classpath:io/cucumber/spring/cucumbercontextconfigannotation")) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory, times(0)).addClass(AbstractWithComponentAnnotation.class);
     }
 
     @Test
     void ignoresInterfaceWithCucumberContextConfiguration() {
-        backend.loadGlue(glue, new TestGlueDiscoveryRequest(
-            URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")));
-        backend.buildWorld();
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectUri("classpath:io/cucumber/spring/cucumbercontextconfigannotation")) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory, times(0)).addClass(AnnotatedInterface.class);
     }
 
     @Test
     void considersClassWithCucumberContextConfigurationMetaAnnotation() {
-        backend.loadGlue(glue, new TestGlueDiscoveryRequest(
-            URI.create("classpath:io/cucumber/spring/cucumbercontextconfigannotation")));
-        backend.buildWorld();
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectUri("classpath:io/cucumber/spring/cucumbercontextconfigannotation")) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory, times(1)).addClass(WithMetaAnnotation.class);
-    }
-
-    private static final class TestGlueDiscoveryRequest implements GlueDiscoveryRequest {
-        private final List<URI> gluePaths;
-        private final List<String> glueClassNames;
-
-        TestGlueDiscoveryRequest(URI... gluePaths) {
-            this.gluePaths = List.of(gluePaths);
-            this.glueClassNames = emptyList();
-        }
-
-        TestGlueDiscoveryRequest(String... glueClassNames) {
-            this.gluePaths = emptyList();
-            this.glueClassNames = List.of(glueClassNames);
-        }
-
-        @Override
-        public List<URI> getGlue() {
-            return gluePaths;
-        }
-
-        @Override
-        public List<String> getGlueClassNames() {
-            return glueClassNames;
-        }
     }
 
 }

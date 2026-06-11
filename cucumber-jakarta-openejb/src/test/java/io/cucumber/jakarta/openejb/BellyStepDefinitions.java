@@ -6,19 +6,18 @@ import jakarta.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SuppressWarnings("DesignForExtension")
-public class BellyStepDefinitions {
+class BellyStepDefinitions {
 
     @Inject
     private Belly belly;
 
     @Given("I have {int} cukes in my belly")
-    public void haveCukes(int n) {
+    void haveCukes(int n) {
         belly.setCukes(n);
     }
 
     @Then("there are {int} cukes in my belly")
-    public void checkCukes(int n) {
+    void checkCukes(int n) {
         assertEquals(n, belly.getCukes());
     }
 

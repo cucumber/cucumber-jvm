@@ -33,11 +33,11 @@ import io.cucumber.docstring.DocString;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StepDefinitions implements En {
+class StepDefinitions implements En {
 
     private RpnCalculator calc;
 
-    public RpnCalculatorSteps() {
+    RpnCalculatorSteps() {
         Given("a calculator I just turned on", () -> {
             calc = new RpnCalculator();
         });
@@ -85,9 +85,9 @@ import io.cucumber.java8.En;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StepDefinitions implements En {
+class StepDefinitions implements En {
 
-    public StepDefinitions() {
+    StepDefinitions() {
         ParameterType("amount", "(\\d+\\.\\d+)\\s([a-zA-Z]+)", (String[] values) ->
             new Amount(new BigDecimal(values[0]), Currency.getInstance(values[1])));
     }
@@ -115,9 +115,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StepDefinitions implements En {
+class StepDefinitions implements En {
 
-    public StepDefinitions() {
+    StepDefinitions() {
         DataTableType((Map<String, String> row) -> new Grocery(
             row.get("name"),
             Price.fromString(row.get("price"))
@@ -143,9 +143,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.cucumber.java8.En;
 
-public class StepDefinitions implements En {
+class StepDefinitions implements En {
 
-    public StepDefinitions() {
+    StepDefinitions() {
         final ObjectMapper objectMapper = new ObjectMapper();
 
         DefaultParameterTransformer((fromValue, toValueType) ->
@@ -188,9 +188,9 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class StepDefinitions implements En {
+class StepDefinitions implements En {
     
-    public StepDefinitions() {
+    StepDefinitions() {
         DataTableType("[blank]", (Map<String, String> entry) -> new Author(
             entry.get("name"),
             entry.get("first publication")
@@ -235,9 +235,9 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class StepDefinitions implements En {
+class StepDefinitions implements En {
     
-    public StepDefinitions() {
+    StepDefinitions() {
         DataTableType((Map<String, String> entry) -> new User(
             entry.get("firstname"),
             entry.get("lastname"),

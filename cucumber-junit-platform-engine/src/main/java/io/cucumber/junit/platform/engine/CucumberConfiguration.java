@@ -1,5 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
@@ -21,9 +23,10 @@ import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
 import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.hierarchical.Node.ExecutionMode;
 
-import java.net.URI;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -31,7 +34,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
@@ -41,6 +46,8 @@ import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_CLASSES_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_HINT_ENABLED_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_HINT_THRESHOLD_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.OBJECT_FACTORY_PROPERTY_NAME;
@@ -52,6 +59,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_TOKEN_P
 import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.UUID_GENERATOR_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.DefaultNamingStrategyProvider.SUREFIRE;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
 
@@ -141,27 +149,6 @@ class CucumberConfiguration implements
     }
 
     @Override
-    public List<URI> getGlue() {
-        return configurationParameters
-                .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
-                .orElse(Collections.singletonList(CLASSPATH_SCHEME_PREFIX))
-                .stream()
-                .map(String::trim)
-                .map(GluePath::parse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<String> getGlueClasses() {
-        return configurationParameters
-                .get(GLUE_CLASSES_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(String::trim)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public boolean isDryRun() {
         return configurationParameters
                 .getBoolean(EXECUTION_DRY_RUN_PROPERTY_NAME)
@@ -176,6 +163,21 @@ class CucumberConfiguration implements
     }
 
     @Override
+    public boolean isGlueHintEnabled() {
+        return configurationParameters
+                .getBoolean(GLUE_HINT_ENABLED_PROPERTY_NAME)
+                .orElse(true);
+    }
+
+    @Override
+    public Duration getGlueHintThreshold() {
+        return configurationParameters
+                .get(GLUE_HINT_THRESHOLD_PROPERTY_NAME)
+                .map(Duration::parse)
+                .orElseGet(() -> Duration.ofMillis(100));
+    }
+
+    @Override
     public @Nullable Class<? extends ObjectFactory> getObjectFactoryClass() {
         return configurationParameters
                 .get(OBJECT_FACTORY_PROPERTY_NAME, ObjectFactoryParser::parseObjectFactory)
@@ -187,6 +189,33 @@ class CucumberConfiguration implements
         return configurationParameters
                 .get(UUID_GENERATOR_PROPERTY_NAME, UuidGeneratorParser::parseUuidGenerator)
                 .orElse(null);
+    }
+
+    @Override
+    public GlueDiscoveryRequest getGlueDiscoveryRequest() {
+        var uriSelectors = configurationParameters
+                .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
+                .stream()
+                .flatMap(Collection::stream)
+                .map(String::trim)
+                .map(GluePath::parse)
+                .map(GlueDiscoverySelector::selectUri);
+
+        var classSelectors = configurationParameters
+                .get(GLUE_CLASSES_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
+                .stream()
+                .flatMap(Collection::stream)
+                .map(String::trim)
+                .map(GlueDiscoverySelector::selectClass);
+
+        var selectors = Stream.concat(uriSelectors, classSelectors).toList();
+
+        var defaultSelector = singletonList(selectUri(GluePath.parse(CLASSPATH_SCHEME_PREFIX)));
+
+        return GlueDiscoveryRequest.builder()
+                .options(this)
+                .selectors(selectors.isEmpty() ? defaultSelector : selectors)
+                .build();
     }
 
     boolean isParallelExecutionEnabled() {

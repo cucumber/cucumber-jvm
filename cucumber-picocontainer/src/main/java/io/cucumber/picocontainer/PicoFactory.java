@@ -102,11 +102,23 @@ public final class PicoFactory implements ObjectFactory {
         if (isProvider(clazz)) {
             providers.add(requireConstructableProvider(clazz));
         } else {
-            if (isInstantiable(clazz) && classes.add(clazz)) {
-                addConstructorDependencies(clazz);
+            if (!isInstantiable(clazz)) {
+                throw new CucumberBackendException("""
+                        Glue class %s is not instantiable by Pico Container. Please \
+                        ensure that all of the following requirements are satisfied:
+                        1) the class is public
+                        2) the class is not abstract
+                        3) if nested, the class is static.""".formatted(clazz.getName()));
             }
+            addDependency(clazz);
         }
         return true;
+    }
+
+    private void addDependency(Class<?> clazz) {
+        if (isInstantiable(clazz) && classes.add(clazz)) {
+            addConstructorDependencies(clazz);
+        }
     }
 
     private static boolean hasDefaultConstructor(Class<?> clazz) {
@@ -141,7 +153,7 @@ public final class PicoFactory implements ObjectFactory {
     private void addConstructorDependencies(Class<?> clazz) {
         for (Constructor<?> constructor : clazz.getConstructors()) {
             for (Class<?> paramClazz : constructor.getParameterTypes()) {
-                addClass(paramClazz);
+                addDependency(paramClazz);
             }
         }
     }

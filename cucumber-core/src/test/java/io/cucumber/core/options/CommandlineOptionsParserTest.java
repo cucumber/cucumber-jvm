@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.feature.TestFeatureParser;
@@ -37,6 +38,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
@@ -205,7 +207,8 @@ class CommandlineOptionsParserTest {
         RuntimeOptions options = parser
                 .parse("--glue", "somewhere")
                 .build();
-        assertThat(options.getGlue(), contains(uri("classpath:/somewhere")));
+        assertThat(options.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class),
+            contains(selectUri("classpath:/somewhere")));
     }
 
     @Test
@@ -526,7 +529,8 @@ class CommandlineOptionsParserTest {
                 .parse()
                 .addDefaultGlueIfAbsent()
                 .build();
-        assertThat(options.getGlue(), is(singletonList(rootPackageUri())));
+        assertThat(options.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class),
+            is(singletonList(selectUri(rootPackageUri()))));
     }
 
     @Test

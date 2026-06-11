@@ -21,24 +21,24 @@ public class DirtiesContextBellyMetaStepDefinitions {
     private BellyBean bellyBean;
 
     @Then("there are {int} dirty meta cukes in my belly")
-    public void checkCukes(final int n) {
+    void checkCukes(final int n) {
         assertEquals(n, belly.getCukes());
     }
 
     @Given("I have {int} dirty meta cukes in my belly")
-    public void haveCukes(final int n) {
+    void haveCukes(final int n) {
         assertEquals(0, belly.getCukes());
         belly.setCukes(n);
     }
 
     @Given("I have {int} dirty meta beans in my belly")
-    public void I_have_beans_in_my_belly(int n) {
+    void I_have_beans_in_my_belly(int n) {
         assertEquals(0, bellyBean.getCukes());
         bellyBean.setCukes(n);
     }
 
     @Then("there are {int} dirty meta beans in my belly")
-    public void there_are_beans_in_my_belly(int n) {
+    void there_are_beans_in_my_belly(int n) {
         assertEquals(n, bellyBean.getCukes());
     }
 

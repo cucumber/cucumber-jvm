@@ -11,8 +11,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ContextConfig.class)
-@SuppressWarnings("DesignForExtension")
-public class SharedContextTest {
+class SharedContextTest {
 
     @Autowired
     ContextCounter contextCounter;

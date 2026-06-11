@@ -4,6 +4,7 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
@@ -16,8 +17,10 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 import static io.cucumber.java8.LambdaGlueRegistry.CLOSED;
+import static java.lang.reflect.Modifier.isAbstract;
+import static java.lang.reflect.Modifier.isPrivate;
+import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Objects.requireNonNull;
 
 final class Java8Backend implements Backend {
@@ -36,32 +39,31 @@ final class Java8Backend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, GlueDiscoveryRequest glueDiscoveryRequest) {
-        Stream<Class<?>> glueClasses = glueDiscoveryRequest.getGlue()
-                .stream()
-                .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
+    public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
+        this.glue = new ClosureAwareGlueRegistry(glue);
+        // Scan for Java8 style glue (lambdas)
+        var packageClasses = request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
+                .stream() //
+                .map(GlueDiscoverySelector.UriGlueDiscoverySelector::uri)
+                .filter(gluePath -> ClasspathSupport.CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
-                .map(classFinder::scanForClassesInPackage)
+                .map(basePackageName -> classFinder.scanForSubClassesInPackage(basePackageName, LambdaGlue.class))
                 .flatMap(Collection::stream);
 
-        Stream<Class<?>> explicitClasses = glueDiscoveryRequest.getGlueClassNames()
-                .stream()
-                .map(classFinder::loadClass);
+        var explicitClasses = request.getSelectorsByType(GlueDiscoverySelector.ClassGlueDiscoverySelector.class) //
+                .stream() //
+                .map(GlueDiscoverySelector.ClassGlueDiscoverySelector::name)
+                .map(classFinder::loadClass)
+                .filter(LambdaGlue.class::isAssignableFrom)
+                .map(aClass -> (Class<? extends LambdaGlue>) aClass.asSubclass(LambdaGlue.class));
 
-        this.glue = new ClosureAwareGlueRegistry(glue);
-
-        Stream.concat(glueClasses, explicitClasses)
-                .filter(aClass -> !LambdaGlue.class.equals(aClass) && LambdaGlue.class.isAssignableFrom(aClass))
-                .map(aClass -> (Class<? extends LambdaGlue>) aClass.asSubclass(LambdaGlue.class))
-                .filter(glueClass -> !glueClass.isInterface())
-                .filter(glueClass -> glueClass.getConstructors().length > 0)
+        Stream.concat(packageClasses, explicitClasses)
+                .filter(Java8Backend::isInstantiable)
                 .distinct()
-                .forEach(this::processClass);
-    }
-
-    private void processClass(Class<? extends LambdaGlue> glueClass) {
-        container.addClass(glueClass);
-        lambdaGlueClasses.add(glueClass);
+                .forEach(glueClass -> {
+                    container.addClass(glueClass);
+                    lambdaGlueClasses.add(glueClass);
+                });
     }
 
     @Override
@@ -87,4 +89,10 @@ final class Java8Backend implements Backend {
         return new Java8Snippet();
     }
 
+    private static boolean isInstantiable(Class<?> clazz) {
+        return !clazz.isInterface()
+                && !isPrivate(clazz.getModifiers())
+                && !isAbstract(clazz.getModifiers())
+                && (isStatic(clazz.getModifiers()) || clazz.getEnclosingClass() == null);
+    }
 }

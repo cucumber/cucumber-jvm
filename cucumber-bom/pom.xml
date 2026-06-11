@@ -13,16 +13,16 @@
     <name>Cucumber-JVM: Bill of Materials</name>
 
     <properties>
-        <project.rootdir>${project.basedir}/..</project.rootdir>
+        <project.rootdir>..</project.rootdir>
         <ci-environment.version>13.0.0</ci-environment.version>
-        <cucumber-expressions.version>19.0.0</cucumber-expressions.version>
+        <cucumber-expressions.version>19.0.1</cucumber-expressions.version>
         <cucumber-json-formatter.version>0.4.0</cucumber-json-formatter.version>
-        <gherkin.version>39.0.0</gherkin.version>
-        <html-formatter.version>23.0.0</html-formatter.version>
-        <junit-xml-formatter.version>0.13.2</junit-xml-formatter.version>
-        <messages.version>32.2.0</messages.version>
+        <gherkin.version>39.1.0</gherkin.version>
+        <html-formatter.version>23.1.0</html-formatter.version>
+        <junit-xml-formatter.version>0.13.3</junit-xml-formatter.version>
+        <messages.version>32.3.1</messages.version>
         <messages-ndjson.version>0.4.1</messages-ndjson.version>
-        <pretty-formatter.version>3.2.0</pretty-formatter.version>
+        <pretty-formatter.version>3.3.1</pretty-formatter.version>
         <query.version>15.0.1</query.version>
         <tag-expressions.version>9.1.0</tag-expressions.version>
         <teamcity-formatter.version>0.3.0</teamcity-formatter.version>

@@ -4,7 +4,7 @@ import io.cucumber.java8.En;
 
 public class Steps implements En {
 
-    public Steps() {
+    Steps() {
 
         Given("test", () -> {
 

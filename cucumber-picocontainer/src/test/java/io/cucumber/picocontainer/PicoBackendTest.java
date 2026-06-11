@@ -12,11 +12,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.net.URI;
-import java.util.List;
-
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectClass;
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static java.lang.Thread.currentThread;
-import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,74 +37,54 @@ final class PicoBackendTest {
 
     @Test
     void considers_but_does_not_add_annotated_configuration() {
-        backend.loadGlue(glue,
-            new TestGlueDiscoveryRequest(URI.create("classpath:io/cucumber/picocontainer/annotationconfig")));
-        backend.buildWorld();
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory, never()).addClass(ExamplePicoConfiguration.class);
     }
 
     @Test
     void adds_unnested_provider_classes() {
-        backend.loadGlue(glue,
-            new TestGlueDiscoveryRequest(URI.create("classpath:io/cucumber/picocontainer/annotationconfig")));
-        backend.buildWorld();
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory).addClass(UrlToUriProvider.class);
         verify(factory).addClass(DatabaseConnectionProvider.class);
     }
 
     @Test
     void adds_unnested_provider_classes_from_class_name() {
-        backend.loadGlue(glue,
-            new TestGlueDiscoveryRequest(UrlToUriProvider.class.getName()));
-        backend.buildWorld();
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectClass(UrlToUriProvider.class.getName())) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory).addClass(UrlToUriProvider.class);
     }
 
     @Test
     void adds_nested_provider_classes() {
-        backend.loadGlue(glue,
-            new TestGlueDiscoveryRequest(URI.create("classpath:io/cucumber/picocontainer/annotationconfig")));
-        backend.buildWorld();
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory).addClass(ExamplePicoConfiguration.NestedUrlProvider.class);
         verify(factory).addClass(ExamplePicoConfiguration.NestedUrlConnectionProvider.class);
     }
 
     @Test
     void finds_configured_classes_only_once_when_scanning_twice() {
-        backend.loadGlue(glue, new TestGlueDiscoveryRequest(
-            URI.create("classpath:io/cucumber/picocontainer/annotationconfig"),
-            URI.create("classpath:io/cucumber/picocontainer/annotationconfig")));
-        backend.buildWorld();
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
+                .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory, never()).addClass(ExamplePicoConfiguration.class);
         verify(factory, times(1)).addClass(ExamplePicoConfiguration.NestedUrlProvider.class);
         verify(factory, times(1)).addClass(ExamplePicoConfiguration.NestedUrlConnectionProvider.class);
         verify(factory, times(1)).addClass(UrlToUriProvider.class);
         verify(factory, times(1)).addClass(DatabaseConnectionProvider.class);
-    }
-
-    private static final class TestGlueDiscoveryRequest implements GlueDiscoveryRequest {
-        private final List<URI> gluePaths;
-        private final List<String> glueClassNames;
-
-        TestGlueDiscoveryRequest(URI... gluePaths) {
-            this.gluePaths = List.of(gluePaths);
-            this.glueClassNames = emptyList();
-        }
-
-        TestGlueDiscoveryRequest(String... glueClassNames) {
-            this.gluePaths = emptyList();
-            this.glueClassNames = List.of(glueClassNames);
-        }
-
-        @Override
-        public List<URI> getGlue() {
-            return gluePaths;
-        }
-
-        @Override
-        public List<String> getGlueClassNames() {
-            return glueClassNames;
-        }
     }
 
 }
