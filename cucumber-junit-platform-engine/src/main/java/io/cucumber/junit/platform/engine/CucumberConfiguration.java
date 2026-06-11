@@ -245,7 +245,7 @@ class CucumberConfiguration implements
                     .map(FeatureWithLines::parse)
                     .map(FeatureWithLinesSelector::from)
                     .collect(Collectors.toSet()))
-                .orElse(Collections.emptySet());
+                .orElseGet(Collections::emptySet);
     }
 
     ExecutionMode getExecutionModeFeature() {
