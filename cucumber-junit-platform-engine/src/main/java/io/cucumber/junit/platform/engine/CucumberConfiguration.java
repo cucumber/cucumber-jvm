@@ -26,7 +26,6 @@ import org.junit.platform.engine.support.hierarchical.Node.ExecutionMode;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -172,8 +171,7 @@ class CucumberConfiguration implements
     @Override
     public Duration getGlueHintThreshold() {
         return configurationParameters
-                .get(GLUE_HINT_THRESHOLD_PROPERTY_NAME)
-                .map(Duration::parse)
+                .get(GLUE_HINT_THRESHOLD_PROPERTY_NAME, Duration::parse)
                 .orElseGet(() -> Duration.ofMillis(100));
     }
 
@@ -194,19 +192,17 @@ class CucumberConfiguration implements
     @Override
     public GlueDiscoveryRequest getGlueDiscoveryRequest() {
         var uriSelectors = configurationParameters
-                .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
-                .stream()
-                .flatMap(Collection::stream)
-                .map(String::trim)
-                .map(GluePath::parse)
-                .map(GlueDiscoverySelector::selectUri);
+                .get(GLUE_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
+                        .map(String::trim)
+                        .map(GluePath::parse)
+                        .map(GlueDiscoverySelector::selectUri))
+                .orElseGet(Stream::empty);
 
         var classSelectors = configurationParameters
-                .get(GLUE_CLASSES_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
-                .stream()
-                .flatMap(Collection::stream)
-                .map(String::trim)
-                .map(GlueDiscoverySelector::selectClass);
+                .get(GLUE_CLASSES_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
+                        .map(String::trim)
+                        .map(GlueDiscoverySelector::selectClass))
+                .orElseGet(Stream::empty);
 
         var selectors = Stream.concat(uriSelectors, classSelectors).toList();
 
