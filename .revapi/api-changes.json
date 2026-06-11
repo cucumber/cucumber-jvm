@@ -294,6 +294,12 @@
             "code": "java.method.addedToInterface",
             "new": "method boolean io.cucumber.core.backend.Options::isGlueHintEnabled()",
             "justification": "New feature"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.addedToInterface",
+            "new": "method java.time.Duration io.cucumber.core.backend.Options::getGlueHintThreshold()",
+            "justification": "New feature"
           }
         ]
       }
