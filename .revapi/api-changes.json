@@ -300,6 +300,19 @@
             "code": "java.method.addedToInterface",
             "new": "method java.time.Duration io.cucumber.core.backend.Options::getGlueHintThreshold()",
             "justification": "New feature"
+          },
+
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.ObjectFactory",
+            "justification": "New feature"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.Options",
+            "justification": "New feature"
           }
         ]
       }
