@@ -338,7 +338,7 @@ with a custom object mapper (e.g., Jackson Databind).
 ```java
 private class JacksonDataTableTransformer implements TableEntryByTypeTransformer, TableCellByTypeTransformer {
 
-    ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+    ObjectMapper objectMapper = new tools.jackson.databind.ObjectMapper();
     
     @Override
     public <T> T transform(String value, Class<T> cellType) {

@@ -98,8 +98,7 @@ class TimelineFormatterTest {
         jsonMapper = JsonMapper.builder()
                 .changeDefaultPropertyInclusion(value -> value
                         .withContentInclusion(NON_ABSENT)
-                        .withValueInclusion(NON_ABSENT)
-                )
+                        .withValueInclusion(NON_ABSENT))
                 .constructorDetector(ConstructorDetector.USE_PROPERTIES_BASED)
                 .disable(StreamWriteFeature.AUTO_CLOSE_TARGET)
                 .build();

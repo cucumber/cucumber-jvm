@@ -139,7 +139,7 @@ Jackson to quickly transform well-known string representations to Java objects.
 ```java
 package com.example.app;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import io.cucumber.java8.En;
 

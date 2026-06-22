@@ -1,14 +1,5 @@
 package io.cucumber.compatibility;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.MissingNode;
-import com.fasterxml.jackson.databind.node.NumericNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.core.order.PickleOrder;
 import io.cucumber.core.order.StandardPickleOrders;
@@ -19,6 +10,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.commons.io.ResourceFilter;
 import org.junit.platform.commons.support.ResourceSupport;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.IntNode;
+import tools.jackson.databind.node.MissingNode;
+import tools.jackson.databind.node.NumericNode;
+import tools.jackson.databind.node.StringNode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -80,8 +78,8 @@ final class CompatibilityTest {
         Map<String, Map<Pattern, Matcher<?>>> exceptions = new LinkedHashMap<>();
 
         Map<Pattern, Matcher<?>> attachment = new LinkedHashMap<>();
-        attachment.put(Pattern.compile("/testCaseStartedId"), isA(TextNode.class));
-        attachment.put(Pattern.compile("/testStepId"), isA(TextNode.class));
+        attachment.put(Pattern.compile("/testCaseStartedId"), isA(StringNode.class));
+        attachment.put(Pattern.compile("/testStepId"), isA(StringNode.class));
         // exception: timestamps and durations are not predictable
         attachment.put(Pattern.compile("/timestamp/seconds"), isA(NumericNode.class));
         attachment.put(Pattern.compile("/timestamp/nanos"), isA(NumericNode.class));
@@ -89,17 +87,17 @@ final class CompatibilityTest {
 
         Map<Pattern, Matcher<?>> meta = new LinkedHashMap<>();
         // exception: protocolVersion can vary
-        meta.put(Pattern.compile("/protocolVersion"), isA(TextNode.class));
+        meta.put(Pattern.compile("/protocolVersion"), isA(StringNode.class));
         // exception: Mata fields depend on the platform
-        meta.put(Pattern.compile("/implementation/name"), isA(TextNode.class));
-        meta.put(Pattern.compile("/implementation/version"), isA(TextNode.class));
-        meta.put(Pattern.compile("/cpu/name"), isA(TextNode.class));
-        meta.put(Pattern.compile("/os/name"), isA(TextNode.class));
-        meta.put(Pattern.compile("/os/version"), isA(TextNode.class));
-        meta.put(Pattern.compile("/runtime/name"), isA(TextNode.class));
-        meta.put(Pattern.compile("/runtime/version"), isA(TextNode.class));
+        meta.put(Pattern.compile("/implementation/name"), isA(StringNode.class));
+        meta.put(Pattern.compile("/implementation/version"), isA(StringNode.class));
+        meta.put(Pattern.compile("/cpu/name"), isA(StringNode.class));
+        meta.put(Pattern.compile("/os/name"), isA(StringNode.class));
+        meta.put(Pattern.compile("/os/version"), isA(StringNode.class));
+        meta.put(Pattern.compile("/runtime/name"), isA(StringNode.class));
+        meta.put(Pattern.compile("/runtime/version"), isA(StringNode.class));
         // exceptioN: Ci information depends on where the tests are ran
-        Matcher<JsonNode> value = anyOf(isA(MissingNode.class), isA(TextNode.class));
+        Matcher<JsonNode> value = anyOf(isA(MissingNode.class), isA(StringNode.class));
         meta.put(Pattern.compile("/ci/name"), value);
         meta.put(Pattern.compile("/ci/url"), value);
         meta.put(Pattern.compile("/ci/buildNumber"), value);
@@ -109,36 +107,36 @@ final class CompatibilityTest {
         exceptions.put("meta", meta);
 
         Map<Pattern, Matcher<?>> source = new LinkedHashMap<>();
-        source.put(Pattern.compile("/uri"), isA(TextNode.class));
+        source.put(Pattern.compile("/uri"), isA(StringNode.class));
         exceptions.put("source", source);
 
         Map<Pattern, Matcher<?>> gherkinDocument = new LinkedHashMap<>();
         // exception: ids are not predictable
-        gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/id"), isA(TextNode.class));
-        gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/steps/.*/id"), isA(TextNode.class));
-        gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/examples/.*/id"), isA(TextNode.class));
-        gherkinDocument.put(Pattern.compile("/feature/children/.*/rule/id"), isA(TextNode.class));
-        gherkinDocument.put(Pattern.compile("/feature/children/.*/rule/tags/.*/id"), isA(TextNode.class));
-        gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/tags/.*/id"), isA(TextNode.class));
-        gherkinDocument.put(Pattern.compile("/feature/children/.*/background/id"), isA(TextNode.class));
-        gherkinDocument.put(Pattern.compile("/feature/children/.*/background/steps/.*/id"), isA(TextNode.class));
+        gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/id"), isA(StringNode.class));
+        gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/steps/.*/id"), isA(StringNode.class));
+        gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/examples/.*/id"), isA(StringNode.class));
+        gherkinDocument.put(Pattern.compile("/feature/children/.*/rule/id"), isA(StringNode.class));
+        gherkinDocument.put(Pattern.compile("/feature/children/.*/rule/tags/.*/id"), isA(StringNode.class));
+        gherkinDocument.put(Pattern.compile("/feature/children/.*/scenario/tags/.*/id"), isA(StringNode.class));
+        gherkinDocument.put(Pattern.compile("/feature/children/.*/background/id"), isA(StringNode.class));
+        gherkinDocument.put(Pattern.compile("/feature/children/.*/background/steps/.*/id"), isA(StringNode.class));
         // exception: the CCK uses relative paths as uris
-        gherkinDocument.put(Pattern.compile("/uri"), isA(TextNode.class));
+        gherkinDocument.put(Pattern.compile("/uri"), isA(StringNode.class));
         exceptions.put("gherkinDocument", gherkinDocument);
 
         Map<Pattern, Matcher<?>> pickle = new LinkedHashMap<>();
         // exception: ids are not predictable
-        pickle.put(Pattern.compile("/id"), isA(TextNode.class));
-        pickle.put(Pattern.compile("/uri"), isA(TextNode.class));
-        pickle.put(Pattern.compile("/astNodeIds/.*"), isA(TextNode.class));
-        pickle.put(Pattern.compile("/steps/.*/id"), isA(TextNode.class));
-        pickle.put(Pattern.compile("/steps/.*/astNodeIds/.*"), isA(TextNode.class));
-        pickle.put(Pattern.compile("/tags/.*/astNodeId"), isA(TextNode.class));
+        pickle.put(Pattern.compile("/id"), isA(StringNode.class));
+        pickle.put(Pattern.compile("/uri"), isA(StringNode.class));
+        pickle.put(Pattern.compile("/astNodeIds/.*"), isA(StringNode.class));
+        pickle.put(Pattern.compile("/steps/.*/id"), isA(StringNode.class));
+        pickle.put(Pattern.compile("/steps/.*/astNodeIds/.*"), isA(StringNode.class));
+        pickle.put(Pattern.compile("/tags/.*/astNodeId"), isA(StringNode.class));
         exceptions.put("pickle", pickle);
 
         Map<Pattern, Matcher<?>> stepDefinition = new LinkedHashMap<>();
         // exception: ids are not predictable
-        stepDefinition.put(Pattern.compile("/id"), isA(TextNode.class));
+        stepDefinition.put(Pattern.compile("/id"), isA(StringNode.class));
         // exception: the CCK uses relative paths as uris
         stepDefinition.put(Pattern.compile("/sourceReference/uri"), isA(MissingNode.class));
         stepDefinition.put(Pattern.compile("/sourceReference/location/line"), isA(MissingNode.class));
@@ -154,28 +152,28 @@ final class CompatibilityTest {
 
         Map<Pattern, Matcher<?>> testCase = new LinkedHashMap<>();
         // exception: ids are not predictable
-        testCase.put(Pattern.compile("/id"), isA(TextNode.class));
-        testCase.put(Pattern.compile("/pickleId"), isA(TextNode.class));
-        testCase.put(Pattern.compile("/testSteps/.*/id"), isA(TextNode.class));
-        testCase.put(Pattern.compile("/testSteps/.*/pickleStepId"), isA(TextNode.class));
-        testCase.put(Pattern.compile("/testSteps/.*/stepDefinitionIds/.*"), isA(TextNode.class));
-        testCase.put(Pattern.compile("/testSteps/.*/hookId"), isA(TextNode.class));
+        testCase.put(Pattern.compile("/id"), isA(StringNode.class));
+        testCase.put(Pattern.compile("/pickleId"), isA(StringNode.class));
+        testCase.put(Pattern.compile("/testSteps/.*/id"), isA(StringNode.class));
+        testCase.put(Pattern.compile("/testSteps/.*/pickleStepId"), isA(StringNode.class));
+        testCase.put(Pattern.compile("/testSteps/.*/stepDefinitionIds/.*"), isA(StringNode.class));
+        testCase.put(Pattern.compile("/testSteps/.*/hookId"), isA(StringNode.class));
         // exception: not yet implemented
         testCase.put(Pattern.compile("/testRunStartedId"), isA(MissingNode.class));
         exceptions.put("testCase", testCase);
 
         Map<Pattern, Matcher<?>> testCaseStarted = new LinkedHashMap<>();
         // exception: ids are not predictable
-        testCaseStarted.put(Pattern.compile("/id"), isA(TextNode.class));
-        testCaseStarted.put(Pattern.compile("/testCaseId"), isA(TextNode.class));
+        testCaseStarted.put(Pattern.compile("/id"), isA(StringNode.class));
+        testCaseStarted.put(Pattern.compile("/testCaseId"), isA(StringNode.class));
         // exception: timestamps and durations are not predictable
         testCaseStarted.put(Pattern.compile("/timestamp/seconds"), isA(IntNode.class));
         testCaseStarted.put(Pattern.compile("/timestamp/nanos"), isA(IntNode.class));
         exceptions.put("testCaseStarted", testCaseStarted);
 
         Map<Pattern, Matcher<?>> testStepStarted = new LinkedHashMap<>();
-        testStepStarted.put(Pattern.compile("/testCaseStartedId"), isA(TextNode.class));
-        testStepStarted.put(Pattern.compile("/testStepId"), isA(TextNode.class));
+        testStepStarted.put(Pattern.compile("/testCaseStartedId"), isA(StringNode.class));
+        testStepStarted.put(Pattern.compile("/testStepId"), isA(StringNode.class));
         // exception: timestamps and durations are not predictable
         testStepStarted.put(Pattern.compile("/timestamp/seconds"), isA(IntNode.class));
         testStepStarted.put(Pattern.compile("/timestamp/nanos"), isA(IntNode.class));
@@ -183,18 +181,18 @@ final class CompatibilityTest {
 
         Map<Pattern, Matcher<?>> testStepFinished = new LinkedHashMap<>();
         // exception: ids are not predictable
-        testStepFinished.put(Pattern.compile("/testCaseStartedId"), isA(TextNode.class));
+        testStepFinished.put(Pattern.compile("/testCaseStartedId"), isA(StringNode.class));
         // exception: ids are not predictable
-        testStepFinished.put(Pattern.compile("/testStepId"), isA(TextNode.class));
+        testStepFinished.put(Pattern.compile("/testStepId"), isA(StringNode.class));
         // exception: timestamps and durations are not predictable
         testStepFinished.put(Pattern.compile("/testStepResult/duration/seconds"), isA(IntNode.class));
         testStepFinished.put(Pattern.compile("/testStepResult/duration/nanos"), isA(IntNode.class));
         // exception: error messages are platform specific
-        testStepFinished.put(Pattern.compile("/testStepResult/message"), isA(TextNode.class));
+        testStepFinished.put(Pattern.compile("/testStepResult/message"), isA(StringNode.class));
         // exception: exceptions are platform specific
-        testStepFinished.put(Pattern.compile("/testStepResult/exception/type"), isA(TextNode.class));
-        testStepFinished.put(Pattern.compile("/testStepResult/exception/message"), isA(TextNode.class));
-        testStepFinished.put(Pattern.compile("/testStepResult/exception/stackTrace"), isA(TextNode.class));
+        testStepFinished.put(Pattern.compile("/testStepResult/exception/type"), isA(StringNode.class));
+        testStepFinished.put(Pattern.compile("/testStepResult/exception/message"), isA(StringNode.class));
+        testStepFinished.put(Pattern.compile("/testStepResult/exception/stackTrace"), isA(StringNode.class));
         // exception: timestamps and durations are not predictable
         testStepFinished.put(Pattern.compile("/timestamp/seconds"), isA(IntNode.class));
         testStepFinished.put(Pattern.compile("/timestamp/nanos"), isA(IntNode.class));
@@ -202,7 +200,7 @@ final class CompatibilityTest {
 
         Map<Pattern, Matcher<?>> testCaseFinished = new LinkedHashMap<>();
         // exception: ids are not predictable
-        testCaseFinished.put(Pattern.compile("/testCaseStartedId"), isA(TextNode.class));
+        testCaseFinished.put(Pattern.compile("/testCaseStartedId"), isA(StringNode.class));
         // exception: timestamps and durations are not predictable
         testCaseFinished.put(Pattern.compile("/timestamp/seconds"), isA(IntNode.class));
         testCaseFinished.put(Pattern.compile("/timestamp/nanos"), isA(IntNode.class));
@@ -218,7 +216,7 @@ final class CompatibilityTest {
 
         Map<Pattern, Matcher<?>> hook = new LinkedHashMap<>();
         // exception: ids are not predictable
-        hook.put(Pattern.compile("/id"), isA(TextNode.class));
+        hook.put(Pattern.compile("/id"), isA(StringNode.class));
         // exception: the CCK expects source references with URIs but
         // Java can only provide method and stack trace references.
         hook.put(Pattern.compile("/sourceReference/uri"), isA(MissingNode.class));
@@ -227,7 +225,7 @@ final class CompatibilityTest {
 
         Map<Pattern, Matcher<?>> parameterType = new LinkedHashMap<>();
         // exception: ids are not predictable
-        parameterType.put(Pattern.compile("/id"), isA(TextNode.class));
+        parameterType.put(Pattern.compile("/id"), isA(StringNode.class));
         // exception: the CCK uses relative paths as uris
         parameterType.put(Pattern.compile("/sourceReference/uri"), isA(MissingNode.class));
         parameterType.put(Pattern.compile("/sourceReference/location/line"), isA(MissingNode.class));
@@ -235,12 +233,12 @@ final class CompatibilityTest {
 
         Map<Pattern, Matcher<?>> suggestion = new LinkedHashMap<>();
         // exception: ids are not predictable
-        suggestion.put(Pattern.compile("/id"), isA(TextNode.class));
-        suggestion.put(Pattern.compile("/pickleStepId"), isA(TextNode.class));
+        suggestion.put(Pattern.compile("/id"), isA(StringNode.class));
+        suggestion.put(Pattern.compile("/pickleStepId"), isA(StringNode.class));
         // exception: language is implementation specific
-        suggestion.put(Pattern.compile("/snippets/.*/language"), isA(TextNode.class));
+        suggestion.put(Pattern.compile("/snippets/.*/language"), isA(StringNode.class));
         // exception: code is implementation specific
-        suggestion.put(Pattern.compile("/snippets/.*/code"), isA(TextNode.class));
+        suggestion.put(Pattern.compile("/snippets/.*/code"), isA(StringNode.class));
 
         exceptions.put("suggestion", suggestion);
 
@@ -344,17 +342,8 @@ final class CompatibilityTest {
     private static List<JsonNode> readAllMessages(InputStream output) throws IOException {
         List<JsonNode> expectedEnvelopes = new ArrayList<>();
 
-        ObjectMapper mapper = new ObjectMapper()
-                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        readAllLines(output).forEach(s -> {
-            try {
-                expectedEnvelopes.add(mapper.readTree(s));
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        JsonMapper mapper = JsonMapper.builder().build();
+        readAllLines(output).forEach(s -> expectedEnvelopes.add(mapper.readTree(s)));
 
         return expectedEnvelopes;
     }
@@ -373,8 +362,8 @@ final class CompatibilityTest {
     @SuppressWarnings("unchecked")
     private static <T> Map<String, List<T>> openEnvelopes(List<JsonNode> actual) {
         Map<String, List<T>> map = new LinkedHashMap<>();
-        actual.forEach(envelope -> envelope.fieldNames()
-                .forEachRemaining(fieldName -> {
+        actual.forEach(envelope -> envelope.propertyNames()
+                .forEach(fieldName -> {
                     map.putIfAbsent(fieldName, new ArrayList<>());
                     map.get(fieldName).add((T) envelope.get(fieldName));
                 }));
@@ -383,16 +372,16 @@ final class CompatibilityTest {
 
     private void sortStepDefinitionsAndHooks(Map<String, List<JsonNode>> envelopes) {
         Comparator<JsonNode> stepDefinitionPatternComparator = Comparator
-                .comparing(a -> a.get("pattern").get("source").asText());
+                .comparing(a -> a.get("pattern").get("source").asString());
         List<JsonNode> actualStepDefinitions = envelopes.get("stepDefinition");
         if (actualStepDefinitions != null) {
             actualStepDefinitions.sort(stepDefinitionPatternComparator);
         }
-        Comparator<JsonNode> hookTypeComparator = Comparator.comparing(a -> a.get("type").asText());
+        Comparator<JsonNode> hookTypeComparator = Comparator.comparing(a -> a.get("type").asString());
         Comparator<JsonNode> hookTagExpressionComparator = Comparator.comparing(a -> {
             JsonNode tagExpression = a.get("tagExpression");
             if (tagExpression != null) {
-                return tagExpression.asText();
+                return tagExpression.asString();
             }
             return "";
         });
