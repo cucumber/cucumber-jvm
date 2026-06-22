@@ -16,6 +16,7 @@
         <project.rootdir>..</project.rootdir>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <assertj.version>3.27.7</assertj.version>
+        <jackson.version>3.1.2</jackson.version>
         <jsoup.version>1.22.2</jsoup.version>
         <junit-jupiter.version>6.1.0</junit-jupiter.version>
         <xmlunit.version>2.12.0</xmlunit.version>
@@ -39,6 +40,13 @@
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>${junit-jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -200,6 +208,13 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

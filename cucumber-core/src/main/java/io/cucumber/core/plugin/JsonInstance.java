@@ -11,32 +11,35 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.requireNonNull;
+
 final class JsonInstance {
 
-    private static @Nullable Json INSTANCE;
+    private static volatile @Nullable Json INSTANCE;
 
     private JsonInstance() {
         /* no-op */
     }
 
     private static Json instance() {
-        if (INSTANCE != null) {
-            return INSTANCE;
-        }
+        if (INSTANCE == null) {
+            synchronized (JsonInstance.class) {
+                if (INSTANCE == null) {
+                    var providers = ServiceLoader.load(JsonProvider.class).stream()
+                            .map(ServiceLoader.Provider::get)
+                            .toList();
 
-        synchronized (JsonInstance.class) {
-            var providers = ServiceLoader.load(JsonProvider.class).stream()
-                    .map(ServiceLoader.Provider::get)
-                    .toList();
-
-            INSTANCE = providers.stream()
-                    .map(JsonProvider::instance)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .findFirst()
-                    .orElseThrow(() -> createMissingDependenciesException(providers));
+                    INSTANCE = providers.stream()
+                            .map(JsonProvider::instance)
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .findFirst()
+                            .orElseThrow(() -> createMissingDependenciesException(providers));
+                }
+            }
         }
-        return INSTANCE;
+        return requireNonNull(INSTANCE);
+
     }
 
     static <T> Serializer<T> serializer(Class<T> type) {

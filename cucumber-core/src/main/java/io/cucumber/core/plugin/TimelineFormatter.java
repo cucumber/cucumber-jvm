@@ -66,18 +66,18 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     private final Query query = new Query(repository);
 
     private final File reportDir;
-    private final Serializer<Object> serializer;
+    private final Serializer<Collection> serializer;
 
     // Used by PluginFactory
     @SuppressWarnings({ "unused", "RedundantThrows", "ResultOfMethodCallIgnored" })
     public TimelineFormatter(File reportDir) throws FileNotFoundException {
-        this.serializer = JsonInstance.serializer(Object.class);
         reportDir.mkdirs();
         if (!reportDir.isDirectory()) {
             throw new CucumberException("The %s needs an existing directory. Not a directory: %s"
                     .formatted(getClass().getName(), reportDir.getAbsolutePath()));
         }
         this.reportDir = reportDir;
+        this.serializer = JsonInstance.serializer(Collection.class);
     }
 
     @Override
