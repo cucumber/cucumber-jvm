@@ -14,17 +14,17 @@
 
     <properties>
         <project.rootdir>..</project.rootdir>
-        <ci-environment.version>13.0.0</ci-environment.version>
-        <cucumber-expressions.version>19.0.1</cucumber-expressions.version>
+        <ci-environment.version>14.0.0</ci-environment.version>
+        <cucumber-expressions.version>20.0.0</cucumber-expressions.version>
         <cucumber-json-formatter.version>0.4.0</cucumber-json-formatter.version>
-        <gherkin.version>39.1.0</gherkin.version>
-        <html-formatter.version>23.1.0</html-formatter.version>
+        <gherkin.version>41.0.0</gherkin.version>
+        <html-formatter.version>24.0.0</html-formatter.version>
         <junit-xml-formatter.version>0.14.0</junit-xml-formatter.version>
-        <messages.version>32.3.1</messages.version>
+        <messages.version>33.0.3</messages.version>
         <messages-ndjson.version>0.5.0</messages-ndjson.version>
-        <pretty-formatter.version>3.3.1</pretty-formatter.version>
-        <query.version>15.0.1</query.version>
-        <tag-expressions.version>9.1.0</tag-expressions.version>
+        <pretty-formatter.version>4.0.0</pretty-formatter.version>
+        <query.version>16.0.1</query.version>
+        <tag-expressions.version>10.0.0</tag-expressions.version>
         <teamcity-formatter.version>0.3.0</teamcity-formatter.version>
         <testng-xml-formatter.version>0.8.1</testng-xml-formatter.version>
         <usage-formatter.version>0.2.0</usage-formatter.version>
