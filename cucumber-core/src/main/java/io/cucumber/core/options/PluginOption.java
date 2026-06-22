@@ -13,6 +13,7 @@ import io.cucumber.core.plugin.ProgressFormatter;
 import io.cucumber.core.plugin.RerunFormatter;
 import io.cucumber.core.plugin.TeamCityPlugin;
 import io.cucumber.core.plugin.TestNGFormatter;
+import io.cucumber.core.plugin.TimelineFormatter;
 import io.cucumber.core.plugin.UnusedStepsSummaryPrinter;
 import io.cucumber.core.plugin.UsageFormatter;
 import io.cucumber.core.plugin.UsageJsonFormatter;
@@ -52,6 +53,7 @@ public final class PluginOption implements Options.Plugin {
         plugins.put("rerun", RerunFormatter.class);
         plugins.put("summary", DefaultSummaryPrinter.class);
         plugins.put("testng", TestNGFormatter.class);
+        plugins.put("timeline", TimelineFormatter.class);
         plugins.put("unused", UnusedStepsSummaryPrinter.class);
         plugins.put("usage", UsageFormatter.class);
         plugins.put("usage-json", UsageJsonFormatter.class);

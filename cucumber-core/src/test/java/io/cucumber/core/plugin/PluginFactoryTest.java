@@ -230,6 +230,13 @@ class PluginFactoryTest {
     }
 
     @Test
+    void instantiates_timeline_plugin_with_dir_arg() {
+        PluginOption option = parse("timeline:" + tmp.toAbsolutePath());
+        plugin = fc.create(option);
+        assertThat(plugin.getClass(), is(equalTo(TimelineFormatter.class)));
+    }
+
+    @Test
     void instantiates_wants_nothing_plugin() {
         PluginOption option = parse(WantsNothing.class.getName());
         WantsNothing plugin = (WantsNothing) fc.create(option);
