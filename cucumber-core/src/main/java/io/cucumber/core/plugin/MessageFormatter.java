@@ -1,7 +1,6 @@
 package io.cucumber.core.plugin;
 
 import io.cucumber.messages.MessageToNdjsonWriter;
-import io.cucumber.messages.ndjson.Serializer;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.event.EventPublisher;
@@ -14,7 +13,8 @@ public final class MessageFormatter implements ConcurrentEventListener {
     private final MessageToNdjsonWriter writer;
 
     public MessageFormatter(OutputStream outputStream) {
-        this.writer = new MessageToNdjsonWriter(outputStream, new Serializer());
+        var serializer = JsonInstance.serializer(Envelope.class);
+        this.writer = new MessageToNdjsonWriter(outputStream, serializer::writeValue);
     }
 
     @Override

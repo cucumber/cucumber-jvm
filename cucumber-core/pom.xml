@@ -16,7 +16,6 @@
         <project.rootdir>..</project.rootdir>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <assertj.version>3.27.7</assertj.version>
-        <jackson.version>2.21.4</jackson.version>
         <jsoup.version>1.22.2</jsoup.version>
         <junit-jupiter.version>6.1.0</junit-jupiter.version>
         <xmlunit.version>2.12.0</xmlunit.version>
@@ -40,13 +39,6 @@
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>${junit-jupiter.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -133,22 +125,6 @@
             <groupId>org.apiguardian</groupId>
             <artifactId>apiguardian-api</artifactId>
             <version>${apiguardian-api.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jdk8</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-parameter-names</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
