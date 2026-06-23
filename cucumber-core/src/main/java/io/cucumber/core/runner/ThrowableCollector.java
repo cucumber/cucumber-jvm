@@ -33,7 +33,7 @@ final class ThrowableCollector {
         } else if (isTestAbortedException(this.throwable) && !isTestAbortedException(throwable)) {
             throwable.addSuppressed(this.throwable);
             this.throwable = throwable;
-        } else if (this.throwable != throwable) {
+        } else if (!this.throwable.equals(throwable)) {
             this.throwable.addSuppressed(throwable);
         }
     }

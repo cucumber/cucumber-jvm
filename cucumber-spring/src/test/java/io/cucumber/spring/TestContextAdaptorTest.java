@@ -224,7 +224,7 @@ final class TestContextAdaptorTest {
 
     }
 
-    private interface Spy {
+    interface Spy {
 
         int postProcessedCount();
 
