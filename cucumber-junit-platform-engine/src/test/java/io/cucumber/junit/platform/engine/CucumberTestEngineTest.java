@@ -668,6 +668,32 @@ class CucumberTestEngineTest {
     }
 
     @Test
+    void discoversChildrenWhenNestedUnderSuiteEngineWithDisabledRootDiscovery() {
+        TestDescriptor suiteDescriptor = EngineTestKit.engine("junit-platform-suite")
+                .configurationParameter(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, "false")
+                .selectors(selectClass(SuiteTestCase.class))
+                .discover()
+                .getEngineDescriptor();
+
+        // Find the Cucumber engine among all descendants
+        TestDescriptor cucumberEngine = suiteDescriptor.getDescendants().stream()
+                .filter(d -> d.getUniqueId().getSegments().stream()
+                        .anyMatch(s -> "cucumber".equals(s.getValue())))
+                .findFirst()
+                .orElseThrow();
+
+        // The Cucumber engine should discover features when nested under the
+        // suite engine
+        // with discovery-as-root-engine=false. This distinguishes
+        // isRootEngine() from
+        // always returning true: the nested engine has >2 UniqueId segments so
+        // isRootEngine() returns false, allowing discovery to proceed.
+        assertThat(cucumberEngine.getChildren())
+                .as("Cucumber engine should have children when nested under suite engine")
+                .isNotEmpty();
+    }
+
+    @Test
     void selectAndSkipDisabledScenarioByTags() {
         EngineTestKit.engine(ENGINE_ID)
                 .configurationParameter(FILTER_TAGS_PROPERTY_NAME, "@Integration and not @Disabled")
