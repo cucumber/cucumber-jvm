@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Fixed
+- [Core] Don't swallow exceptions thrown by event handlers while processing a feature ([#2748](https://github.com/cucumber/cucumber-jvm/issues/2748), Julien Kronegg)
 - [JUnit Platform Engine] Accept partial matches with `cucumber.filter.name` and align the behavior with JUnit 4 and CLI ([#3174](https://github.com/cucumber/cucumber-jvm/pull/3174))
 - [JUnit Platform Engine] Don't require global read lock ([#3103](https://github.com/cucumber/cucumber-jvm/pull/3103))
 

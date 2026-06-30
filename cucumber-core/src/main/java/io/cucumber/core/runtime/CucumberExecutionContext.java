@@ -123,9 +123,14 @@ public final class CucumberExecutionContext {
 
     public void beforeFeature(Feature feature) {
         log.debug(() -> "Sending test source read event for " + feature.getUri());
-        bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-        bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), singletonList(feature)));
-        bus.sendAll(feature.getParseEvents());
+        // Collect and rethrow any failure (e.g. from an event handler in a
+        // plugin). Otherwise the failure is swallowed when running the features
+        // because CucumberExecutionContext.execute drops it (see #2748).
+        collector.executeAndThrow(() -> {
+            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+            bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), singletonList(feature)));
+            bus.sendAll(feature.getParseEvents());
+        });
     }
 
     public void runTestCase(Consumer<Runner> execution) {

@@ -1,6 +1,8 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.feature.TestFeatureParser;
+import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
 import io.cucumber.plugin.event.Result;
@@ -67,6 +69,30 @@ class CucumberExecutionContextTest {
         }));
         assertThat(thrown, is(failure));
         assertThat(context.getThrowable(), nullValue());
+    }
+
+    @Test
+    public void rethrows_event_handler_failures_emitted_while_processing_features() {
+        // Reproduces #2748: a plugin that throws while handling an Envelope
+        // emitted during feature processing (e.g. the GherkinDocument envelope)
+        // had its exception swallowed, while the same plugin throwing on the
+        // TestRunFinished envelope did not. The behavior must be consistent:
+        // the exception should always be rethrown.
+        Feature feature = TestFeatureParser.parse("test.feature", "" +
+                "Feature: feature name\n" +
+                "  Scenario: scenario name\n" +
+                "    Given first step\n");
+
+        RuntimeException failure = new IllegalStateException("handler failure");
+        bus.registerHandlerFor(io.cucumber.messages.types.Envelope.class, envelope -> {
+            if (envelope.getGherkinDocument().isPresent()) {
+                throw failure;
+            }
+        });
+
+        IllegalStateException thrown = assertThrows(IllegalStateException.class,
+            () -> context.runFeatures(() -> context.beforeFeature(feature)));
+        assertThat(thrown, is(failure));
     }
 
     @Test
