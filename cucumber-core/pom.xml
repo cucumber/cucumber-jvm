@@ -18,7 +18,7 @@
         <assertj.version>3.27.7</assertj.version>
         <jackson.version>3.2.1</jackson.version>
         <jsoup.version>1.22.2</jsoup.version>
-        <junit-jupiter.version>6.1.1</junit-jupiter.version>
+        <junit-jupiter.version>6.1.2</junit-jupiter.version>
         <xmlunit.version>2.12.0</xmlunit.version>
         <hamcrest.version>3.0</hamcrest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
