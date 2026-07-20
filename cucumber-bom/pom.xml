@@ -17,10 +17,10 @@
         <ci-environment.version>14.0.0</ci-environment.version>
         <cucumber-expressions.version>20.0.0</cucumber-expressions.version>
         <cucumber-json-formatter.version>0.4.1</cucumber-json-formatter.version>
-        <gherkin.version>41.0.0</gherkin.version>
+        <gherkin.version>42.0.0</gherkin.version>
         <html-formatter.version>24.1.0</html-formatter.version>
         <junit-xml-formatter.version>0.14.0</junit-xml-formatter.version>
-        <messages.version>33.0.4</messages.version>
+        <messages.version>34.2.0</messages.version>
         <messages-ndjson.version>0.5.1</messages-ndjson.version>
         <pretty-formatter.version>4.0.0</pretty-formatter.version>
         <query.version>16.0.1</query.version>
