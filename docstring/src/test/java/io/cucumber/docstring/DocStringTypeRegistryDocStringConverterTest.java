@@ -1,9 +1,9 @@
 package io.cucumber.docstring;
 
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.TreeNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -119,7 +119,7 @@ class DocStringTypeRegistryDocStringConverterTest {
             CucumberDocStringException.class,
             () -> converter.convert(docString, JsonNode.class));
         assertThat(exception).hasMessage(
-            "It appears you did not register docstring type for 'application/json' or com.fasterxml.jackson.databind.JsonNode");
+            "It appears you did not register docstring type for 'application/json' or tools.jackson.databind.JsonNode");
     }
 
     @Test
@@ -129,7 +129,7 @@ class DocStringTypeRegistryDocStringConverterTest {
             CucumberDocStringException.class,
             () -> converter.convert(docString, JsonNode.class));
         assertThat(exception).hasMessage(
-            "It appears you did not register docstring type for com.fasterxml.jackson.databind.JsonNode");
+            "It appears you did not register docstring type for tools.jackson.databind.JsonNode");
     }
 
     @Test
@@ -141,7 +141,7 @@ class DocStringTypeRegistryDocStringConverterTest {
             CucumberDocStringException.class,
             () -> converter.convert(docString, JsonNode.class));
         assertThat(exception).hasMessage(
-            "Multiple converters found for type com.fasterxml.jackson.databind.JsonNode, " +
+            "Multiple converters found for type tools.jackson.databind.JsonNode, " +
                     "add one of the following content types to your docstring [json, xml]");
     }
 

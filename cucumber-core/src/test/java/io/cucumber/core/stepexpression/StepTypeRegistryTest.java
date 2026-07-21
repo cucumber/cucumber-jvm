@@ -1,6 +1,5 @@
 package io.cucumber.core.stepexpression;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
@@ -12,6 +11,7 @@ import io.cucumber.datatable.TableEntryByTypeTransformer;
 import io.cucumber.docstring.DocStringType;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
 
 import java.util.Date;
 
@@ -62,7 +62,8 @@ class StepTypeRegistryTest {
 
     @Test
     void should_set_default_table_entry_transformer() {
-        TableEntryByTypeTransformer expected = (entry, toValueType, tableCellByTypeTransformer) -> null;
+        TableEntryByTypeTransformer expected = (entry, toValueType,
+                tableCellByTypeTransformer) -> null;
         registry.setDefaultDataTableEntryTransformer(expected);
     }
 

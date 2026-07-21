@@ -8,6 +8,7 @@ import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.platform.commons.io.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
@@ -642,7 +643,7 @@ class CucumberTestEngineTest {
     void supportsDisablingDiscoveryAsRootEngine() {
         DiscoverySelector selector = selectClasspathResource("io/cucumber/junit/platform/engine/single.feature");
 
-        // Ensure classpath resource exists.
+        // Ensure classpath resource from SuiteTestCase exists.
         assertThat(EngineTestKit.engine(ENGINE_ID)
                 .selectors(selector)
                 .discover()
@@ -658,8 +659,14 @@ class CucumberTestEngineTest {
                 .getChildren())
                 .isEmpty();
 
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "true", "false" })
+    void nonRootTestsAreAlwaysDiscovered(String enabled) {
+        // Non-root tests are always discovered
         assertThat(EngineTestKit.engine("junit-platform-suite")
-                .configurationParameter(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, "false")
+                .configurationParameter(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, enabled)
                 .selectors(selectClass(SuiteTestCase.class))
                 .discover()
                 .getEngineDescriptor()

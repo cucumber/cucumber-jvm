@@ -336,7 +336,7 @@ be combined with an object mapper like Jackson to quickly transform well-known s
  ```java
 package com.example.app;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.cucumber.java.DefaultDataTableCellTransformer;
 import io.cucumber.java.DefaultDataTableEntryTransformer;
 import io.cucumber.java.DefaultParameterTransformer;
@@ -560,8 +560,8 @@ Then some conclusion is drawn
 ```java
 package com.example;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import io.cucumber.java.DocStringType;
 import io.cucumber.java.en.Given;

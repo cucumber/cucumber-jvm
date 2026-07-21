@@ -1,13 +1,13 @@
 package io.cucumber.compatibility;
 
-import com.fasterxml.jackson.core.JsonPointer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
+import tools.jackson.core.JsonPointer;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -67,7 +67,7 @@ final class AComparableMessage extends TypeSafeDiagnosingMatcher<JsonNode> {
 
     private Map<JsonPointer, JsonNode> extractFieldsAndPointers(JsonPointer path, ObjectNode node) {
         Map<JsonPointer, JsonNode> expectedFields = new LinkedHashMap<>();
-        node.fieldNames().forEachRemaining(fieldName -> {
+        node.propertyNames().forEach(fieldName -> {
             JsonNode field = node.get(fieldName);
             JsonPointer fieldPath = path.appendProperty(fieldName);
             expectedFields.putAll(extractFieldsAndPointers(fieldPath, field));

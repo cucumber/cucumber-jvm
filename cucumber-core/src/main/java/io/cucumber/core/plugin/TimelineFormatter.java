@@ -2,6 +2,7 @@ package io.cucumber.core.plugin;
 
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.messages.Convertor;
+import io.cucumber.messages.ndjson.Serializer;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.Pickle;
@@ -65,6 +66,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
     private final Query query = new Query(repository);
 
     private final File reportDir;
+    private final Serializer<Collection> serializer;
 
     // Used by PluginFactory
     @SuppressWarnings({ "unused", "RedundantThrows", "ResultOfMethodCallIgnored" })
@@ -75,6 +77,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
                     .formatted(getClass().getName(), reportDir.getAbsolutePath()));
         }
         this.reportDir = reportDir;
+        this.serializer = JsonInstance.serializer(Collection.class);
     }
 
     @Override
@@ -198,7 +201,7 @@ public final class TimelineFormatter implements ConcurrentEventListener {
             BufferedWriter out, String pushTo, Collection<?> content
     ) throws IOException {
         out.append("CucumberHTML.").append(pushTo).append(".pushArray(");
-        Jackson.OBJECT_MAPPER.writeValue(out, content);
+        serializer.writeValue(out, content);
         out.append(");");
     }
 

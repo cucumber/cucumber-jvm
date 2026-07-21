@@ -7,19 +7,23 @@ import static java.util.Objects.requireNonNull;
 
 public final class DocStringArgument implements Argument {
 
-    private final DocStringTransformer<?> docStringType;
+    private final int argumentIndex;
+    private final DocStringTransformer<?> transformer;
     private final String content;
     private final @Nullable String contentType;
 
-    DocStringArgument(DocStringTransformer<?> docStringType, String content, @Nullable String contentType) {
-        this.docStringType = requireNonNull(docStringType);
+    DocStringArgument(
+            int argumentIndex, DocStringTransformer<?> transformer, String content, @Nullable String contentType
+    ) {
+        this.argumentIndex = argumentIndex;
+        this.transformer = requireNonNull(transformer);
         this.content = requireNonNull(content);
         this.contentType = contentType;
     }
 
     @Override
     public @Nullable Object getValue() {
-        return docStringType.transform(content, contentType);
+        return transformer.transform(argumentIndex, content, contentType);
     }
 
     @Override

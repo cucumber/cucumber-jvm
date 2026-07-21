@@ -11,10 +11,12 @@ import io.cucumber.core.runtime.Runtime;
 import io.cucumber.core.runtime.StubBackendSupplier;
 import io.cucumber.core.runtime.StubFeatureSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
-import io.cucumber.messages.ndjson.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import tools.jackson.core.StreamWriteFeature;
+import tools.jackson.databind.cfg.ConstructorDetector;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,6 +27,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_ABSENT;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
@@ -85,12 +88,20 @@ class TimelineFormatterTest {
     Path reportDir;
     Path reportJsFile;
     RuntimeOptionsBuilder runtimeOptionsBuilder;
+    JsonMapper jsonMapper;
 
     @BeforeEach
     void setUp() {
         reportJsFile = reportDir.resolve("report.js");
         runtimeOptionsBuilder = new RuntimeOptionsBuilder()
                 .addPluginName("timeline:" + reportDir.toAbsolutePath());
+        jsonMapper = JsonMapper.builder()
+                .changeDefaultPropertyInclusion(value -> value
+                        .withContentInclusion(NON_ABSENT)
+                        .withValueInclusion(NON_ABSENT))
+                .constructorDetector(ConstructorDetector.USE_PROPERTIES_BASED)
+                .disable(StreamWriteFeature.AUTO_CLOSE_TARGET)
+                .build();
     }
 
     @Test
@@ -173,7 +184,7 @@ class TimelineFormatterTest {
             false);
     }
 
-    private TimeLineItem[] getExpectedTestData() throws JsonProcessingException {
+    private TimeLineItem[] getExpectedTestData() {
         String expectedJson = """
                 [
                  {
@@ -218,7 +229,7 @@ class TimelineFormatterTest {
                  }
                 ]""";
 
-        return Jackson.OBJECT_MAPPER.readValue(expectedJson, TimeLineItem[].class);
+        return jsonMapper.readValue(expectedJson, TimeLineItem[].class);
     }
 
     private ActualReportOutput readReport() throws IOException {
@@ -232,8 +243,8 @@ class TimelineFormatterTest {
                 groupLines = line.substring("CucumberHTML.timelineGroups.pushArray(".length(), line.length() - 2);
             }
         }
-        TimeLineItem[] tests = Jackson.OBJECT_MAPPER.readValue(itemLines, TimeLineItem[].class);
-        TimeLineGroup[] groups = Jackson.OBJECT_MAPPER.readValue(groupLines, TimeLineGroup[].class);
+        TimeLineItem[] tests = jsonMapper.readValue(itemLines, TimeLineItem[].class);
+        TimeLineGroup[] groups = jsonMapper.readValue(groupLines, TimeLineGroup[].class);
         return new ActualReportOutput(tests, groups);
     }
 
@@ -302,7 +313,7 @@ class TimelineFormatterTest {
 
         TimeLineItem[] expectedTests = getExpectedTestData();
 
-        TimeLineGroup[] expectedGroups = Jackson.OBJECT_MAPPER.readValue(
+        TimeLineGroup[] expectedGroups = jsonMapper.readValue(
             """
                     [
                      {

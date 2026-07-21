@@ -196,4 +196,16 @@ class CucumberConfigurationTest {
         assertThat(new CucumberConfiguration(configurationParameters, issueReporter).getUuidGeneratorClass(),
             is(IncrementingUuidGenerator.class));
     }
+
+    @Test
+    void supportsDiscoveryAsRootEngine() {
+        var enabled = new MapConfigurationParameters(
+            Constants.JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, "true");
+        assertTrue(new CucumberConfiguration(enabled, issueReporter).supportsDiscoveryAsRootEngine());
+        var disabled = new MapConfigurationParameters(
+            Constants.JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, "false");
+        assertFalse(new CucumberConfiguration(disabled, issueReporter).supportsDiscoveryAsRootEngine());
+        var absent = new EmptyConfigurationParameters();
+        assertTrue(new CucumberConfiguration(absent, issueReporter).supportsDiscoveryAsRootEngine());
+    }
 }

@@ -19,8 +19,8 @@
         <diffutils.version>1.3.0</diffutils.version>
         <guava.version>33.6.0-jre</guava.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <jackson.version>2.21.4</jackson.version>
-        <junit-jupiter.version>6.1.0</junit-jupiter.version>
+        <jackson.version>3.2.1</jackson.version>
+        <junit-jupiter.version>6.1.2</junit-jupiter.version>
         <mockito.version>5.23.0</mockito.version>
     </properties>
 
@@ -41,7 +41,7 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
+                <groupId>tools.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
                 <version>${jackson.version}</version>
                 <type>pom</type>
@@ -97,7 +97,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <scope>test</scope>
         </dependency>

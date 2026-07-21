@@ -1,11 +1,11 @@
 package io.cucumber.java;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.docstring.DocString;
 import io.cucumber.docstring.DocStringTypeRegistry;
 import io.cucumber.docstring.DocStringTypeRegistryDocStringConverter;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.type.TypeReference;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;

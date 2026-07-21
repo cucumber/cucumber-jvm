@@ -1,8 +1,8 @@
 package io.cucumber.docstring;
 
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.TreeNode;
+import tools.jackson.databind.JsonNode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,8 +44,8 @@ class DocStringTypeRegistryTest {
             () -> registry.defineDocStringType(duplicate));
         assertThat(exception).hasMessage(
             """
-                    There is already docstring type registered for 'application/json' and com.fasterxml.jackson.databind.JsonNode.
-                    You are trying to add 'application/json' and com.fasterxml.jackson.databind.JsonNode""");
+                    There is already docstring type registered for 'application/json' and tools.jackson.databind.JsonNode.
+                    You are trying to add 'application/json' and tools.jackson.databind.JsonNode""");
     }
 
     @Test

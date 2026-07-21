@@ -163,7 +163,7 @@ final class JUnitReporter {
         }
     }
 
-    private interface TestNotifier {
+    interface TestNotifier {
 
         void fireTestStarted();
 

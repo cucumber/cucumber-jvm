@@ -287,7 +287,6 @@
             "code": "java.method.addedToInterface",
             "new": "method int io.cucumber.core.backend.Options::getGlueHintThreshold()",
             "justification": "New feature"
-
           },
           {
             "ignore": true,
@@ -301,7 +300,6 @@
             "new": "method java.time.Duration io.cucumber.core.backend.Options::getGlueHintThreshold()",
             "justification": "New feature"
           },
-
           {
             "ignore": true,
             "code": "java.class.externalClassExposedInAPI",
@@ -313,6 +311,33 @@
             "code": "java.class.externalClassExposedInAPI",
             "new": "interface io.cucumber.core.backend.Options",
             "justification": "New feature"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.addedToInterface",
+            "new": "method java.util.List<io.cucumber.core.gherkin.Argument> io.cucumber.core.gherkin.Step::getArguments()",
+            "justification": "New feature"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.visibilityReduced",
+            "old": "method java.util.List<io.cucumber.core.stepexpression.Argument> io.cucumber.core.stepexpression.StepExpression::match(java.lang.String, java.lang.reflect.Type[])",
+            "new": "method java.util.List<io.cucumber.core.stepexpression.Argument> io.cucumber.core.stepexpression.StepExpression::match(io.cucumber.core.gherkin.Step, java.lang.reflect.Type[])",
+            "oldVisibility": "public",
+            "newVisibility": "package",
+            "justification": "Internal refactoring"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method java.util.List<io.cucumber.core.stepexpression.Argument> io.cucumber.core.stepexpression.StepExpression::match(java.lang.String, java.lang.String, java.lang.String, java.lang.reflect.Type[])",
+            "justification": "Internal refactoring"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.removed",
+            "old": "method java.util.List<io.cucumber.core.stepexpression.Argument> io.cucumber.core.stepexpression.StepExpression::match(java.lang.String, java.util.List<java.util.List<java.lang.String>>, java.lang.reflect.Type[])",
+            "justification": "Internal refactoring"
           }
         ]
       }
