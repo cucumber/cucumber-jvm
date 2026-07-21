@@ -4,6 +4,7 @@ import io.cucumber.core.backend.StepDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.cucumberexpressions.CucumberExpression;
 import io.cucumber.datatable.DataTable;
@@ -13,8 +14,9 @@ import io.cucumber.datatable.TableTransformer;
 import io.cucumber.docstring.DocString;
 import io.cucumber.docstring.DocStringType;
 import io.cucumber.messages.types.Envelope;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.shadow.de.siegmar.fastcsv.util.Nullable;
+import org.mockito.Mockito;
 import tools.jackson.core.StreamWriteFeature;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.cfg.ConstructorDetector;
@@ -38,9 +40,9 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings("NullAway") // TODO: Use AssertJ
-@Disabled // TODO: Put tests into separate module
 public class StepExpressionFactoryTest {
 
     private static final Type UNKNOWN_TYPE = Object.class;
@@ -55,24 +57,75 @@ public class StepExpressionFactoryTest {
         UUID::randomUUID);
     private final StepTypeRegistry registry = new StepTypeRegistry(Locale.ENGLISH);
     private final StepExpressionFactory stepExpressionFactory = new StepExpressionFactory(registry, bus);
+
+    private final String content = "A rather long and boring string of documentation";
     private final List<List<String>> table = asList(asList("name", "amount",
         "unit"), asList("chocolate", "2", "tbsp"));
     private final List<List<String>> tableTransposed = asList(asList("name",
         "chocolate"), asList("amount", "2"),
         asList("unit", "tbsp"));
 
+    private static Step step(String text) {
+        var step = Mockito.mock(Step.class);
+        when(step.getText()).thenReturn(text);
+        return step;
+    }
+
+    private Step stepWithTable(String text, List<List<String>> cells) {
+        var step = step(text);
+        var table = table(cells);
+        when(step.getArguments()).thenReturn(List.of(table));
+        return step;
+    }
+
+    private static io.cucumber.core.gherkin.DataTableArgument table(List<List<String>> cells) {
+        var table = Mockito.mock(io.cucumber.core.gherkin.DataTableArgument.class);
+        when(table.cells()).thenReturn(cells);
+        return table;
+    }
+
+    private Step stepWithDocString(String text, String content, @Nullable String mediaType) {
+        var step = step(text);
+        var docString = docString(content, mediaType);
+        when(step.getArguments()).thenReturn(List.of(docString));
+        return step;
+    }
+
+    private static io.cucumber.core.gherkin.DocStringArgument docString(String content, @Nullable String mediaType) {
+        var docString = Mockito.mock(io.cucumber.core.gherkin.DocStringArgument.class);
+        when(docString.getContent()).thenReturn(content);
+        when(docString.getMediaType()).thenReturn(mediaType);
+        return docString;
+    }
+
+    private Step stepWithTableDocString(String text, List<List<String>> cells, String content) {
+        var step = step(text);
+        var table = table(cells);
+        var docString = docString(content, null);
+        when(step.getArguments()).thenReturn(List.of(table, docString));
+        return step;
+    }
+
+    private Step stepWithDocStringTable(String text, String content, List<List<String>> cells) {
+        var step = step(text);
+        var table = table(cells);
+        var docString = docString(content, null);
+        when(step.getArguments()).thenReturn(List.of(docString, table));
+        return step;
+    }
+
     @Test
     void creates_a_step_expression() {
-        StepDefinition stepDefinition = new StubStepDefinition("Given a step");
+        StepDefinition stepDefinition = new StubStepDefinition("Given a stepWithTable");
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-        assertThat(expression.getSource(), is("Given a step"));
+        assertThat(expression.getSource(), is("Given a stepWithTable"));
         assertThat(expression.getExpressionType(), is(CucumberExpression.class));
-        assertThat(expression.match("Given a step"), is(emptyList()));
+        assertThat(expression.match(step("Given a stepWithTable")), is(emptyList()));
     }
 
     @Test
     void throws_for_unknown_parameter_types() {
-        StepDefinition stepDefinition = new StubStepDefinition("Given a {unknownParameterType} ");
+        StepDefinition stepDefinition = new StubStepDefinition("Given a {unknownParameterType}");
 
         List<Envelope> events = new ArrayList<>();
         bus.registerHandlerFor(Envelope.class, events::add);
@@ -96,7 +149,7 @@ public class StepExpressionFactoryTest {
             DataTable.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
 
-        List<Argument> match = expression.match("Given some stuff:", table);
+        List<Argument> match = expression.match(stepWithTable("Given some stuff:", table));
 
         DataTable dataTable = (DataTable) match.get(0).getValue();
         assertThat(dataTable.cells(), is(equalTo(table)));
@@ -110,8 +163,8 @@ public class StepExpressionFactoryTest {
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:",
             Ingredient.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-        List<Argument> match = expression.match("Given some stuff:",
-            tableTransposed);
+        List<Argument> match = expression.match(stepWithTable("Given some stuff:",
+            tableTransposed));
 
         Ingredient ingredient = (Ingredient) match.get(0).getValue();
         assertThat(ingredient.name, is(equalTo("chocolate")));
@@ -138,14 +191,13 @@ public class StepExpressionFactoryTest {
     @SuppressWarnings("unchecked")
     @Test
     void table_expression_with_list_type_creates_list_of_ingredients_from_table() {
-
         registry.defineDataTableType(new DataTableType(Ingredient.class,
             listBeanMapper()));
 
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:",
             getTypeFromStepDefinition());
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-        List<Argument> match = expression.match("Given some stuff:", table);
+        List<Argument> match = expression.match(stepWithTable("Given some stuff:", table));
 
         List<Ingredient> ingredients = (List<Ingredient>) match.get(0).getValue();
         Ingredient ingredient = ingredients.get(0);
@@ -166,44 +218,41 @@ public class StepExpressionFactoryTest {
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:",
             UNKNOWN_TYPE);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-        List<Argument> match = expression.match("Given some stuff:", table);
+        List<Argument> match = expression.match(stepWithTable("Given some stuff:", table));
         assertThat(match.get(0).getValue(), is(equalTo(DataTable.create(table))));
     }
 
     @Test
     void unknown_target_type_transform_doc_string_to_doc_string() {
-        String docString = "A rather long and boring string of documentation";
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:",
             UNKNOWN_TYPE);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-        List<Argument> match = expression.match("Given some stuff:", docString,
-            null);
+        List<Argument> match = expression.match(stepWithDocString("Given some stuff:", content,
+            null));
         assertThat(match.get(0).getValue(),
-            is(equalTo(DocString.create(docString))));
+            is(equalTo(DocString.create(content))));
     }
 
     @Test
     void docstring_expression_transform_doc_string_to_string() {
-        String docString = "A rather long and boring string of documentation";
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:",
             String.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-        List<Argument> match = expression.match("Given some stuff:", docString,
-            null);
-        assertThat(match.get(0).getValue(), is(equalTo(docString)));
+        List<Argument> match = expression.match(stepWithDocString("Given some stuff:", content,
+            null));
+        assertThat(match.get(0).getValue(), is(equalTo(content)));
     }
 
     @Test
     void docstring_and_datatable_match_same_step_definition() {
-        String docString = "A rather long and boring string of documentation";
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:",
             UNKNOWN_TYPE);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-        List<Argument> match = expression.match("Given some stuff:", docString,
-            null);
+        List<Argument> match = expression.match(stepWithDocString("Given some stuff:", content,
+            null));
         assertThat(match.get(0).getValue(),
-            is(equalTo(DocString.create(docString))));
-        match = expression.match("Given some stuff:", table);
+            is(equalTo(DocString.create(content))));
+        match = expression.match(stepWithTable("Given some stuff:", table));
         assertThat(match.get(0).getValue(), is(equalTo(DataTable.create(table))));
     }
 
@@ -219,8 +268,8 @@ public class StepExpressionFactoryTest {
         StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:",
             JsonNode.class);
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-        List<Argument> match = expression.match("Given some stuff:", docString,
-            contentType);
+        List<Argument> match = expression.match(stepWithDocString("Given some stuff:", docString,
+            contentType));
         JsonNode node = (JsonNode) match.get(0).getValue();
         assertThat(node.asString(), equalTo(docString));
     }
@@ -236,13 +285,37 @@ public class StepExpressionFactoryTest {
             getTypeFromStepDefinition());
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
         List<List<String>> table = asList(asList("name", "amount", "unit"),
-            asList("chocolate", null, "tbsp"));
-        List<Argument> match = expression.match("Given some stuff:", table);
+            asList("chocolate", "", "tbsp"));
+        List<Argument> match = expression.match(stepWithTable("Given some stuff:", table));
 
         List<Ingredient> ingredients = (List<Ingredient>) match.get(0).getValue();
         Ingredient ingredient = ingredients.get(0);
         assertThat(ingredient.name, is(equalTo("chocolate")));
 
+    }
+
+    @Test
+    void table_doc_string_expression() {
+        StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:", DataTable.class, DocString.class);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        List<Argument> match = expression.match(stepWithTableDocString("Given some stuff:", table, content));
+
+        DataTable dataTable = (DataTable) match.get(0).getValue();
+        assertThat(dataTable.cells(), is(equalTo(table)));
+        DocString docString = (DocString) match.get(1).getValue();
+        assertThat(docString.getContent(), is(equalTo(content)));
+    }
+
+    @Test
+    void doc_string_table_expression() {
+        StepDefinition stepDefinition = new StubStepDefinition("Given some stuff:", DocString.class, DataTable.class);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        List<Argument> match = expression.match(stepWithDocStringTable("Given some stuff:", content, table));
+
+        DocString docString = (DocString) match.get(0).getValue();
+        assertThat(docString.getContent(), is(equalTo(content)));
+        DataTable dataTable = (DataTable) match.get(1).getValue();
+        assertThat(dataTable.cells(), is(equalTo(table)));
     }
 
     @SuppressWarnings("unused")

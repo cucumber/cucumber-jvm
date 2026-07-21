@@ -8,6 +8,6 @@ import java.util.List;
 interface RawTableTransformer<T> {
 
     @Nullable
-    T transform(List<List<String>> raw);
+    T transform(int argumentIndex, List<List<@Nullable String>> raw);
 
 }

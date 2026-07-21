@@ -14,11 +14,8 @@ import io.cucumber.docstring.DocStringTypeRegistryDocStringConverter;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.UndefinedParameterType;
 
-import java.lang.reflect.Type;
 import java.util.List;
-import java.util.function.Supplier;
-
-import static java.util.Objects.requireNonNull;
+import java.util.function.Function;
 
 public final class StepExpressionFactory {
 
@@ -36,48 +33,32 @@ public final class StepExpressionFactory {
 
     public StepExpression createExpression(StepDefinition stepDefinition) {
         List<ParameterInfo> parameterInfos = stepDefinition.parameterInfos();
+        String expressionString = stepDefinition.getPattern();
+        var expression = crateExpression(expressionString);
 
-        if (parameterInfos.isEmpty()) {
-            return createExpression(
-                stepDefinition.getPattern(),
-                stepDefinitionDoesNotTakeAnyParameter(stepDefinition),
-                false);
-        }
+        Function<Integer, ParameterInfo> safeGetParameterInfos = argumentIndex -> {
+            if (argumentIndex < parameterInfos.size()) {
+                return parameterInfos.get(argumentIndex);
+            }
+            throw new CucumberException("step definition at %s does not take enough parameters. Expected %s parameters."
+                    .formatted(stepDefinition.getLocation(), argumentIndex + 1));
+        };
 
-        ParameterInfo parameterInfo = parameterInfos.get(parameterInfos.size() - 1);
-        return createExpression(
-            stepDefinition.getPattern(),
-            parameterInfo.getTypeResolver()::resolve,
-            parameterInfo.isTransposed());
-    }
-
-    private StepExpression createExpression(
-            String expressionString, Supplier<Type> tableOrDocStringType, boolean transpose
-    ) {
-        requireNonNull(expressionString, "expressionString can not be null");
-        requireNonNull(tableOrDocStringType, "tableOrDocStringType can not be null");
-
-        final Expression expression = crateExpression(expressionString);
-
-        RawTableTransformer<?> tableTransform = (List<List<String>> raw) -> {
-            DataTable dataTable = DataTable.create(raw, StepExpressionFactory.this.tableConverter);
-            Type targetType = tableOrDocStringType.get();
+        RawTableTransformer<?> tableTransform = (argumentIndex, raw) -> {
+            var parameterInfo = safeGetParameterInfos.apply(argumentIndex);
+            var targetType = parameterInfo.getType();
+            var transpose = parameterInfo.isTransposed();
+            var dataTable = DataTable.create(raw, this.tableConverter);
             return dataTable.convert(Object.class.equals(targetType) ? DataTable.class : targetType, transpose);
         };
 
-        DocStringTransformer<?> docStringTransform = (text, contentType) -> {
-            DocString docString = DocString.create(text, contentType, docStringConverter);
-            Type targetType = tableOrDocStringType.get();
+        DocStringTransformer<?> docStringTransform = (argumentIndex, text, contentType) -> {
+            var parameterInfo = safeGetParameterInfos.apply(argumentIndex);
+            var targetType = parameterInfo.getType();
+            var docString = DocString.create(text, contentType, docStringConverter);
             return docString.convert(Object.class.equals(targetType) ? DocString.class : targetType);
         };
         return new StepExpression(expression, docStringTransform, tableTransform);
-    }
-
-    private static Supplier<Type> stepDefinitionDoesNotTakeAnyParameter(StepDefinition stepDefinition) {
-        return () -> {
-            throw new CucumberException("step definition at %s does not take any parameters"
-                    .formatted(stepDefinition.getLocation()));
-        };
     }
 
     private Expression crateExpression(String expressionString) {

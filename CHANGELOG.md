@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Java] Declare step definitions with minimal ceremony ([#3200](https://github.com/cucumber/cucumber-jvm/issues/3200))
 - [Java] Display hints when the glue is not efficiently configured ([#3151](https://github.com/cucumber/cucumber-jvm/pull/3151), Julien Kronegg)
 - [JUnit Platform] Use `ParallelHierarchicalTestExecutorServiceFactory` ([#3105](https://github.com/cucumber/cucumber-jvm/pull/3105))
-
+- [Core] Support both DocString and DataTable arguments on steps ([#3213](https://github.com/cucumber/cucumber-jvm/pull/3213))
 
 ### Fixed
 - [JUnit Platform Engine] Accept partial matches with `cucumber.filter.name` and align the behavior with JUnit 4 and CLI ([#3174](https://github.com/cucumber/cucumber-jvm/pull/3174))

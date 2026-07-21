@@ -6,6 +6,6 @@ import org.jspecify.annotations.Nullable;
 interface DocStringTransformer<T> {
 
     @Nullable
-    T transform(String docString, @Nullable String contentType);
+    T transform(int argumentIndex, String docString, @Nullable String contentType);
 
 }
