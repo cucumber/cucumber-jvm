@@ -1126,13 +1126,12 @@ class CucumberTestEngineTest {
 
     @Test
     void supportsEmptyRerunFile() {
-        EngineTestKit.engine(ENGINE_ID)
+        EngineDiscoveryResults result = EngineTestKit.engine(ENGINE_ID)
                 .selectors(
                     selectFile("src/test/resources/rerun/empty-rerun.txt"))
-                .execute()
-                .allEvents()
-                .assertThatEvents()
-                .haveExactly(0, event(test()));
+                .discover();
+
+        assertThat(result.getDiscoveryIssues()).isEmpty();
     }
 
 }
