@@ -1124,4 +1124,15 @@ class CucumberTestEngineTest {
                 .haveExactly(2, event(scenario("scenario:3", "A single scenario")));
     }
 
+    @Test
+    void supportsEmptyRerunFile() {
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(
+                    selectFile("src/test/resources/rerun/empty-rerun.txt"))
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveExactly(0, event(test()));
+    }
+
 }
