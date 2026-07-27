@@ -21,33 +21,35 @@ Supported properties are:
 
 ```
 cucumber.ansi-colors.disabled=  # true or false. default: false
-                     
+
 cucumber.execution.dry-run=     # true or false. default: false
- 
+
 cucumber.execution.limit=       # number of scenarios to execute (CLI only).
-  
+
 cucumber.execution.order=       # lexical, reverse, random or random:[seed] (CLI only). default: lexical
 
 cucumber.execution.wip=         # true or false. default: false.
                                 # Fails if there any passing scenarios
-                                # CLI only.   
+                                # CLI only.
+
+cucumber.execution.threads=     # number of threads used to execute scenarios (CLI only).
 
 cucumber.features=              # comma separated list of feature paths.
                                 # format: [ PATH[.feature[:LINE]*] | URI[.feature[:LINE]*] | @PATH ]
                                 # example: path/to/features, classpath:com/example/features, path/to/example.feature:42, @path/to/rerun.txt
-  
+
 cucumber.filter.name=           # a regular expression
                                 # only scenarios with matching names are executed.
-                                # combined with cucumber.filter.tags using "and" semantics. 
+                                # combined with cucumber.filter.tags using "and" semantics.
                                 # example: ^Hello (World|Cucumber)$
 
-cucumber.filter.tags=           # a cucumber tag expression. 
+cucumber.filter.tags=           # a cucumber tag expression.
                                 # only scenarios with matching tags are executed.
                                 # combined with cucumber.filter.name using "and" semantics.
                                 # example: @Cucumber and not (@Gherkin or @Zucchini)
 
-cucumber.glue=                  # comma separated package names. 
-                                # example: com.example.glue  
+cucumber.glue=                  # comma separated package names.
+                                # example: com.example.glue
 
 cucumber.glue.hint.enabled=    # true or false
                                # default: true
@@ -57,7 +59,7 @@ cucumber.glue.hint.threshold=  # threshold value as an ISO-8601 duration string
                                # default: PT0.1S
                                # if the expected gain is higher than this value, the glue hint is displayed.
 
-cucumber.plugin=                # comma separated plugin strings. 
+cucumber.plugin=                # comma separated plugin strings.
                                 # example: pretty, json:path/to/report.json
                                 # example: com.example.MyCustomPlugin:path/to/report.xml
 
@@ -69,10 +71,10 @@ cucumber.uuid-generator         # uuid generator class name of a registered serv
                                 # example: com.example.MyUuidGenerator
 
 cucumber.publish.enabled        # true or false. default: false
-                                # enable publishing of test results 
+                                # enable publishing of test results
 
 cucumber.publish.quiet          # true or false. default: false
-                                # supress publish banner after test exeuction  
+                                # suppress publish banner after test execution
 
 cucumber.publish.token          # any string value.
                                 # publish authenticated test results
@@ -80,7 +82,7 @@ cucumber.publish.token          # any string value.
 cucumber.publish.url            # a valid url
                                 # location to publish test reports to
 
-cucumber.snippet-type=          # underscore or camelcase. 
+cucumber.snippet-type=          # underscore or camelcase.
                                 # default: underscore
 ```
 
