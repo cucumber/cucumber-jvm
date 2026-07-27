@@ -170,15 +170,13 @@ public final class CucumberPropertiesParser {
     }
 
     private <T> void parse(
-            CucumberPropertiesProvider properties, String propertyName, Function<String, T> parser,
-            Consumer<T> setter
+            CucumberPropertiesProvider properties, String propertyName, Function<String, T> parser, Consumer<T> setter
     ) {
         parseAll(properties, propertyName, parser.andThen(Collections::singletonList), setter);
     }
 
     private <T> void parseAll(
-            CucumberPropertiesProvider properties, String propertyName,
-            Function<String, Collection<T>> parser,
+            CucumberPropertiesProvider properties, String propertyName, Function<String, Collection<T>> parser,
             Consumer<T> setter
     ) {
         String property = properties.get(propertyName);
@@ -189,8 +187,7 @@ public final class CucumberPropertiesParser {
             Collection<T> parsed = parser.apply(property);
             parsed.forEach(setter);
         } catch (Exception e) {
-            throw new CucumberException(
-                "Failed to parse '" + propertyName + "' with value '" + property + "'", e);
+            throw new CucumberException("Failed to parse '" + propertyName + "' with value '" + property + "'", e);
         }
     }
 

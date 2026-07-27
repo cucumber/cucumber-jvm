@@ -49,7 +49,14 @@ public final class Constants {
     public static final String EXECUTION_ORDER_PROPERTY_NAME = "cucumber.execution.order";
 
     /**
-     * Property name used to set the number of threads.
+     * Property name used to set the number of threads when using the CLI.
+     * <p>
+     * This property only has an effect when used with the CLI. To control
+     * parallelism with {@code cucumber-junit},
+     * {@code cucumber-junit-platform-engine} or {@code cucumber-testng} check
+     * their respective documentation.
+     * <p>
+     * The number of threads must be a positive number. Defaults to {@code 1}.
      */
     public static final String EXECUTION_THREADS_PROPERTY_NAME = "cucumber.execution.threads";
 
