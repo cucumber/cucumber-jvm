@@ -18,7 +18,8 @@ public final class GlueDiscoverySelectorResolver {
     }
 
     // TODO: Support filtering for class conditions.
-    // TODO: SUpport filtering before class loading (e.g. files named *StepDefinion).
+    // TODO: SUpport filtering before class loading (e.g. files named
+    // *StepDefinion).
     public Stream<Class<?>> resolve(GlueDiscoveryRequest request) {
         var classesInPackage = request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
                 .stream() //
