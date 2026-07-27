@@ -12,31 +12,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - [Java] Add optional names to `@Before`, `@After`, `@BeforeStep` and `@AfterStep` hooks and emit hook names in messages ([#2917](https://github.com/cucumber/cucumber-jvm/issues/2917), [#3173](https://github.com/cucumber/cucumber-jvm/pull/3173))
+- [Java] Declare step definitions with minimal ceremony ([#3200](https://github.com/cucumber/cucumber-jvm/issues/3200))
+- [Java] Display hints when the glue is not efficiently configured ([#3151](https://github.com/cucumber/cucumber-jvm/pull/3151), Julien Kronegg)
+- [JUnit Platform] Use `ParallelHierarchicalTestExecutorServiceFactory` ([#3105](https://github.com/cucumber/cucumber-jvm/pull/3105))
+- [Core] Support both DocString and DataTable arguments on steps ([#3213](https://github.com/cucumber/cucumber-jvm/pull/3213))
 
 ### Fixed
-- [JUnit Platform Engine] Accept partial matches with `cucumber.filter.name` and align the behavior with JUnit 4 and CLI  ([#3174](https://github.com/cucumber/cucumber-jvm/pull/3174))
+- [JUnit Platform Engine] Accept partial matches with `cucumber.filter.name` and align the behavior with JUnit 4 and CLI ([#3174](https://github.com/cucumber/cucumber-jvm/pull/3174))
+- [JUnit Platform Engine] Don't require global read lock ([#3103](https://github.com/cucumber/cucumber-jvm/pull/3103))
 
 ### Changed
+- [Core] Jackson is now an opt-in dependency ([#3206](https://github.com/cucumber/cucumber-jvm/pull/3206))
 - [All] Set baseline to Java 17 ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
 - [All] Adopt [JSpecify](https://jspecify.dev/) to declare nullability ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
 - [Core] Update skipped, pending and undefined colors ([cucumber/common#2302](https://github.com/cucumber/common/issues/2302))
-- [Core] Update dependency io.cucumber:ci-environment.version to v13.0.0
-- [Core] Update dependency io.cucumber:cucumber-expressions.version to v19.0.0
-- [Core] Update dependency io.cucumber:cucumber-json-formatter.version to v0.4.0
-- [Core] Update dependency io.cucumber:gherkin.version to v38.0.0
-- [Core] Update dependency io.cucumber:html-formatter.version to v23.0.0
-- [Core] Update dependency io.cucumber:junit-xml-formatter.version to v0.12.0
-- [Core] Update dependency io.cucumber:messages.version to v32.0.0
-- [Core] Update dependency io.cucumber:messages-ndjson.version to v0.4.0
-- [Core] Update dependency io.cucumber:pretty-formatter.version to v3.0.0 
-- [Core] Update dependency io.cucumber:query.version to v15.0.1
-- [Core] Update dependency io.cucumber:tag-expressions.version to v9.0.0
+- [Core] Update dependency io.cucumber:ci-environment.version to v14.0.0
+- [Core] Update dependency io.cucumber:cucumber-expressions.version to v20.0.0
+- [Core] Update dependency io.cucumber:cucumber-json-formatter.version to v0.4.1
+- [Core] Update dependency io.cucumber:gherkin.version to v42.0.0
+- [Core] Update dependency io.cucumber:html-formatter.version to v24.1.0
+- [Core] Update dependency io.cucumber:junit-xml-formatter.version to v0.14.0
+- [Core] Update dependency io.cucumber:messages.version to v34.2.0
+- [Core] Update dependency io.cucumber:messages-ndjson.version to v0.5.1
+- [Core] Update dependency io.cucumber:pretty-formatter.version to v4.0.0 
+- [Core] Update dependency io.cucumber:query.version to v16.0.1
+- [Core] Update dependency io.cucumber:tag-expressions.version to v10.0.0
 - [Core] Update dependency io.cucumber:teamcity-formatter.version to v0.3.0
-- [Core] Update dependency io.cucumber:testng-xml-formatter.version to v0.8.0
+- [Core] Update dependency io.cucumber:testng-xml-formatter.version to v0.8.1
 - [Core] Update dependency io.cucumber:usage-formatter.version to v0.2.0
-- [JUnit Platform Engine] Use JUnit Platform 6.0.2 (JUnit Jupiter 6.0.2) ([#3162](https://github.com/cucumber/cucumber-jvm/pull/3162))
+- [JUnit Platform Engine] Use JUnit Platform 6.1.2 (JUnit Jupiter 6.1.2) ([#3162](https://github.com/cucumber/cucumber-jvm/pull/3162))
 - [All] Classes not designed for extension are now final. See [api-changes.json](./.revapi/api-changes.json) for details.
 - [All] Utility classes are no longer instantiatable. See [api-changes.json](./.revapi/api-changes.json) for details.
+
+### Removed
+- [OpenEJB] Removed `cucumber-openejb` in favor of `cucumber-jakarta-openejb` ([#3189](https://github.com/cucumber/cucumber-jvm/pull/3189))
+- [OpenEJB] Removed `cucumber-cdi2` in favor of `cucumber-jakarta-cdi` ([#3192](https://github.com/cucumber/cucumber-jvm/pull/3192))
+- [OpenEJB] Removed `cucumber-deltaspike` without replacement ([#3193](https://github.com/cucumber/cucumber-jvm/pull/3193))
+
+## [7.34.6] - 2026-07-25
+### Fixed
+- [JUnit Platform Engine] Do not fail discovery on an empty rerun file with JUnit Platform 6.1.x ([#3216](https://github.com/cucumber/cucumber-jvm/pull/3216))
+
+## [7.34.5] - 2026-07-23
+### Fixed
+- [Core] Update dependency io.cucumber:messages-ndjson to v0.3.5
+- [Core] Update dependency com.fasterxml.jackson:jackson-bom to v2.22.1
+
+## [7.34.4] - 2026-06-26
+### Fixed
+- [Core] Update dependency io.cucumber:messages-ndjson to v0.3.4
+- [Core] Update dependency com.fasterxml.jackson:jackson-bom to v2.22.0
 
 ## [7.34.3] - 2026-03-04
 ### Fixed
@@ -621,7 +646,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.3...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.6...HEAD
+[7.34.6]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.5...v7.34.6
+[7.34.5]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.4...v7.34.5
+[7.34.4]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.3...v7.34.4
 [7.34.3]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.2...v7.34.3
 [7.34.2]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.1...v7.34.2
 [7.34.1]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.0...v7.34.1

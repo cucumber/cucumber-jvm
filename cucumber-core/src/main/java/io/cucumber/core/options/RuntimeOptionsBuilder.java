@@ -11,6 +11,7 @@ import io.cucumber.tagexpressions.Expression;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,6 +31,8 @@ public final class RuntimeOptionsBuilder {
     private @Nullable Boolean parsedMonochrome = null;
     private @Nullable SnippetType parsedSnippetType = null;
     private @Nullable Boolean parsedWip = null;
+    private @Nullable Boolean parsedGlueHint = null;
+    private @Nullable Duration parsedGlueHintThreshold = null;
     private @Nullable PickleOrder parsedPickleOrder = null;
     private @Nullable Integer parsedCount = null;
     private @Nullable Class<? extends ObjectFactory> parsedObjectFactoryClass = null;
@@ -103,6 +106,14 @@ public final class RuntimeOptionsBuilder {
 
         if (this.parsedWip != null) {
             runtimeOptions.setWip(this.parsedWip);
+        }
+
+        if (this.parsedGlueHint != null) {
+            runtimeOptions.setGlueHintEnabled(this.parsedGlueHint);
+        }
+
+        if (this.parsedGlueHintThreshold != null) {
+            runtimeOptions.setGlueHintThreshold(this.parsedGlueHintThreshold);
         }
 
         if (this.parsedPickleOrder != null) {
@@ -216,6 +227,16 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder setWip(boolean wip) {
         this.parsedWip = wip;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder setGlueHintEnabled(boolean glueHint) {
+        this.parsedGlueHint = glueHint;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder setGlueHintThreshold(Duration threshold) {
+        this.parsedGlueHintThreshold = threshold;
         return this;
     }
 

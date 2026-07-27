@@ -8,6 +8,7 @@ import io.cucumber.junit.platform.engine.CucumberTestDescriptor.PickleDescriptor
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.platform.commons.io.Resource;
 import org.junit.platform.engine.DiscoveryIssue;
 import org.junit.platform.engine.DiscoverySelector;
@@ -51,6 +52,8 @@ import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_DISCOVE
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_LONG_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_SHORT_NAMING_STRATEGY_EXAMPLE_NAME_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PARALLEL_CONFIG_EXECUTOR_SERVICE_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.READ_SUFFIX;
 import static io.cucumber.junit.platform.engine.Constants.READ_WRITE_SUFFIX;
 import static io.cucumber.junit.platform.engine.CucumberEngineDescriptor.ENGINE_ID;
@@ -640,7 +643,7 @@ class CucumberTestEngineTest {
     void supportsDisablingDiscoveryAsRootEngine() {
         DiscoverySelector selector = selectClasspathResource("io/cucumber/junit/platform/engine/single.feature");
 
-        // Ensure classpath resource exists.
+        // Ensure classpath resource from SuiteTestCase exists.
         assertThat(EngineTestKit.engine(ENGINE_ID)
                 .selectors(selector)
                 .discover()
@@ -656,8 +659,14 @@ class CucumberTestEngineTest {
                 .getChildren())
                 .isEmpty();
 
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "true", "false" })
+    void nonRootTestsAreAlwaysDiscovered(String enabled) {
+        // Non-root tests are always discovered
         assertThat(EngineTestKit.engine("junit-platform-suite")
-                .configurationParameter(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, "false")
+                .configurationParameter(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME, enabled)
                 .selectors(selectClass(SuiteTestCase.class))
                 .discover()
                 .getEngineDescriptor()
@@ -1179,6 +1188,50 @@ class CucumberTestEngineTest {
                 .assertThatEvents()
                 .haveExactly(2, event(feature("single.feature", "A feature with a single scenario")))
                 .haveExactly(2, event(scenario("scenario:3", "A single scenario")));
+    }
+
+    @Test
+    void supportsEmptyRerunFile() {
+        var result = EngineTestKit.engine(ENGINE_ID)
+                .selectors(
+                    selectFile("src/test/resources/rerun/empty-rerun.txt"))
+                .discover();
+
+        assertThat(result.getDiscoveryIssues()).isEmpty();
+    }
+
+    @Test
+    void supportsParallelExecutionWithForkJoinPool() {
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/rule.feature"))
+                .configurationParameter(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, "true")
+                .configurationParameter(PARALLEL_CONFIG_EXECUTOR_SERVICE_PROPERTY_NAME, "FORK_JOIN_POOL")
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveExactly(1, event( //
+                    scenario("scenario:5", "An example of this rule"), //
+                    finishedSuccessfully()))
+                .haveExactly(1, event( //
+                    scenario("scenario:11", "An other example of this rule"), //
+                    finishedSuccessfully()));
+    }
+
+    @Test
+    void supportsParallelExecutionWithWorkerThreadPool() {
+        EngineTestKit.engine(ENGINE_ID)
+                .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/rule.feature"))
+                .configurationParameter(PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, "true")
+                .configurationParameter(PARALLEL_CONFIG_EXECUTOR_SERVICE_PROPERTY_NAME, "WORKER_THREAD_POOL")
+                .execute()
+                .allEvents()
+                .assertThatEvents()
+                .haveExactly(1, event( //
+                    scenario("scenario:5", "An example of this rule"), //
+                    finishedSuccessfully()))
+                .haveExactly(1, event( //
+                    scenario("scenario:11", "An other example of this rule"), //
+                    finishedSuccessfully()));
     }
 
     @Suite

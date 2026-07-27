@@ -10,10 +10,16 @@ import io.cucumber.messages.types.PickleTable;
 import io.cucumber.plugin.event.Location;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 final class GherkinMessagesStep implements Step {
 
     private final PickleStep pickleStep;
-    private final @Nullable Argument argument;
+    private final List<Argument> arguments;
     private final String keyword;
     private final StepType stepType;
     private final String previousGwtKeyword;
@@ -27,27 +33,38 @@ final class GherkinMessagesStep implements Step {
             String keyword
     ) {
         this.pickleStep = pickleStep;
-        this.argument = extractArgument(pickleStep, location);
+        this.arguments = extractArgument(pickleStep, location);
         this.keyword = keyword;
         this.stepType = extractKeyWordType(this.keyword, dialect);
         this.previousGwtKeyword = previousGwtKeyword;
         this.location = location;
     }
 
-    private static @Nullable Argument extractArgument(PickleStep pickleStep, Location location) {
-        return pickleStep.getArgument()
-                .map(argument -> {
-                    if (argument.getDocString().isPresent()) {
-                        PickleDocString docString = argument.getDocString().get();
-                        // TODO: Fix this work around
-                        return new GherkinMessagesDocStringArgument(docString, location.getLine() + 1);
+    private static List<Argument> extractArgument(PickleStep pickleStep, Location location) {
+        return Stream.of(pickleStep.getArgument())
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .flatMap(argument -> {
+                    var dt = argument.getDataTable();
+                    var ds = argument.getDocString();
+                    var arguments = new ArrayList<Argument>(2);
+
+                    // Workaround, we don't know the location of the table.
+                    dt.map(pickleTable -> new GherkinMessagesDataTableArgument(pickleTable, location.getLine() + 1))
+                            .ifPresent(arguments::add);
+                    ds.map(pickleDocString -> new GherkinMessagesDocStringArgument(pickleDocString,
+                        location.getLine() + 1))
+                            .ifPresent(arguments::add);
+
+                    var dataTableIndex = dt.flatMap(PickleTable::getArgumentIndex).orElse(Integer.MAX_VALUE);
+                    var docStringIndex = ds.flatMap(PickleDocString::getArgumentIndex).orElse(Integer.MAX_VALUE);
+
+                    if (docStringIndex < dataTableIndex) {
+                        Collections.reverse(arguments);
                     }
-                    if (argument.getDataTable().isPresent()) {
-                        PickleTable table = argument.getDataTable().get();
-                        return new GherkinMessagesDataTableArgument(table, location.getLine() + 1);
-                    }
-                    return null;
-                }).orElse(null);
+                    return arguments.stream();
+                })
+                .toList();
     }
 
     private static StepType extractKeyWordType(String keyword, GherkinDialect dialect) {
@@ -104,7 +121,12 @@ final class GherkinMessagesStep implements Step {
 
     @Override
     public @Nullable Argument getArgument() {
-        return argument;
+        return arguments.isEmpty() ? null : arguments.get(0);
+    }
+
+    @Override
+    public List<Argument> getArguments() {
+        return arguments;
     }
 
     @Override

@@ -1,0 +1,80 @@
+name: Test Java
+  
+permissions: { }  
+
+on:
+  pull_request:
+    branches:
+      - '**'
+  push:
+    branches:
+      - main
+      - v4.x.x
+      - v5.x.x
+      - v6.x.x
+      - v7.x.x
+      - renovate/**
+
+jobs:
+  build:
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - ubuntu-latest
+        version:
+          - 21
+          - 25
+        include:
+          - os: windows-latest
+            version: 21
+
+    name: 'Build Java ${{ matrix.version }} - ${{ matrix.os }}'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.version }}
+          cache: 'maven'
+      - name: Install dependencies
+        run: mvn install -Pinclude-extra-modules -DskipTests=true -DskipITs=true -D"archetype.test.skip=true" -D"maven.javadoc.skip=true" --batch-mode -D"style.color=always" --show-version
+      - name: Test
+        run: mvn verify -Pinclude-extra-modules -D"style.color=always"
+
+  javadoc:
+    name: 'Javadoc'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+      - name: Install dependencies
+        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
+      - name: Javadoc
+        run: mvn javadoc:jar -Dstyle.color=always
+
+  semver:
+    name: 'Semver'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+      - name: Install dependencies
+        run: mvn install -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dmaven.javadoc.skip=true --batch-mode -Dstyle.color=always --show-version
+      - name: Test (Semver check)
+        run: mvn verify -Pcheck-semantic-version -DskipTests=true -DskipITs=true -Darchetype.test.skip=true -Dstyle.color=always

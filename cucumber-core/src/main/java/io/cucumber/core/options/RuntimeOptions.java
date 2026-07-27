@@ -1,5 +1,7 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
@@ -13,6 +15,7 @@ import io.cucumber.tagexpressions.Expression;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -47,6 +50,8 @@ public final class RuntimeOptions implements
     private boolean dryRun;
     private boolean monochrome = false;
     private boolean wip = false;
+    private boolean glueHint = true;
+    private Duration glueHintThreshold = Duration.ofMillis(100);
     private SnippetType snippetType = SnippetType.UNDERSCORE;
     private int threads = 1;
     private PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
@@ -147,11 +152,6 @@ public final class RuntimeOptions implements
     }
 
     @Override
-    public List<URI> getGlue() {
-        return unmodifiableList(glue);
-    }
-
-    @Override
     public boolean isDryRun() {
         return dryRun;
     }
@@ -159,6 +159,24 @@ public final class RuntimeOptions implements
     @Override
     public SnippetType getSnippetType() {
         return snippetType;
+    }
+
+    @Override
+    public boolean isGlueHintEnabled() {
+        return glueHint;
+    }
+
+    void setGlueHintEnabled(boolean glueHint) {
+        this.glueHint = glueHint;
+    }
+
+    @Override
+    public Duration getGlueHintThreshold() {
+        return glueHintThreshold;
+    }
+
+    void setGlueHintThreshold(Duration glueHintThreshold) {
+        this.glueHintThreshold = glueHintThreshold;
     }
 
     @Override
@@ -173,6 +191,14 @@ public final class RuntimeOptions implements
     @Override
     public @Nullable Class<? extends UuidGenerator> getUuidGeneratorClass() {
         return uuidGeneratorClass;
+    }
+
+    @Override
+    public GlueDiscoveryRequest getGlueDiscoveryRequest() {
+        return GlueDiscoveryRequest.builder() //
+                .options(this)
+                .selectors(glue.stream().map(GlueDiscoverySelector::selectUri).toList()) //
+                .build();
     }
 
     void setUuidGeneratorClass(Class<? extends UuidGenerator> uuidGeneratorClass) {

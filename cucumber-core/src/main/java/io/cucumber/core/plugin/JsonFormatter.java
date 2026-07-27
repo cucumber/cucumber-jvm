@@ -16,7 +16,8 @@ public final class JsonFormatter implements ConcurrentEventListener {
 
     public JsonFormatter(OutputStream out) {
         URI cwdUri = new File("").toPath().toUri();
-        this.writer = MessagesToJsonWriter.builder(Jackson.OBJECT_MAPPER::writeValue)
+        var serializer = JsonInstance.serializer(Object.class);
+        this.writer = MessagesToJsonWriter.builder(serializer::writeValue)
                 .relativizeAgainst(cwdUri)
                 .build(out);
     }

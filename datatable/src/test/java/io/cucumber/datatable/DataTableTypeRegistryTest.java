@@ -1,8 +1,8 @@
 package io.cucumber.datatable;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;

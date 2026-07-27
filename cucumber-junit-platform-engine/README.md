@@ -119,7 +119,7 @@ into a Suite.
 @SelectPackages("com.example")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example")
 @ConfigurationParametersResource("cucumber.properties")
-public class RunCucumberTest {
+class RunCucumberTest {
 }
 ```
 
@@ -304,7 +304,7 @@ import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 @IncludeEngines("cucumber")
 @SelectPackages("com.example")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example")
-public class RunCucumberTest {
+class RunCucumberTest {
 }
 ```
 
@@ -467,6 +467,14 @@ cucumber.filter.tags=                                          # a cucumber tag 
 cucumber.glue=                                                 # comma separated package names.
                                                                # example: com.example.glue  
 
+cucumber.glue.hint.enabled=                                    # true or false
+                                                               # default: true
+                                                               # enable displaying glue hint in case of inneficient configuration.
+
+cucumber.glue.hint.threshold=                                  # threshold value as an ISO-8601 duration string
+                                                               # default: PT0.1S
+                                                               # if the expected gain is higher than this value, the glue hint is displayed.
+
 cucumber.junit-platform.discovery.as-root-engine               # true or false
                                                                # default: true
                                                                # enable discovery when used as a root engine.
@@ -556,6 +564,9 @@ cucumber.execution.parallel.config.dynamic.factor=             # positive double
 
 cucumber.execution.parallel.config.custom.class=               # class name.
                                                                # example: com.example.MyCustomParallelStrategy
+
+cucumber.execution.parallel.config.executor-service            # FORK_JOIN_POOL, WORKER_THREAD_POOL
+                                                               # default: depends on JUnit version
 
 cucumber.execution.exclusive-resources.<tag-name>.read-write=  # a comma separated list of strings
                                                                # example: resource-a, resource-b.
@@ -656,10 +667,10 @@ import org.junit.jupiter.api.Assumptions;
 
 import java.util.List;
 
-public class RpnCalculatorSteps {
+class RpnCalculatorSteps {
 
    @Before
-   public void before() {
+   void before() {
        boolean condition = // decide if tests should abort
        Assumptions.assumeTrue(condition, "Condition not met");
    }
@@ -682,7 +693,7 @@ The JUnit Platform Engine supports rerun files. Rerun files must have the
 @SelectPackages("com.example")
 // Writes the failed tests to rerun.txt
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "rerun:target/rerun.txt")
-public class RunCucumber { 
+class RunCucumber { 
 }
 ```
 
@@ -693,7 +704,7 @@ can be selected for execution:
 @Suite(failIfNoTests = false) // Allows the suite have no tests to rerun if all tests in RunCucumber passed
 @IncludeEngines("cucumber")
 @SelectFile("target/rerun.txt") // Selects the rerun file, must end with .txt 
-public class RerunRunCucumber {
+class RerunRunCucumber {
 }
 ```
 

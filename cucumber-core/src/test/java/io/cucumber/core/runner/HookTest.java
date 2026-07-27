@@ -2,6 +2,7 @@ package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.EventBus;
@@ -12,7 +13,6 @@ import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.snippets.TestSnippet;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InOrder;
 
 import java.time.Clock;
@@ -56,7 +56,7 @@ class HookTest {
             Glue glue = invocation.getArgument(0);
             glue.addBeforeHook(hook);
             return null;
-        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
+        }).when(backend).loadGlue(any(Glue.class), any(GlueDiscoveryRequest.class));
 
         Runner runner = new Runner(bus, Collections.singleton(backend), objectFactory, runtimeOptions);
 
@@ -64,7 +64,7 @@ class HookTest {
 
         InOrder inOrder = inOrder(hook, backend);
         inOrder.verify(backend).buildWorld();
-        inOrder.verify(hook).execute(ArgumentMatchers.any());
+        inOrder.verify(hook).execute(any());
         inOrder.verify(backend).disposeWorld();
     }
 
@@ -81,7 +81,7 @@ class HookTest {
             Glue glue = invocation.getArgument(0);
             glue.addBeforeHook(hook);
             return null;
-        }).when(backend).loadGlue(any(Glue.class), ArgumentMatchers.anyList());
+        }).when(backend).loadGlue(any(Glue.class), any(GlueDiscoveryRequest.class));
 
         RuntimeException e = assertThrows(RuntimeException.class,
             () -> new Runner(bus, Collections.singleton(backend), objectFactory,

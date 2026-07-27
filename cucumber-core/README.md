@@ -48,7 +48,15 @@ cucumber.filter.tags=           # a cucumber tag expression.
 
 cucumber.glue=                  # comma separated package names. 
                                 # example: com.example.glue  
-  
+
+cucumber.glue.hint.enabled=    # true or false
+                               # default: true
+                               # enable displaying glue hint in case of inneficient configuration.
+
+cucumber.glue.hint.threshold=  # threshold value as an ISO-8601 duration string
+                               # default: PT0.1S
+                               # if the expected gain is higher than this value, the glue hint is displayed.
+
 cucumber.plugin=                # comma separated plugin strings. 
                                 # example: pretty, json:path/to/report.json
                                 # example: com.example.MyCustomPlugin:path/to/report.xml

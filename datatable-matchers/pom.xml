@@ -14,11 +14,11 @@
 
     <properties>
         <project.Automatic-Module-Name>io.cucumber.datatable.matchers</project.Automatic-Module-Name>
-        <project.rootdir>${project.basedir}/..</project.rootdir>
+        <project.rootdir>..</project.rootdir>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <guava.version>33.6.0-jre</guava.version>
         <hamcrest.version>3.0</hamcrest.version>
-        <junit-jupiter.version>6.0.3</junit-jupiter.version>
+        <junit-jupiter.version>6.1.2</junit-jupiter.version>
     </properties>
 
     <dependencyManagement>
@@ -46,13 +46,13 @@
             <artifactId>apiguardian-api</artifactId>
             <version>${apiguardian-api.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jspecify</groupId>
             <artifactId>jspecify</artifactId>
             <version>1.0.0</version>
         </dependency>
-        
+
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>datatable</artifactId>

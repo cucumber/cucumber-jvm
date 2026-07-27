@@ -1,0 +1,27 @@
+name: Release Maven
+
+permissions: { }
+
+on:
+  push:
+    branches: [release/*]
+
+jobs:
+  publish-mvn:
+    name: Publish Maven Package
+    runs-on: ubuntu-latest
+    environment: Release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - uses: cucumber/action-publish-mvn@252601e47a5d699c325d1f046199a4d6f2c7b9db # v3.0.1
+        with:
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          nexus-username: ${{ secrets.SONATYPE_USERNAME }}
+          nexus-password: ${{ secrets.SONATYPE_PASSWORD }}

@@ -12,9 +12,9 @@
     <name>Cucumber-JVM: Kotlin Java8</name>
 
     <properties>
-        <project.rootdir>${project.basedir}/..</project.rootdir>
-        <kotlin.version>2.3.21</kotlin.version>
-        <junit-jupiter.version>6.0.3</junit-jupiter.version>
+        <project.rootdir>..</project.rootdir>
+        <kotlin.version>2.4.10</kotlin.version>
+        <junit-jupiter.version>6.1.2</junit-jupiter.version>
     </properties>
 
     <dependencyManagement>

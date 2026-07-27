@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.logging.LogRecordListener;
@@ -14,12 +15,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.stream.Collectors.toList;
@@ -30,7 +33,10 @@ import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInA
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @WithLogRecordListener
 class CucumberPropertiesParserTest {
@@ -121,17 +127,38 @@ class CucumberPropertiesParserTest {
     void should_parse_glue() {
         properties.put(Constants.GLUE_PROPERTY_NAME, "com.example.steps");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getGlue(), contains(
-            URI.create("classpath:/com/example/steps")));
+        assertThat(options.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class), contains(
+            selectUri("classpath:/com/example/steps")));
     }
 
     @Test
     void should_parse_glue_list() {
         properties.put(Constants.GLUE_PROPERTY_NAME, "com.example.app.steps, com.example.other.steps");
         RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
-        assertThat(options.getGlue(), contains(
-            URI.create("classpath:/com/example/app/steps"),
-            URI.create("classpath:/com/example/other/steps")));
+        assertThat(options.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class), contains(
+            selectUri("classpath:/com/example/app/steps"),
+            selectUri("classpath:/com/example/other/steps")));
+    }
+
+    @Test
+    void should_parse_glue_hint_enabled_false() {
+        properties.put(Constants.GLUE_HINT_ENABLED_PROPERTY_NAME, "false");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertFalse(options.isGlueHintEnabled());
+    }
+
+    @Test
+    void should_parse_glue_hint_enabled_true() {
+        properties.put(Constants.GLUE_HINT_ENABLED_PROPERTY_NAME, "true");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertTrue(options.isGlueHintEnabled());
+    }
+
+    @Test
+    void should_parse_glue_hint_threshold_specific_value() {
+        properties.put(Constants.GLUE_HINT_THRESHOLD_PROPERTY_NAME, "PT0.123S");
+        RuntimeOptions options = cucumberPropertiesParser.parse(properties).build();
+        assertEquals(Duration.ofMillis(123), options.getGlueHintThreshold());
     }
 
     @Test

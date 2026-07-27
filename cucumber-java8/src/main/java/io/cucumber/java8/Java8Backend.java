@@ -3,19 +3,23 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 import org.jspecify.annotations.Nullable;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
 import static io.cucumber.java8.LambdaGlueRegistry.CLOSED;
+import static java.lang.reflect.Modifier.isAbstract;
+import static java.lang.reflect.Modifier.isPrivate;
+import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Objects.requireNonNull;
 
 final class Java8Backend implements Backend {
@@ -34,16 +38,17 @@ final class Java8Backend implements Backend {
     }
 
     @Override
-    public void loadGlue(Glue glue, List<URI> gluePaths) {
+    public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
         this.glue = new ClosureAwareGlueRegistry(glue);
         // Scan for Java8 style glue (lambdas)
-        gluePaths.stream()
+        request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
+                .stream() //
+                .map(GlueDiscoverySelector.UriGlueDiscoverySelector::uri)
                 .filter(gluePath -> ClasspathSupport.CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
                 .map(basePackageName -> classFinder.scanForSubClassesInPackage(basePackageName, LambdaGlue.class))
                 .flatMap(Collection::stream)
-                .filter(glueClass -> !glueClass.isInterface())
-                .filter(glueClass -> glueClass.getConstructors().length > 0)
+                .filter(Java8Backend::isInstantiable)
                 .distinct()
                 .forEach(glueClass -> {
                     container.addClass(glueClass);
@@ -74,4 +79,10 @@ final class Java8Backend implements Backend {
         return new Java8Snippet();
     }
 
+    private static boolean isInstantiable(Class<?> clazz) {
+        return !clazz.isInterface()
+                && !isPrivate(clazz.getModifiers())
+                && !isAbstract(clazz.getModifiers())
+                && (isStatic(clazz.getModifiers()) || clazz.getEnclosingClass() == null);
+    }
 }

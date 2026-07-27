@@ -24,7 +24,7 @@ public final class StepHooksSteps {
     private final List<String> afterStepKeywords = new ArrayList<>();
 
     @Before
-    public void reset() {
+    void reset() {
         beforeStepTexts.clear();
         beforeStepKeywords.clear();
         afterStepTexts.clear();
@@ -32,31 +32,31 @@ public final class StepHooksSteps {
     }
 
     @BeforeStep
-    public void beforeStep(Scenario scenario, Step step) {
+    void beforeStep(Scenario scenario, Step step) {
         assertNotNull(step, "Step should not be null in @BeforeStep");
         beforeStepTexts.add(step.getText());
         beforeStepKeywords.add(step.getKeyword());
     }
 
     @AfterStep
-    public void afterStep(Scenario scenario, Step step) {
+    void afterStep(Scenario scenario, Step step) {
         assertNotNull(step, "Step should not be null in @AfterStep");
         afterStepTexts.add(step.getText());
         afterStepKeywords.add(step.getKeyword());
     }
 
     @Given("I have a step to execute")
-    public void i_have_a_step_to_execute() {
+    void i_have_a_step_to_execute() {
         // Step execution - hooks will capture the step info
     }
 
     @When("I execute another step")
-    public void i_execute_another_step() {
+    void i_execute_another_step() {
         // Step execution - hooks will capture the step info
     }
 
     @Then("the BeforeStep hook captured the correct step info")
-    public void the_before_step_hook_captured_the_correct_step_info() {
+    void the_before_step_hook_captured_the_correct_step_info() {
         // At this point, BeforeStep has run for Given, When, and this Then step
         // So we check the first two entries
         assertTrue(beforeStepTexts.size() >= 2, "BeforeStep should have captured at least 2 steps");
@@ -67,7 +67,7 @@ public final class StepHooksSteps {
     }
 
     @Then("the AfterStep hook captured the correct step info")
-    public void the_after_step_hook_captured_the_correct_step_info() {
+    void the_after_step_hook_captured_the_correct_step_info() {
         // AfterStep runs after each step, so by this Then step,
         // it has already captured Given and When steps
         assertTrue(afterStepTexts.size() >= 2, "AfterStep should have captured at least 2 steps");

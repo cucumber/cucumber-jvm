@@ -1,5 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
@@ -21,7 +23,7 @@ import org.junit.platform.engine.support.config.PrefixedConfigurationParameters;
 import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import org.junit.platform.engine.support.hierarchical.Node.ExecutionMode;
 
-import java.net.URI;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,7 +42,10 @@ import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_HINT_ENABLED_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_HINT_THRESHOLD_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME;
@@ -140,17 +145,6 @@ class CucumberConfiguration implements
     }
 
     @Override
-    public List<URI> getGlue() {
-        return configurationParameters
-                .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
-                .orElse(Collections.singletonList(CLASSPATH_SCHEME_PREFIX))
-                .stream()
-                .map(String::trim)
-                .map(GluePath::parse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public boolean isDryRun() {
         return configurationParameters
                 .getBoolean(EXECUTION_DRY_RUN_PROPERTY_NAME)
@@ -165,6 +159,21 @@ class CucumberConfiguration implements
     }
 
     @Override
+    public boolean isGlueHintEnabled() {
+        return configurationParameters
+                .getBoolean(GLUE_HINT_ENABLED_PROPERTY_NAME)
+                .orElse(true);
+    }
+
+    @Override
+    public Duration getGlueHintThreshold() {
+        return configurationParameters
+                .get(GLUE_HINT_THRESHOLD_PROPERTY_NAME)
+                .map(Duration::parse)
+                .orElseGet(() -> Duration.ofMillis(100));
+    }
+
+    @Override
     public @Nullable Class<? extends ObjectFactory> getObjectFactoryClass() {
         return configurationParameters
                 .get(OBJECT_FACTORY_PROPERTY_NAME, ObjectFactoryParser::parseObjectFactory)
@@ -176,6 +185,22 @@ class CucumberConfiguration implements
         return configurationParameters
                 .get(UUID_GENERATOR_PROPERTY_NAME, UuidGeneratorParser::parseUuidGenerator)
                 .orElse(null);
+    }
+
+    @Override
+    public GlueDiscoveryRequest getGlueDiscoveryRequest() {
+        var selectors = configurationParameters
+                .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
+                .orElse(Collections.singletonList(CLASSPATH_SCHEME_PREFIX))
+                .stream()
+                .map(String::trim)
+                .map(GluePath::parse)
+                .map(GlueDiscoverySelector::selectUri)
+                .toList();
+        return GlueDiscoveryRequest.builder()
+                .options(this)
+                .selectors(selectors)
+                .build();
     }
 
     boolean isParallelExecutionEnabled() {
@@ -224,6 +249,11 @@ class CucumberConfiguration implements
             configurationParameters,
             EXECUTION_EXCLUSIVE_RESOURCES_PREFIX + tag));
 
+    }
+
+    boolean supportsDiscoveryAsRootEngine() {
+        return configurationParameters.getBoolean(JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME)
+                .orElse(true);
     }
 
 }

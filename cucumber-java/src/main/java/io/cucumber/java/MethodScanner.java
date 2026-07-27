@@ -8,10 +8,11 @@ import java.lang.reflect.Method;
 import java.util.function.BiConsumer;
 
 import static io.cucumber.core.resource.ClasspathSupport.classPathScanningExplanation;
-import static io.cucumber.java.InvalidMethodException.createInvalidMethodException;
+import static io.cucumber.java.InvalidMethodException.annotatedMethodInParentClass;
+import static io.cucumber.java.InvalidMethodException.invalidModifier;
 import static io.cucumber.java.Invoker.invoke;
 import static java.lang.reflect.Modifier.isAbstract;
-import static java.lang.reflect.Modifier.isPublic;
+import static java.lang.reflect.Modifier.isPrivate;
 import static java.lang.reflect.Modifier.isStatic;
 import static java.util.Objects.requireNonNull;
 
@@ -31,28 +32,56 @@ final class MethodScanner {
         if (!isInstantiable(aClass)) {
             return;
         }
-        for (Method method : safelyGetMethods(aClass)) {
-            scan(consumer, aClass, method);
+        for (Method method : safelyGetDeclaredMethods(aClass)) {
+            scan(method, validate().andThen(consumer));
+        }
+
+        requireNoGlueDefinitionsInSuperClass(aClass);
+    }
+
+    private static BiConsumer<Method, Annotation> validate() {
+        return (method, annotation) -> {
+            if (!isConcreteNonPrivate(method)) {
+                throw invalidModifier(method);
+            }
+        };
+    }
+
+    private static void requireNoGlueDefinitionsInSuperClass(Class<?> aClass) {
+        for (Class<?> superclass = aClass.getSuperclass(); //
+                !Object.class.equals(superclass); //
+                superclass = superclass.getSuperclass()) {
+            for (Method method : safelyGetDeclaredMethods(superclass)) {
+                scan(method, (candiateMethod, annotation) -> {
+                    throw annotatedMethodInParentClass(candiateMethod, aClass);
+                });
+            }
         }
     }
 
-    private static Method[] safelyGetMethods(Class<?> aClass) {
+    private static Method[] safelyGetDeclaredMethods(Class<?> aClass) {
         try {
-            return aClass.getMethods();
+            return aClass.getDeclaredMethods();
         } catch (NoClassDefFoundError e) {
-            log.warn(e,
-                () -> "Failed to load methods of class '" + aClass.getName() + "'.\n" + classPathScanningExplanation());
+            log.trace(e,
+                () -> "Failed to load declared methods of class '" + aClass.getName() + "'.\n"
+                        + classPathScanningExplanation());
         }
         return new Method[0];
     }
 
+    private static boolean isConcreteNonPrivate(Method aMethod) {
+        return !isPrivate(aMethod.getModifiers())
+                && !isAbstract(aMethod.getModifiers());
+    }
+
     private static boolean isInstantiable(Class<?> clazz) {
-        return isPublic(clazz.getModifiers())
+        return !isPrivate(clazz.getModifiers())
                 && !isAbstract(clazz.getModifiers())
                 && (isStatic(clazz.getModifiers()) || clazz.getEnclosingClass() == null);
     }
 
-    private static void scan(BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method) {
+    private static void scan(Method method, BiConsumer<Method, Annotation> consumer) {
         // prevent unnecessary checking of Object methods
         if (Object.class.equals(method.getDeclaringClass())) {
             return;
@@ -68,25 +97,18 @@ final class MethodScanner {
             return;
         }
 
-        scan(consumer, aClass, method, method.getAnnotations());
+        scan(consumer, method, method.getAnnotations());
     }
 
     private static void scan(
-            BiConsumer<Method, Annotation> consumer, Class<?> aClass, Method method, Annotation[] methodAnnotations
+            BiConsumer<Method, Annotation> consumer, Method method, Annotation[] methodAnnotations
     ) {
         for (Annotation annotation : methodAnnotations) {
             if (isHookAnnotation(annotation) || isStepDefinitionAnnotation(annotation)) {
-                validateMethod(aClass, method);
                 consumer.accept(method, annotation);
             } else if (isRepeatedStepDefinitionAnnotation(annotation)) {
-                scan(consumer, aClass, method, repeatedAnnotations(annotation));
+                scan(consumer, method, repeatedAnnotations(annotation));
             }
-        }
-    }
-
-    private static void validateMethod(Class<?> glueCodeClass, Method method) {
-        if (!glueCodeClass.equals(method.getDeclaringClass())) {
-            throw createInvalidMethodException(method, glueCodeClass);
         }
     }
 

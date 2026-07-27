@@ -2,63 +2,107 @@ package io.cucumber.core.backend;
 
 import io.cucumber.core.exception.CucumberException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsNull.notNullValue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class DefaultObjectFactoryTest {
+public final class DefaultObjectFactoryTest {
     final ObjectFactory factory = new DefaultObjectFactory();
 
     @Test
-    void shouldGiveUsNewInstancesForEachScenario() {
-        factory.addClass(StepDefinition.class);
+    void shouldCreateNewInstancesForEachScenario() {
+        factory.addClass(DefaultConstructor.class);
 
         // Scenario 1
         factory.start();
-        StepDefinition o1 = factory.getInstance(StepDefinition.class);
+        DefaultConstructor o1 = factory.getInstance(DefaultConstructor.class);
         factory.stop();
 
         // Scenario 2
         factory.start();
-        StepDefinition o2 = factory.getInstance(StepDefinition.class);
+        DefaultConstructor o2 = factory.getInstance(DefaultConstructor.class);
         factory.stop();
 
         assertAll(
-            () -> assertThat(o1, is(notNullValue())),
-            () -> assertThat(o1, is(not(equalTo(o2)))),
-            () -> assertThat(o2, is(not(equalTo(o1)))));
+            () -> assertThat(o1).isNotNull(),
+            () -> assertThat(o1).isNotEqualTo(o2),
+            () -> assertThat(o2).isNotEqualTo(o1));
     }
 
-    @Test
-    void shouldThrowForNonZeroArgPublicConstructors() {
-        CucumberException exception = assertThrows(CucumberException.class,
-            () -> factory.getInstance(NoAccessibleConstructor.class));
+    @ParameterizedTest
+    @ValueSource(classes = {
+            DefaultConstructor.class, PublicConstructor.class, PackagePrivateConstructor.class,
+            ProtectedConstructor.class, SubclassWithDefaultConstructor.class
+    })
+    @ValueSource(strings = "io.cucumber.core.backend.fixtures.PackagePrivateClass")
+    void shouldCreateNewInstanceUsingAccessibleConstructors(Object arg) throws ClassNotFoundException {
+        Class<?> clazz;
+        if (arg instanceof Class<?> instance) {
+            clazz = instance;
+        } else if (arg instanceof String className) {
+            clazz = Class.forName(className);
+        } else {
+            throw new IllegalArgumentException();
+        }
 
-        assertThat(exception.getMessage(),
-            is("""
-                    class io.cucumber.core.backend.DefaultObjectFactoryTest$NoAccessibleConstructor does not have an accessible public zero-argument constructor.
-
-                    To use dependency injection add an other ObjectFactory implementation such as:
-                     * cucumber-picocontainer
-                     * cucumber-spring
-                     * cucumber-jakarta-cdi
-                     * ...etc
-                    """));
+        factory.addClass(clazz);
+        factory.start();
+        Object o1 = factory.getInstance(clazz);
+        factory.stop();
+        assertThat(o1).isNotNull();
     }
 
-    public static final class StepDefinition {
+    @ParameterizedTest
+    @ValueSource(classes = { PrivateConstructor.class, ConstructorWithArguments.class })
+    void shouldThrowForInaccessibleConstructors(Class<?> clazz) {
+        CucumberException exception = assertThrows(CucumberException.class, () -> factory.getInstance(clazz));
+        assertThat(exception).hasMessageStartingWith(
+            "class %s does not have an single accessible zero-argument constructor.".formatted(clazz.getName()));
+    }
+
+    public static final class DefaultConstructor {
         // we just test the instances
     }
 
-    public static final class NoAccessibleConstructor {
-        private NoAccessibleConstructor() {
+    public static final class PublicConstructor {
+        public PublicConstructor() {
             /* no-op */
         }
+    }
+
+    public static final class ConstructorWithArguments {
+        public ConstructorWithArguments(String argument) {
+            /* no-op */
+        }
+    }
+
+    static final class PackagePrivateConstructor {
+        PackagePrivateConstructor() {
+            /* no-op */
+        }
+    }
+
+    @SuppressWarnings("ProtectedMembersInFinalClass")
+    protected static final class ProtectedConstructor {
+        protected ProtectedConstructor() {
+            /* no-op */
+        }
+    }
+
+    private static final class PrivateConstructor {
+        private PrivateConstructor() {
+            /* no-op */
+        }
+    }
+
+    static abstract class AbstractSuperClassDefaultConstructor {
+
+    }
+
+    static class SubclassWithDefaultConstructor extends AbstractSuperClassDefaultConstructor {
 
     }
 
