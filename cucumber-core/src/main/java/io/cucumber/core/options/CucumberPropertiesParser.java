@@ -73,6 +73,11 @@ public final class CucumberPropertiesParser {
             PickleOrderParser::parse,
             builder::setPickleOrder);
 
+        parse(properties,
+            EXECUTION_THREADS_PROPERTY_NAME,
+            Integer::parseInt,
+            builder::setThreads);
+
         parseAll(properties,
             FEATURES_PROPERTY_NAME,
             splitAndMap(FeatureWithLinesOrRerunPath::parse),
@@ -151,11 +156,6 @@ public final class CucumberPropertiesParser {
             WIP_PROPERTY_NAME,
             BooleanString::parseBoolean,
             builder::setWip);
-
-        parse(properties,
-            EXECUTION_THREADS_PROPERTY_NAME,
-            Integer::parseInt,
-            builder::setThreads);
 
         return builder;
     }
