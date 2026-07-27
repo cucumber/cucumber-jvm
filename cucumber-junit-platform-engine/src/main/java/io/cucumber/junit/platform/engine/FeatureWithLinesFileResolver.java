@@ -27,6 +27,8 @@ final class FeatureWithLinesFileResolver implements SelectorResolver {
                 .stream()
                 .map(FeatureWithLinesSelector::from)
                 .collect(Collectors.toSet());
-        return Resolution.selectors(selectors);
+        return selectors.isEmpty()
+                ? Resolution.unresolved()
+                : Resolution.selectors(selectors);
     }
 }

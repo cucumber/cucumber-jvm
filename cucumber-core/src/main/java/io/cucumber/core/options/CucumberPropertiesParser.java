@@ -18,6 +18,7 @@ import static io.cucumber.core.options.Constants.ANSI_COLORS_DISABLED_PROPERTY_N
 import static io.cucumber.core.options.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_LIMIT_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.EXECUTION_ORDER_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.EXECUTION_THREADS_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
@@ -72,6 +73,11 @@ public final class CucumberPropertiesParser {
             EXECUTION_ORDER_PROPERTY_NAME,
             PickleOrderParser::parse,
             builder::setPickleOrder);
+
+        parse(properties,
+            EXECUTION_THREADS_PROPERTY_NAME,
+            Integer::parseInt,
+            builder::setThreads);
 
         parseAll(properties,
             FEATURES_PROPERTY_NAME,

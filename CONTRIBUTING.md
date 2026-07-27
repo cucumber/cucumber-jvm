@@ -1,6 +1,8 @@
 ## About to contribute?
 
-We appreciate that. Do keep the following in mind: 
+We appreciate that. Please read [cucumber/.github/CONTRIBUTING.md](https://github.com/cucumber/.github/blob/main/CONTRIBUTING.md) first.
+
+Do keep the following in mind: 
 
 * Before making a significant contribution, consider discussing the outline of 
   your solution first. This may avoid a duplication of efforts.

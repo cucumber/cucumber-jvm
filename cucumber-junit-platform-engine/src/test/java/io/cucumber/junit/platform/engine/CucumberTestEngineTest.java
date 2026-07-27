@@ -1191,6 +1191,16 @@ class CucumberTestEngineTest {
     }
 
     @Test
+    void supportsEmptyRerunFile() {
+        var result = EngineTestKit.engine(ENGINE_ID)
+                .selectors(
+                    selectFile("src/test/resources/rerun/empty-rerun.txt"))
+                .discover();
+
+        assertThat(result.getDiscoveryIssues()).isEmpty();
+    }
+
+    @Test
     void supportsParallelExecutionWithForkJoinPool() {
         EngineTestKit.engine(ENGINE_ID)
                 .selectors(selectClasspathResource("io/cucumber/junit/platform/engine/rule.feature"))
