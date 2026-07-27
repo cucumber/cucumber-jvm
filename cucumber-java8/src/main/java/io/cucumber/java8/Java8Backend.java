@@ -4,18 +4,15 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
-import io.cucumber.core.backend.GlueDiscoverySelector;
+import io.cucumber.core.backend.GlueDiscoverySelectorResolver;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.resource.ClasspathScanner;
-import io.cucumber.core.resource.ClasspathSupport;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static io.cucumber.java8.LambdaGlueRegistry.CLOSED;
 import static java.lang.reflect.Modifier.isAbstract;
@@ -27,39 +24,24 @@ final class Java8Backend implements Backend {
 
     private final Lookup lookup;
     private final Container container;
-    private final ClasspathScanner classFinder;
+    private final GlueDiscoverySelectorResolver resolver;
 
     private final List<Class<? extends LambdaGlue>> lambdaGlueClasses = new ArrayList<>();
     private @Nullable ClosureAwareGlueRegistry glue;
 
-    Java8Backend(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderProvider) {
+    Java8Backend(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderSupplier) {
         this.container = container;
         this.lookup = lookup;
-        this.classFinder = new ClasspathScanner(classLoaderProvider);
+        this.resolver = new GlueDiscoverySelectorResolver(new ClasspathScanner(classLoaderSupplier));
     }
 
     @Override
     public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
         this.glue = new ClosureAwareGlueRegistry(glue);
-        // Scan for Java8 style glue (lambdas)
-        var packageClasses = request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
-                .stream() //
-                .map(GlueDiscoverySelector.UriGlueDiscoverySelector::uri)
-                .filter(gluePath -> ClasspathSupport.CLASSPATH_SCHEME.equals(gluePath.getScheme()))
-                .map(ClasspathSupport::packageName)
-                .map(basePackageName -> classFinder.scanForSubClassesInPackage(basePackageName, LambdaGlue.class))
-                .flatMap(Collection::stream);
-
-        var explicitClasses = request.getSelectorsByType(GlueDiscoverySelector.ClassGlueDiscoverySelector.class) //
-                .stream() //
-                .map(GlueDiscoverySelector.ClassGlueDiscoverySelector::name)
-                .map(classFinder::loadClass)
+        resolver.resolve(request)
                 .filter(LambdaGlue.class::isAssignableFrom)
-                .map(aClass -> (Class<? extends LambdaGlue>) aClass.asSubclass(LambdaGlue.class));
-
-        Stream.concat(packageClasses, explicitClasses)
+                .map(aClass -> (Class<? extends LambdaGlue>) aClass.asSubclass(LambdaGlue.class))
                 .filter(Java8Backend::isInstantiable)
-                .distinct()
                 .forEach(glueClass -> {
                     container.addClass(glueClass);
                     lambdaGlueClasses.add(glueClass);

@@ -37,6 +37,7 @@ public final class ClasspathScanner {
         this.classLoaderSupplier = classLoaderSupplier;
     }
 
+    @Deprecated
     public <T> List<Class<? extends T>> scanForSubClassesInPackage(String packageName, Class<T> parentClass) {
         return scanForClassesInPackage(packageName, isSubClassOf(parentClass))
                 .stream()
@@ -44,7 +45,7 @@ public final class ClasspathScanner {
                 .collect(toList());
     }
 
-    private List<Class<?>> scanForClassesInPackage(String packageName, Predicate<Class<?>> classFilter) {
+    public List<Class<?>> scanForClassesInPackage(String packageName, Predicate<Class<?>> classFilter) {
         requireValidPackageName(packageName);
         requireNonNull(classFilter, "classFilter must not be null");
         List<URI> rootUris = getUrisForPackage(getClassLoader(), packageName);

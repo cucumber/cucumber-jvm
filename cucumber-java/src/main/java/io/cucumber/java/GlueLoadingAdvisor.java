@@ -1,5 +1,7 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.Options;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
@@ -49,9 +51,10 @@ final class GlueLoadingAdvisor {
      * {@value Constants#GLUE_HINT_ENABLED_PROPERTY_NAME} property. The
      * suggestions are ordered by decreasing efficiency.
      *
-     * @param gluePaths the glue paths that have been scanned for glue classes.
+     * @param request the discovery request that has been scanned for glue
+     *                classes.
      */
-    void logGlueLoadingSuggestions(List<URI> gluePaths) {
+    void logGlueLoadingSuggestions(GlueDiscoveryRequest request) {
         if (!options.isGlueHintEnabled()) {
             return;
         }
@@ -75,8 +78,12 @@ final class GlueLoadingAdvisor {
             return;
         }
 
-        List<String> suggestions = new ArrayList<>();
+        var gluePaths = request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
+                .stream() //
+                .map(GlueDiscoverySelector.UriGlueDiscoverySelector::uri) //
+                .toList();
 
+        List<String> suggestions = new ArrayList<>();
         // TODO suggests to use "cucumber.glue-classes" property
         // from https://github.com/cucumber/cucumber-jvm/pull/3120
         addSuggestionCucumberGlue(gluePaths, suggestions);

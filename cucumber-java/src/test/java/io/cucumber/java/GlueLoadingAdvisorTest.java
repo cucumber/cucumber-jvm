@@ -1,5 +1,6 @@
 package io.cucumber.java;
 
+import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.RuntimeOptions;
@@ -9,18 +10,18 @@ import io.cucumber.java.steps.Steps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.List;
 
-import static java.util.Collections.singletonList;
+import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GlueLoadingAdvisorTest {
 
-    final java.util.List<URI> gluePaths = List.of(URI.create("classpath:/com"));
+    final GlueDiscoveryRequest request = GlueDiscoveryRequest.builder()
+            .selectors(selectUri("classpath:/com"))
+            .build();
     final TestClock clock = new TestClock(Instant.now(), ZoneId.systemDefault());
     final LogRecordListener listener = new LogRecordListener();
 
@@ -39,7 +40,7 @@ class GlueLoadingAdvisorTest {
         advisor.glueLoadingStarted();
         advisor.addGlueClass(GlueLoadingAdvisor.class);
         clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(gluePaths);
+        advisor.logGlueLoadingSuggestions(request);
 
         // Then we log some hint message to improve the situation
         String message = listener.getLogRecords().get(0).getMessage();
@@ -60,7 +61,7 @@ class GlueLoadingAdvisorTest {
         advisor.addContainerClass(Steps.class);
         advisor.addGlueClass(PublicStaticInnerClass.class);
         clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(gluePaths);
+        advisor.logGlueLoadingSuggestions(request);
 
         // Then we log some hint message to improve the situation
         String message = listener.getLogRecords().get(0).getMessage();
@@ -86,7 +87,7 @@ class GlueLoadingAdvisorTest {
         advisor.addContainerClass(Steps.class);
         advisor.addGlueClass(NonPublicStaticInnerClass.class);
         clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(gluePaths);
+        advisor.logGlueLoadingSuggestions(request);
 
         // Then we log some hint message to improve the situation
         String message = listener.getLogRecords().get(0).getMessage();
@@ -112,7 +113,7 @@ class GlueLoadingAdvisorTest {
         advisor.addGlueClass(Steps.class);
         advisor.addContainerClass(Steps.class);
         clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(gluePaths);
+        advisor.logGlueLoadingSuggestions(request);
 
         // Then we log some hint message to improve the situation
         String message = listener.getLogRecords().get(0).getMessage();
@@ -140,7 +141,7 @@ class GlueLoadingAdvisorTest {
         advisor.addGlueClass(Steps.class);
         advisor.addContainerClass(Steps.class);
         clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(gluePaths);
+        advisor.logGlueLoadingSuggestions(request);
 
         // Then no hint is displayed
         assertThat(listener.getLogRecords()).isEmpty();
@@ -157,7 +158,9 @@ class GlueLoadingAdvisorTest {
         advisor.addGlueClass(Steps.class);
         advisor.addContainerClass(Steps.class);
         clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(singletonList(URI.create("classpath:/")));
+        advisor.logGlueLoadingSuggestions(GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:/"))
+                .build());
 
         // Then the default hint is displayed
         String message = listener.getLogRecords().get(0).getMessage();
@@ -183,7 +186,7 @@ class GlueLoadingAdvisorTest {
         advisor.addContainerClass(Steps.class);
         advisor.addGlueClass(PublicStaticInnerClass.class);
         clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(gluePaths);
+        advisor.logGlueLoadingSuggestions(request);
 
         // Then no hint is displayed
         assertThat(listener.getLogRecords()).isEmpty();
@@ -196,7 +199,7 @@ class GlueLoadingAdvisorTest {
 
         // When loading no classes
         clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(gluePaths);
+        advisor.logGlueLoadingSuggestions(request);
 
         // Then no hint is displayed
         assertThat(listener.getLogRecords()).isEmpty();
@@ -214,7 +217,7 @@ class GlueLoadingAdvisorTest {
         advisor.addGlueClass(PublicStaticInnerClass.class);
         // When loading a lot of classes
         clock.tick(Duration.ofMillis(300));
-        advisor.logGlueLoadingSuggestions(gluePaths);
+        advisor.logGlueLoadingSuggestions(request);
 
         // Then no hint is displayed
         assertThat(listener.getLogRecords()).isEmpty();
