@@ -17,18 +17,19 @@ final class SpringBackend implements Backend {
 
     SpringBackend(Container container, Supplier<ClassLoader> classLoaderSupplier) {
         this.container = container;
-        this.resolver = new GlueDiscoverySelectorResolver(new ClasspathScanner(classLoaderSupplier));
+        this.resolver = new GlueDiscoverySelectorResolver( //
+            new ClasspathScanner(classLoaderSupplier), //
+            SpringBackend::instantiableClassWithSpringContextAnnotation //
+        );
     }
 
     @Override
     public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
-        resolver.resolve(request)
-                .filter(SpringFactory::hasCucumberContextConfiguration)
-                .filter(this::checkIfOfClassTypeAndNotAbstract)
-                .forEach(container::addClass);
+        resolver.resolve(request).forEach(container::addClass);
     }
 
-    private boolean checkIfOfClassTypeAndNotAbstract(Class<?> clazz) {
-        return !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers());
+    private static boolean instantiableClassWithSpringContextAnnotation(Class<?> clazz) {
+        return SpringFactory.hasCucumberContextConfiguration(clazz) &&
+                !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers());
     }
 }

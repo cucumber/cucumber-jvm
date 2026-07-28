@@ -30,6 +30,7 @@ class ClasspathScannerTest {
         ClasspathScannerTest.class::getClassLoader);
 
     @Test
+    @Deprecated
     void scanForSubClassesInPackage() {
         List<Class<? extends ExampleInterface>> classes = scanner.scanForSubClassesInPackage(
             "io.cucumber.core.resource.test",
@@ -39,6 +40,7 @@ class ClasspathScannerTest {
     }
 
     @Test
+    @Deprecated
     void scanForSubClassesInNonExistingPackage() {
         List<Class<? extends ExampleInterface>> classes = scanner
                 .scanForSubClassesInPackage("io.cucumber.core.resource.does.not.exist", ExampleInterface.class);

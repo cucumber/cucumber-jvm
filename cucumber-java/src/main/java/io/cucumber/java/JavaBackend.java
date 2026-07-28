@@ -22,7 +22,10 @@ final class JavaBackend implements Backend {
     JavaBackend(Lookup lookup, Container container, Supplier<ClassLoader> classLoaderSupplier) {
         this.lookup = lookup;
         this.container = container;
-        this.resolver = new GlueDiscoverySelectorResolver(new ClasspathScanner(classLoaderSupplier));
+        this.resolver = new GlueDiscoverySelectorResolver( //
+            new ClasspathScanner(classLoaderSupplier), //
+            anyClass -> true //
+        );
     }
 
     @Override

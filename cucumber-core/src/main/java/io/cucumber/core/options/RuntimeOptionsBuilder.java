@@ -46,6 +46,8 @@ public final class RuntimeOptionsBuilder {
     private @Nullable Boolean parsedPublish;
     private @Nullable Boolean parsedPublishQuiet;
     private @Nullable Boolean parsedEnablePublishPlugin;
+    private @Nullable Pattern includedClassNamePattern;
+    private @Nullable Pattern excludedClassNamePattern;
 
     public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
         if (parsedRerunPaths == null) {
@@ -189,6 +191,13 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setEnablePublishPlugin(parsedEnablePublishPlugin);
         }
 
+        if (includedClassNamePattern != null) {
+            runtimeOptions.setIncludedClassNamePattern(includedClassNamePattern);
+        }
+        if (excludedClassNamePattern != null) {
+            runtimeOptions.setExcludedClassNamePattern(excludedClassNamePattern);
+        }
+
         return runtimeOptions;
     }
 
@@ -303,4 +312,11 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
+    public void setIncludedClassNamePattern(Pattern pattern) {
+        this.includedClassNamePattern = pattern;
+    }
+
+    public void setExcludedClassNamePattern(Pattern pattern) {
+        this.excludedClassNamePattern = pattern;
+    }
 }

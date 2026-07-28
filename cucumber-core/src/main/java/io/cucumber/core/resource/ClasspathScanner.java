@@ -45,7 +45,15 @@ public final class ClasspathScanner {
                 .collect(toList());
     }
 
-    public List<Class<?>> scanForClassesInPackage(String packageName, Predicate<Class<?>> classFilter) {
+    public List<Class<?>> scanForClassesInPackage(String packageName) {
+        return scanForClassesInPackage(packageName, aClass -> true);
+    }
+
+    public List<Class<?>> scanForClassesInPackage(String packageName, Predicate<Class<?>> classPredicate) {
+        return scanForClassesInPackage(packageName, ClassFilter.of(classPredicate));
+    }
+
+    public List<Class<?>> scanForClassesInPackage(String packageName, ClassFilter classFilter) {
         requireValidPackageName(packageName);
         requireNonNull(classFilter, "classFilter must not be null");
         List<URI> rootUris = getUrisForPackage(getClassLoader(), packageName);
@@ -60,7 +68,7 @@ public final class ClasspathScanner {
         return this.classLoaderSupplier.get();
     }
 
-    private List<Class<?>> findClassesForUris(List<URI> baseUris, String packageName, Predicate<Class<?>> classFilter) {
+    private List<Class<?>> findClassesForUris(List<URI> baseUris, String packageName, ClassFilter classFilter) {
         return baseUris.stream()
                 .map(baseUri -> findClassesForUri(baseUri, packageName, classFilter))
                 .flatMap(Collection::stream)
@@ -68,7 +76,7 @@ public final class ClasspathScanner {
                 .collect(toList());
     }
 
-    private List<Class<?>> findClassesForUri(URI baseUri, String packageName, Predicate<Class<?>> classFilter) {
+    private List<Class<?>> findClassesForUri(URI baseUri, String packageName, ClassFilter classFilter) {
         List<Class<?>> classes = new ArrayList<>();
         pathScanner.findResourcesForUri(
             baseUri,
@@ -91,14 +99,16 @@ public final class ClasspathScanner {
 
     private Function<Path, Consumer<Path>> processClassFiles(
             String basePackageName,
-            Predicate<Class<?>> classFilter,
+            ClassFilter classFilter,
             Consumer<Class<?>> classConsumer
     ) {
         return baseDir -> classFile -> {
             String fqn = determineFullyQualifiedClassName(baseDir, basePackageName, classFile);
-            safelyLoadClass(fqn)
-                    .filter(classFilter)
-                    .ifPresent(classConsumer);
+            if (classFilter.match(fqn)) {
+                safelyLoadClass(fqn)
+                        .filter(classFilter::match)
+                        .ifPresent(classConsumer);
+            }
         };
     }
 
@@ -119,10 +129,6 @@ public final class ClasspathScanner {
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
             throw new IllegalArgumentException("Could not to load class '" + fqn + "'", e);
         }
-    }
-
-    public List<Class<?>> scanForClassesInPackage(String packageName) {
-        return scanForClassesInPackage(packageName, aClass -> true);
     }
 
 }

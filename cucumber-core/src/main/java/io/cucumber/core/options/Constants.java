@@ -142,6 +142,16 @@ public final class Constants {
     public static final String GLUE_CLASSES_PROPERTY_NAME = "cucumber.glue.classes";
 
     /**
+     * TODO:
+     */
+    public static final String GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME = "cucumber.glue.included-class-name-pattern";
+
+    /**
+     * TODO:
+     */
+    public static final String GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME = "cucumber.glue.excluded-class-name-pattern";
+
+    /**
      * Property name to enable displaying cucumber glue loading hints: {@value}
      * <p>
      * Enabling this will make the hints to be displayed if the expected gain is

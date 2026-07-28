@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.GlueDiscoveryFilter;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
@@ -27,6 +28,8 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import static io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter.excludeClassNamePatterns;
+import static io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter.includeClassNamePatterns;
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -69,6 +72,9 @@ public final class RuntimeOptions implements
     // For context see: https://mattwynne.net/new-beginning
     private boolean publishQuiet = true;
     private boolean enablePublishPlugin;
+    // TODO: Set to a default value?
+    private @Nullable Pattern includedClassNamePattern;
+    private @Nullable Pattern excludedClassNamePattern;
 
     private RuntimeOptions() {
 
@@ -197,13 +203,28 @@ public final class RuntimeOptions implements
 
     @Override
     public GlueDiscoveryRequest getGlueDiscoveryRequest() {
-        var uriSelectors = glue.stream().map(GlueDiscoverySelector::selectUri);
-        var classSelectors = glueClasses.stream().map(GlueDiscoverySelector::selectClass);
-        var selectors = Stream.concat(uriSelectors, classSelectors).toList();
         return GlueDiscoveryRequest.builder() //
                 .options(this) //
-                .selectors(selectors) //
+                .filters(createClassNamePatternFilters())
+                .selectors(createGlueDiscoverySelectors()) //
                 .build();
+    }
+
+    private List<? extends GlueDiscoverySelector> createGlueDiscoverySelectors() {
+        var uriSelectors = glue.stream().map(GlueDiscoverySelector::selectUri);
+        var classSelectors = glueClasses.stream().map(GlueDiscoverySelector::selectClass);
+        return Stream.concat(uriSelectors, classSelectors).toList();
+    }
+
+    private List<? extends GlueDiscoveryFilter> createClassNamePatternFilters() {
+        var filters = new ArrayList<GlueDiscoveryFilter>(2);
+        if (includedClassNamePattern != null) {
+            filters.add(includeClassNamePatterns(includedClassNamePattern));
+        }
+        if (excludedClassNamePattern != null) {
+            filters.add(excludeClassNamePatterns(excludedClassNamePattern));
+        }
+        return filters;
     }
 
     void setUuidGeneratorClass(Class<? extends UuidGenerator> uuidGeneratorClass) {
@@ -312,6 +333,14 @@ public final class RuntimeOptions implements
 
     void setEnablePublishPlugin(boolean enablePublishPlugin) {
         this.enablePublishPlugin = enablePublishPlugin;
+    }
+
+    void setIncludedClassNamePattern(Pattern includedClassNamePattern) {
+        this.includedClassNamePattern = includedClassNamePattern;
+    }
+
+    void setExcludedClassNamePattern(Pattern excludedClassNamePattern) {
+        this.excludedClassNamePattern = excludedClassNamePattern;
     }
 
 }

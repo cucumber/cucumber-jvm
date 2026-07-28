@@ -1,5 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
+import io.cucumber.core.backend.GlueDiscoveryFilter;
+import io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
@@ -209,10 +211,28 @@ class CucumberConfiguration implements
 
         var defaultSelector = singletonList(selectUri(GluePath.parse(CLASSPATH_SCHEME_PREFIX)));
 
+        var filters = new ArrayList<GlueDiscoveryFilter>(2);
+        includedClassNamePattern().ifPresent(filters::add);
+        excludedClassNamePattern().ifPresent(filters::add);
+
         return GlueDiscoveryRequest.builder()
                 .options(this)
                 .selectors(selectors.isEmpty() ? defaultSelector : selectors)
+                .filters(filters)
                 .build();
+    }
+
+    private Optional<ClassNameFilter> includedClassNamePattern() {
+        return configurationParameters
+                // TODO: Also add for JUnit
+                .get(io.cucumber.core.options.Constants.GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME, Pattern::compile)
+                .map(ClassNameFilter::includeClassNamePatterns);
+    }
+    private Optional<ClassNameFilter> excludedClassNamePattern() {
+        return configurationParameters
+                // TODO: Also add for JUnit
+                .getBoolean(io.cucumber.core.options.Constants.GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME, Pattern::compile)
+                .map(ClassNameFilter::excludeClassNamePatterns);
     }
 
     boolean isParallelExecutionEnabled() {

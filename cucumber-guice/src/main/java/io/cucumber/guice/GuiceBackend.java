@@ -7,6 +7,7 @@ import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.GlueDiscoverySelectorResolver;
 import io.cucumber.core.resource.ClasspathScanner;
 
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 final class GuiceBackend implements Backend {
@@ -16,13 +17,19 @@ final class GuiceBackend implements Backend {
 
     GuiceBackend(Container container, Supplier<ClassLoader> classLoaderSupplier) {
         this.container = container;
-        this.resolver = new GlueDiscoverySelectorResolver(new ClasspathScanner(classLoaderSupplier));
+        this.resolver = new GlueDiscoverySelectorResolver( //
+            new ClasspathScanner(classLoaderSupplier), //
+            isAssignableFromInjectorSource() //
+        );
     }
 
     @Override
     public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
-        resolver.resolve(request)
-                .filter(InjectorSource.class::isAssignableFrom)
-                .forEach(container::addClass);
+        resolver.resolve(request).forEach(container::addClass);
     }
+
+    private static Predicate<Class<?>> isAssignableFromInjectorSource() {
+        return InjectorSource.class::isAssignableFrom;
+    }
+
 }

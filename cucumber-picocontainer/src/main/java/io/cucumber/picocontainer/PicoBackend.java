@@ -16,14 +16,15 @@ final class PicoBackend implements Backend {
 
     PicoBackend(Container container, Supplier<ClassLoader> classLoaderSupplier) {
         this.container = container;
-        this.resolver = new GlueDiscoverySelectorResolver(new ClasspathScanner(classLoaderSupplier));
+        this.resolver = new GlueDiscoverySelectorResolver( //
+            new ClasspathScanner(classLoaderSupplier), //
+            PicoBackend::hasCucumberPicoProvider //
+        );
     }
 
     @Override
     public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
-        resolver.resolve(request)
-                .filter(PicoBackend::hasCucumberPicoProvider)
-                .forEach(container::addClass);
+        resolver.resolve(request).forEach(container::addClass);
     }
 
     private static boolean hasCucumberPicoProvider(Class<?> clazz) {
