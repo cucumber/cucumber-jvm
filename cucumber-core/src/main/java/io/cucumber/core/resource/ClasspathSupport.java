@@ -155,6 +155,7 @@ public final class ClasspathSupport {
     }
 
     public static String classPathScanningExplanation() {
+        // TODO: Explain class name matcher
         return """
                 By default Cucumber scans the entire classpath for step definitions.
                 You can restrict this by configuring the glue path.
