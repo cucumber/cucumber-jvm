@@ -228,6 +228,7 @@ class CucumberConfiguration implements
                 .get(io.cucumber.core.options.Constants.GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME, Pattern::compile)
                 .map(ClassNameFilter::includeClassNamePatterns);
     }
+
     private Optional<ClassNameFilter> excludedClassNamePattern() {
         return configurationParameters
                 // TODO: Also add for JUnit

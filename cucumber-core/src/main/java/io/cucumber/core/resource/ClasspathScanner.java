@@ -46,11 +46,12 @@ public final class ClasspathScanner {
     }
 
     public List<Class<?>> scanForClassesInPackage(String packageName) {
-        return scanForClassesInPackage(packageName, aClass -> true);
+        return scanForClassesInPackage(packageName, ClassFilter.all());
     }
 
+    @Deprecated
     public List<Class<?>> scanForClassesInPackage(String packageName, Predicate<Class<?>> classPredicate) {
-        return scanForClassesInPackage(packageName, ClassFilter.of(classPredicate));
+        return scanForClassesInPackage(packageName, ClassFilter.of(className -> true, classPredicate));
     }
 
     public List<Class<?>> scanForClassesInPackage(String packageName, ClassFilter classFilter) {

@@ -17,8 +17,8 @@ public final class ClassFilter {
         return new ClassFilter(namePredicate, classPredicate);
     }
 
-    public static ClassFilter of(Predicate<Class<?>> classPredicate) {
-        return new ClassFilter(className -> true, classPredicate);
+    public static ClassFilter all(){
+        return new ClassFilter(className -> true, aClass -> true);
     }
 
     boolean match(String name) {

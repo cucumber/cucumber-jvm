@@ -59,6 +59,21 @@ class ClasspathScannerTest {
     }
 
     @Test
+    void scanForClassesInPackageWithClassNameFilter() {
+        var filter = ClassFilter.of(className -> className.endsWith("ExampleClass"), aClass -> true);
+        List<Class<?>> classes = scanner.scanForClassesInPackage("io.cucumber.core.resource.test", filter);
+        assertThat(classes, containsInAnyOrder(ExampleClass.class));
+
+    }
+
+    @Test
+    void scanForClassesInPackageWithClassFilter() {
+        var filter = ClassFilter.of(className -> true, ExampleClass.class::equals);
+        List<Class<?>> classes = scanner.scanForClassesInPackage("io.cucumber.core.resource.test", filter);
+        assertThat(classes, containsInAnyOrder(ExampleClass.class));
+    }
+
+    @Test
     void scanForClassesInNonExistingPackage() {
         List<Class<?>> classes = scanner.scanForClassesInPackage("io.cucumber.core.resource.does.not.exist");
         assertThat(classes, empty());
