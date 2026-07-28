@@ -1,6 +1,7 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.backend.DefaultObjectFactory;
+import io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter;
 import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.plugin.Options;
@@ -13,6 +14,7 @@ import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
 import static java.util.stream.Collectors.toList;
@@ -132,6 +134,30 @@ class CucumberConfigurationTest {
             contains(
                 selectUri("classpath:/com/example/app"),
                 selectUri("classpath:/com/example/glue")));
+    }
+
+    @Test
+    void getGlueIncludedClassNamePattern() {
+        ConfigurationParameters config = new MapConfigurationParameters(
+            Constants.GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
+            "NounStepDefinitions");
+
+        assertThat(
+            new CucumberConfiguration(config, issueReporter).getGlueDiscoveryRequest()
+                    .getFiltersByType(ClassNameFilter.class),
+            contains(ClassNameFilter.includeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
+    }
+
+    @Test
+    void getGlueExcludedClassNamePattern() {
+        ConfigurationParameters config = new MapConfigurationParameters(
+            Constants.GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
+            "NounStepDefinitions");
+
+        assertThat(
+            new CucumberConfiguration(config, issueReporter).getGlueDiscoveryRequest()
+                    .getFiltersByType(ClassNameFilter.class),
+            contains(ClassNameFilter.excludeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
     }
 
     @Test

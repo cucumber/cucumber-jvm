@@ -112,12 +112,12 @@ public final class CucumberPropertiesParser {
         parse(properties,
             GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
             Pattern::compile,
-            builder::setIncludedClassNamePattern);
+            builder::addGlueExcludedClassNamePattern);
 
         parse(properties,
             GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
             Pattern::compile,
-            builder::setExcludedClassNamePattern);
+            builder::addGlueExcludedClassNamePattern);
 
         parse(properties,
             GLUE_HINT_ENABLED_PROPERTY_NAME,

@@ -28,8 +28,6 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter.excludeClassNamePatterns;
-import static io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter.includeClassNamePatterns;
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -73,8 +71,8 @@ public final class RuntimeOptions implements
     private boolean publishQuiet = true;
     private boolean enablePublishPlugin;
     // TODO: Set to a default value?
-    private @Nullable Pattern includedClassNamePattern;
-    private @Nullable Pattern excludedClassNamePattern;
+    private List<Pattern> glueIncludedClassNamePatterns = emptyList();
+    private List<Pattern> glueExcludedClassNamePatterns = emptyList();
 
     private RuntimeOptions() {
 
@@ -217,14 +215,11 @@ public final class RuntimeOptions implements
     }
 
     private List<? extends GlueDiscoveryFilter> createClassNamePatternFilters() {
-        var filters = new ArrayList<GlueDiscoveryFilter>(2);
-        if (includedClassNamePattern != null) {
-            filters.add(includeClassNamePatterns(includedClassNamePattern));
-        }
-        if (excludedClassNamePattern != null) {
-            filters.add(excludeClassNamePatterns(excludedClassNamePattern));
-        }
-        return filters;
+        var included = glueIncludedClassNamePatterns.stream()
+                .map(GlueDiscoveryFilter.ClassNameFilter::includeClassNamePatterns);
+        var excluded = glueExcludedClassNamePatterns.stream()
+                .map(GlueDiscoveryFilter.ClassNameFilter::excludeClassNamePatterns);
+        return Stream.concat(included, excluded).toList();
     }
 
     void setUuidGeneratorClass(Class<? extends UuidGenerator> uuidGeneratorClass) {
@@ -335,12 +330,12 @@ public final class RuntimeOptions implements
         this.enablePublishPlugin = enablePublishPlugin;
     }
 
-    void setIncludedClassNamePattern(Pattern includedClassNamePattern) {
-        this.includedClassNamePattern = includedClassNamePattern;
+    void setGlueIncludedClassNamePatterns(List<Pattern> glueIncludedClassNamePatterns) {
+        this.glueIncludedClassNamePatterns = glueIncludedClassNamePatterns;
     }
 
-    void setExcludedClassNamePattern(Pattern excludedClassNamePattern) {
-        this.excludedClassNamePattern = excludedClassNamePattern;
+    void setGlueExcludedClassNamePatterns(List<Pattern> glueExcludedClassNamePatterns) {
+        this.glueExcludedClassNamePatterns = glueExcludedClassNamePatterns;
     }
 
 }

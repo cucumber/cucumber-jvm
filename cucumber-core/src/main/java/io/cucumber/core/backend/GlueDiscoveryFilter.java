@@ -9,11 +9,13 @@ public interface GlueDiscoveryFilter {
         boolean apply(String className);
 
         static ClassNameFilter includeClassNamePatterns(Pattern pattern) {
-            return className -> pattern.matcher(className).matches();
+            return new IncludeClassNameFilter(pattern);
         }
 
         static ClassNameFilter excludeClassNamePatterns(Pattern pattern) {
-            return className -> !pattern.matcher(className).matches();
+            return new ExcludeClassNameFilter(pattern);
         }
+
     }
+
 }

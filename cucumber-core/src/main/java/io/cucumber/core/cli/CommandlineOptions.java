@@ -37,6 +37,10 @@ public final class CommandlineOptions {
 
     public static final String GLUE_CLASS = "--glue-class";
 
+    public static final String GLUE_INCLUDED_CLASS_NAME_PATTERN = "--glue-included-class-name-pattern";
+
+    public static final String GLUE_EXCLUDED_CLASS_NAME_PATTERN = "--glue-excluded-class-name-pattern";
+
     public static final String TAGS = "--tags";
     public static final String TAGS_SHORT = "-t";
 

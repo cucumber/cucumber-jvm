@@ -47,8 +47,10 @@ import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_CLASSES_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_HINT_ENABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_HINT_THRESHOLD_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
@@ -224,15 +226,15 @@ class CucumberConfiguration implements
 
     private Optional<ClassNameFilter> includedClassNamePattern() {
         return configurationParameters
-                // TODO: Also add for JUnit
-                .get(io.cucumber.core.options.Constants.GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME, Pattern::compile)
+                .get(GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
+                    Pattern::compile)
                 .map(ClassNameFilter::includeClassNamePatterns);
     }
 
     private Optional<ClassNameFilter> excludedClassNamePattern() {
         return configurationParameters
-                // TODO: Also add for JUnit
-                .getBoolean(io.cucumber.core.options.Constants.GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME, Pattern::compile)
+                .get(GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
+                    Pattern::compile)
                 .map(ClassNameFilter::excludeClassNamePatterns);
     }
 

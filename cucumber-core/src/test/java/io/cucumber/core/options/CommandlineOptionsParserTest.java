@@ -1,5 +1,6 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter;
 import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
@@ -209,6 +210,24 @@ class CommandlineOptionsParserTest {
                 .build();
         assertThat(options.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class),
             contains(selectUri("classpath:/somewhere")));
+    }
+
+    @Test
+    void assigns_glue_included_class_name_pattern() {
+        RuntimeOptions options = parser
+                .parse("--glue-included-class-name-pattern", "NounStepDefinitions")
+                .build();
+        assertThat(options.getGlueDiscoveryRequest().getFiltersByType(ClassNameFilter.class),
+            contains(ClassNameFilter.includeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
+    }
+
+    @Test
+    void assigns_glue_excluded_class_name_pattern() {
+        RuntimeOptions options = parser
+                .parse("--glue-excluded-class-name-pattern", "NounStepDefinitions")
+                .build();
+        assertThat(options.getGlueDiscoveryRequest().getFiltersByType(ClassNameFilter.class),
+            contains(ClassNameFilter.excludeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
     }
 
     @Test

@@ -46,8 +46,8 @@ public final class RuntimeOptionsBuilder {
     private @Nullable Boolean parsedPublish;
     private @Nullable Boolean parsedPublishQuiet;
     private @Nullable Boolean parsedEnablePublishPlugin;
-    private @Nullable Pattern includedClassNamePattern;
-    private @Nullable Pattern excludedClassNamePattern;
+    private List<Pattern> glueIncludedClassNamePatterns = new ArrayList<>();
+    private List<Pattern> glueExcludedClassNamePatterns = new ArrayList<>();
 
     public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
         if (parsedRerunPaths == null) {
@@ -191,11 +191,11 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setEnablePublishPlugin(parsedEnablePublishPlugin);
         }
 
-        if (includedClassNamePattern != null) {
-            runtimeOptions.setIncludedClassNamePattern(includedClassNamePattern);
+        if (!glueIncludedClassNamePatterns.isEmpty()) {
+            runtimeOptions.setGlueIncludedClassNamePatterns(glueIncludedClassNamePatterns);
         }
-        if (excludedClassNamePattern != null) {
-            runtimeOptions.setExcludedClassNamePattern(excludedClassNamePattern);
+        if (!glueExcludedClassNamePatterns.isEmpty()) {
+            runtimeOptions.setGlueExcludedClassNamePatterns(glueExcludedClassNamePatterns);
         }
 
         return runtimeOptions;
@@ -312,11 +312,11 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
-    public void setIncludedClassNamePattern(Pattern pattern) {
-        this.includedClassNamePattern = pattern;
+    public void addGlueIncludedClassNamePattern(Pattern pattern) {
+        this.glueIncludedClassNamePatterns.add(pattern);
     }
 
-    public void setExcludedClassNamePattern(Pattern pattern) {
-        this.excludedClassNamePattern = pattern;
+    public void addGlueExcludedClassNamePattern(Pattern pattern) {
+        this.glueExcludedClassNamePatterns.add(pattern);
     }
 }
