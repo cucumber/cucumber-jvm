@@ -28,9 +28,9 @@ public final class GlueDiscoverySelectorResolver {
                 .map(filter -> (Predicate<String>) filter::apply)
                 .reduce(className -> true, Predicate::and);
 
-        var classesInPackage = request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
+        var classesInPackage = request.getSelectorsByType(UriGlueDiscoverySelector.class) //
                 .stream() //
-                .map(GlueDiscoverySelector.UriGlueDiscoverySelector::uri) //
+                .map(UriGlueDiscoverySelector::uri) //
                 .toList().stream() //
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
@@ -38,9 +38,9 @@ public final class GlueDiscoverySelectorResolver {
                     ClassFilter.of(classNamePredicate, classPredicate)))
                 .flatMap(Collection::stream);
 
-        var explicitClasses = request.getSelectorsByType(GlueDiscoverySelector.ClassGlueDiscoverySelector.class)
+        var explicitClasses = request.getSelectorsByType(ClassGlueDiscoverySelector.class)
                 .stream()
-                .map(GlueDiscoverySelector.ClassGlueDiscoverySelector::name)
+                .map(ClassGlueDiscoverySelector::name)
                 .map(classFinder::loadClass);
 
         return Stream.concat(classesInPackage, explicitClasses).distinct();

@@ -14,7 +14,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GlueLoadingAdvisorTest {

@@ -15,8 +15,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.util.List;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectClass;
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectClass;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;

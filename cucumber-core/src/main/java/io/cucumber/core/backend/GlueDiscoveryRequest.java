@@ -17,14 +17,14 @@ public interface GlueDiscoveryRequest {
         return new Builder();
     }
 
-    <T extends GlueDiscoverySelector> List<T> getSelectorsByType(Class<T> selector);
+    <T extends GlueDiscoverySelectors> List<T> getSelectorsByType(Class<T> selector);
 
     <T extends GlueDiscoveryFilter> List<T> getFiltersByType(Class<T> filterType);
 
     Options getOptions();
 
     final class Builder {
-        private final Set<GlueDiscoverySelector> selectors = new LinkedHashSet<>();
+        private final Set<GlueDiscoverySelectors> selectors = new LinkedHashSet<>();
         private final Set<GlueDiscoveryFilter> filters = new LinkedHashSet<>();
         private Options options = new DefaultOptions();
 
@@ -32,12 +32,12 @@ public interface GlueDiscoveryRequest {
 
         }
 
-        public Builder selectors(GlueDiscoverySelector... selectors) {
+        public Builder selectors(GlueDiscoverySelectors... selectors) {
             this.selectors.addAll(List.of(selectors));
             return this;
         }
 
-        public Builder selectors(List<? extends GlueDiscoverySelector> selectors) {
+        public Builder selectors(List<? extends GlueDiscoverySelectors> selectors) {
             this.selectors.addAll(selectors);
             return this;
         }
@@ -81,11 +81,11 @@ public interface GlueDiscoveryRequest {
 
     final class DefaultGlueDiscoveryRequest implements GlueDiscoveryRequest {
         private final Options options;
-        private final List<GlueDiscoverySelector> selectors;
+        private final List<GlueDiscoverySelectors> selectors;
         private final List<GlueDiscoveryFilter> filters;
 
         public DefaultGlueDiscoveryRequest(
-                Options options, List<GlueDiscoverySelector> selectors, List<GlueDiscoveryFilter> filters
+                Options options, List<GlueDiscoverySelectors> selectors, List<GlueDiscoveryFilter> filters
         ) {
             this.options = options;
             this.selectors = selectors;
@@ -93,7 +93,7 @@ public interface GlueDiscoveryRequest {
         }
 
         @Override
-        public <T extends GlueDiscoverySelector> List<T> getSelectorsByType(Class<T> selectorType) {
+        public <T extends GlueDiscoverySelectors> List<T> getSelectorsByType(Class<T> selectorType) {
             return selectors.stream() //
                     .filter(selectorType::isInstance) //
                     .map(selectorType::cast) //

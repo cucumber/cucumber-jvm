@@ -11,8 +11,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.util.function.Supplier;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectClass;
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectClass;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
 import static java.lang.Thread.currentThread;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

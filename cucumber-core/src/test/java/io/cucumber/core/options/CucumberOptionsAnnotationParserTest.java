@@ -1,6 +1,6 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
+import io.cucumber.core.backend.UriGlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.eventbus.UuidGenerator;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;

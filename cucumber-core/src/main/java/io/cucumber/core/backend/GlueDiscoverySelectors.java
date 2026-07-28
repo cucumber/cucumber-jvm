@@ -2,7 +2,7 @@ package io.cucumber.core.backend;
 
 import java.net.URI;
 
-public interface GlueDiscoverySelector {
+public interface GlueDiscoverySelectors {
 
     static ClassGlueDiscoverySelector selectClass(String name) {
         return new ClassGlueDiscoverySelector(name);
@@ -14,14 +14,6 @@ public interface GlueDiscoverySelector {
 
     static UriGlueDiscoverySelector selectUri(String uri) {
         return selectUri(URI.create(uri));
-    }
-
-    record UriGlueDiscoverySelector(URI uri) implements GlueDiscoverySelector {
-
-    }
-
-    record ClassGlueDiscoverySelector(String name) implements GlueDiscoverySelector {
-
     }
 
 }

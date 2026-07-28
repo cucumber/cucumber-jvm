@@ -2,7 +2,7 @@ package io.cucumber.core.options;
 
 import io.cucumber.core.backend.GlueDiscoveryFilter;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
-import io.cucumber.core.backend.GlueDiscoverySelector;
+import io.cucumber.core.backend.GlueDiscoverySelectors;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
@@ -208,9 +208,9 @@ public final class RuntimeOptions implements
                 .build();
     }
 
-    private List<? extends GlueDiscoverySelector> createGlueDiscoverySelectors() {
-        var uriSelectors = glue.stream().map(GlueDiscoverySelector::selectUri);
-        var classSelectors = glueClasses.stream().map(GlueDiscoverySelector::selectClass);
+    private List<? extends GlueDiscoverySelectors> createGlueDiscoverySelectors() {
+        var uriSelectors = glue.stream().map(GlueDiscoverySelectors::selectUri);
+        var classSelectors = glueClasses.stream().map(GlueDiscoverySelectors::selectClass);
         return Stream.concat(uriSelectors, classSelectors).toList();
     }
 

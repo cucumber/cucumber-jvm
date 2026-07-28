@@ -2,7 +2,7 @@ package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.backend.DefaultObjectFactory;
 import io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter;
-import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
+import io.cucumber.core.backend.UriGlueDiscoverySelector;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

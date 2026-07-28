@@ -3,7 +3,7 @@ package io.cucumber.junit.platform.engine;
 import io.cucumber.core.backend.GlueDiscoveryFilter;
 import io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
-import io.cucumber.core.backend.GlueDiscoverySelector;
+import io.cucumber.core.backend.GlueDiscoverySelectors;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
@@ -200,13 +200,13 @@ class CucumberConfiguration implements
                 .get(GLUE_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
                         .map(String::trim)
                         .map(GluePath::parse)
-                        .map(GlueDiscoverySelector::selectUri))
+                        .map(GlueDiscoverySelectors::selectUri))
                 .orElseGet(Stream::empty);
 
         var classSelectors = configurationParameters
                 .get(GLUE_CLASSES_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
                         .map(String::trim)
-                        .map(GlueDiscoverySelector::selectClass))
+                        .map(GlueDiscoverySelectors::selectClass))
                 .orElseGet(Stream::empty);
 
         var selectors = Stream.concat(uriSelectors, classSelectors).toList();

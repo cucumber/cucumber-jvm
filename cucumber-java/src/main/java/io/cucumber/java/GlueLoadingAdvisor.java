@@ -1,8 +1,8 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.GlueDiscoveryRequest;
-import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.Options;
+import io.cucumber.core.backend.UriGlueDiscoverySelector;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.Constants;
@@ -78,9 +78,9 @@ final class GlueLoadingAdvisor {
             return;
         }
 
-        var gluePaths = request.getSelectorsByType(GlueDiscoverySelector.UriGlueDiscoverySelector.class) //
+        var gluePaths = request.getSelectorsByType(UriGlueDiscoverySelector.class) //
                 .stream() //
-                .map(GlueDiscoverySelector.UriGlueDiscoverySelector::uri) //
+                .map(UriGlueDiscoverySelector::uri) //
                 .toList();
 
         List<String> suggestions = new ArrayList<>();

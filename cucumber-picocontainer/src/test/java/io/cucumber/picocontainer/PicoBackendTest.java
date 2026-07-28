@@ -12,8 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectClass;
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectClass;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
 import static java.lang.Thread.currentThread;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;

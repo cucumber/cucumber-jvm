@@ -1,38 +1,42 @@
 package io.cucumber.core.backend;
 
-import org.jspecify.annotations.Nullable;
-
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 final class ExcludeClassNameFilter implements GlueDiscoveryFilter.ClassNameFilter {
-    private final Pattern pattern;
+    private final List<Pattern> patterns;
 
-    ExcludeClassNameFilter(Pattern pattern) {
-        this.pattern = Objects.requireNonNull(pattern);
+    ExcludeClassNameFilter(Pattern... patterns) {
+        this.patterns = List.of(patterns);
     }
 
     @Override
     public boolean apply(String className) {
-        return !pattern.matcher(className).matches();
+        return patterns.stream().noneMatch(pattern -> pattern.matcher(className).matches());
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
+    public boolean equals(Object o) {
         if (!(o instanceof ExcludeClassNameFilter that))
             return false;
-        return Objects.equals(pattern.pattern(), that.pattern.pattern());
+        return Objects.equals(getPatterns(), that.getPatterns());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(pattern.pattern());
+        return Objects.hashCode(getPatterns());
+    }
+
+    private List<String> getPatterns() {
+        // Pattern doesn't implement equals/hashcode
+        return patterns.stream().map(Pattern::pattern).toList();
     }
 
     @Override
     public String toString() {
         return "ExcludeClassNameFilter{" +
-                "pattern=" + pattern +
+                "patterns=" + getPatterns() +
                 '}';
     }
 }
