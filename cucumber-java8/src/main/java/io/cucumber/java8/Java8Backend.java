@@ -71,7 +71,11 @@ final class Java8Backend implements Backend {
     }
 
     private static boolean isInstantiableLambdaGlue(Class<?> aClass) {
-        return LambdaGlue.class.isAssignableFrom(aClass) && isInstantiable(aClass);
+        return isSubClassOfLambdaGlue(aClass) && isInstantiable(aClass);
+    }
+
+    private static boolean isSubClassOfLambdaGlue(Class<?> aClass) {
+        return !aClass.equals(LambdaGlue.class) && LambdaGlue.class.isAssignableFrom(aClass);
     }
 
     private static boolean isInstantiable(Class<?> clazz) {
