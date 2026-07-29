@@ -12,17 +12,16 @@ class ClassNameFilterTest {
 
     @Test
     void includes() {
-         var include = includeClassNamePatterns(Pattern.compile("A"));
+        var include = includeClassNamePatterns(Pattern.compile("A"));
         assertThat(include.apply("A")).isTrue();
         assertThat(include.apply("B")).isFalse();
     }
 
     @Test
     void includesIfAnyOneMatches() {
-         var include = includeClassNamePatterns(
-                 Pattern.compile("A"),
-                 Pattern.compile("B")
-         );
+        var include = includeClassNamePatterns(
+            Pattern.compile("A"),
+            Pattern.compile("B"));
         assertThat(include.apply("A")).isTrue();
         assertThat(include.apply("B")).isTrue();
         assertThat(include.apply("C")).isFalse();
@@ -30,7 +29,7 @@ class ClassNameFilterTest {
 
     @Test
     void excludes() {
-         var exclude = excludeClassNamePatterns(Pattern.compile("A"));
+        var exclude = excludeClassNamePatterns(Pattern.compile("A"));
         assertThat(exclude.apply("A")).isFalse();
         assertThat(exclude.apply("B")).isTrue();
     }
@@ -38,9 +37,8 @@ class ClassNameFilterTest {
     @Test
     void excludesIfAnyOneMatches() {
         var exclude = excludeClassNamePatterns(
-                Pattern.compile("A"),
-                Pattern.compile("B")
-        );
+            Pattern.compile("A"),
+            Pattern.compile("B"));
         assertThat(exclude.apply("A")).isFalse();
         assertThat(exclude.apply("B")).isFalse();
         assertThat(exclude.apply("C")).isTrue();

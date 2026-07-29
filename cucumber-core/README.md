@@ -20,73 +20,79 @@ for more information.
 Supported properties are:
 
 ```
-cucumber.ansi-colors.disabled=  # true or false. default: false
+cucumber.ansi-colors.disabled=              # true or false. default: false
 
-cucumber.execution.dry-run=     # true or false. default: false
+cucumber.execution.dry-run=                 # true or false. default: false
 
-cucumber.execution.limit=       # number of scenarios to execute (CLI only).
+cucumber.execution.limit=                   # number of scenarios to execute (CLI only).
 
-cucumber.execution.order=       # lexical, reverse, random or random:[seed] (CLI only). default: lexical
+cucumber.execution.order=                   # lexical, reverse, random or random:[seed] (CLI only). default: lexical
 
-cucumber.execution.wip=         # true or false. default: false.
-                                # Fails if there any passing scenarios
-                                # CLI only.
+cucumber.execution.wip=                     # true or false. default: false.
+                                            # Fails if there any passing scenarios
+                                            # CLI only.
 
-cucumber.execution.threads=     # number of threads used to execute scenarios (CLI only).
+cucumber.execution.threads=                 # number of threads used to execute scenarios (CLI only).
 
-cucumber.features=              # comma separated list of feature paths.
-                                # format: [ PATH[.feature[:LINE]*] | URI[.feature[:LINE]*] | @PATH ]
-                                # example: path/to/features, classpath:com/example/features, path/to/example.feature:42, @path/to/rerun.txt
+cucumber.features=                          # comma separated list of feature paths.
+                                            # format: [ PATH[.feature[:LINE]*] | URI[.feature[:LINE]*] | @PATH ]
+                                            # example: path/to/features, classpath:com/example/features, path/to/example.feature:42, @path/to/rerun.txt
 
-cucumber.filter.name=           # a regular expression
-                                # only scenarios with matching names are executed.
-                                # combined with cucumber.filter.tags using "and" semantics.
-                                # example: ^Hello (World|Cucumber)$
+cucumber.filter.name=                       # a regular expression
+                                            # only scenarios with matching names are executed.
+                                            # combined with cucumber.filter.tags using "and" semantics.
+                                            # example: ^Hello (World|Cucumber)$
 
-cucumber.filter.tags=           # a cucumber tag expression.
-                                # only scenarios with matching tags are executed.
-                                # combined with cucumber.filter.name using "and" semantics.
-                                # example: @Cucumber and not (@Gherkin or @Zucchini)
+cucumber.filter.tags=                       # a cucumber tag expression.
+                                            # only scenarios with matching tags are executed.
+                                            # combined with cucumber.filter.name using "and" semantics.
+                                            # example: @Cucumber and not (@Gherkin or @Zucchini)
 
-cucumber.glue=                  # comma separated package names.
-                                # example: com.example.glue
+cucumber.glue=                              # comma separated package names.
+                                            # example: com.example.glue
 
-cucumber.glue.classes=          # comma separated class names.
-                                # example: com.example.StepDefinitionsA, com.example.StepDefinitionsB 
+cucumber.glue-classes=                      # comma separated class names.
+                                            # example: com.example.StepDefinitionsA, com.example.StepDefinitionsB
 
-cucumber.glue.hint.enabled=    # true or false
-                               # default: true
-                               # enable displaying glue hint in case of inneficient configuration.
+cucumber.glue.included-class-name-pattern=  # pattern for included glue classes
+                                            # example: .*StepDefinitions?|.*Hooks?
 
-cucumber.glue.hint.threshold=  # threshold value as an ISO-8601 duration string
-                               # default: PT0.1S
-                               # if the expected gain is higher than this value, the glue hint is displayed.
+cucumber.glue.excluded-class-name-pattern=  # pattern for excluded glue classes
+                                            # example: .*UnwantedStepDefinitions?|.*UnwantedHooks?
 
-cucumber.plugin=                # comma separated plugin strings.
-                                # example: pretty, json:path/to/report.json
-                                # example: com.example.MyCustomPlugin:path/to/report.xml
+cucumber.glue.hint.enabled=                 # true or false
+                                            # default: true
+                                            # enable displaying glue hint in case of inneficient configuration.
 
-cucumber.object-factory=        # object factory class name.
-                                # example: com.example.MyObjectFactory
+cucumber.glue.hint.threshold=               # threshold value as an ISO-8601 duration string
+                                            # default: PT0.1S
+                                            # if the expected gain is higher than this value, the glue hint is displayed.
 
-cucumber.uuid-generator         # uuid generator class name of a registered service provider.
-                                # default: io.cucumber.core.eventbus.RandomUuidGenerator
-                                # example: com.example.MyUuidGenerator
+cucumber.plugin=                            # comma separated plugin strings.
+                                            # example: pretty, json:path/to/report.json
+                                            # example: com.example.MyCustomPlugin:path/to/report.xml
 
-cucumber.publish.enabled        # true or false. default: false
-                                # enable publishing of test results
+cucumber.object-factory=                    # object factory class name.
+                                            # example: com.example.MyObjectFactory
 
-cucumber.publish.quiet          # true or false. default: false
-                                # suppress publish banner after test execution
+cucumber.uuid-generator                     # uuid generator class name of a registered service provider.
+                                            # default: io.cucumber.core.eventbus.RandomUuidGenerator
+                                            # example: com.example.MyUuidGenerator
 
-cucumber.publish.token          # any string value.
-                                # publish authenticated test results
+cucumber.publish.enabled                    # true or false. default: false
+                                            # enable publishing of test results
 
-cucumber.publish.url            # a valid url
-                                # location to publish test reports to
+cucumber.publish.quiet                      # true or false. default: false
+                                            # suppress publish banner after test execution
 
-cucumber.snippet-type=          # underscore or camelcase.
-                                # default: underscore
+cucumber.publish.token                      # any string value.
+                                            # publish authenticated test results
+
+cucumber.publish.url                        # a valid url
+                                            # location to publish test reports to
+
+cucumber.snippet-type=                      # underscore or camelcase.
+                                            # default: underscore
 ```
 
 Each property also has an `UPPER_CASE` and `snake_case` variant. For example
