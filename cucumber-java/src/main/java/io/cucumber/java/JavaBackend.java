@@ -31,18 +31,18 @@ final class JavaBackend implements Backend {
     @Override
     public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
         GlueAdaptor glueAdaptor = new GlueAdaptor(lookup, glue);
-        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(request.getOptions());
-        advisor.glueLoadingStarted();
-        resolver.resolve(request)
-                .forEach(aGlueClass -> {
-                    advisor.addGlueClass(aGlueClass);
-                    scan(aGlueClass, (method, annotation) -> {
-                        advisor.addContainerClass(method.getDeclaringClass());
-                        container.addClass(method.getDeclaringClass());
-                        glueAdaptor.addDefinition(method, annotation);
+        try (var advisor = new GlueLoadingAdvisor(request)) {
+            resolver.resolve(request)
+                    .forEach(aGlueClass -> {
+                        advisor.addGlueClass(aGlueClass);
+                        scan(aGlueClass, (method, annotation) -> {
+                            advisor.addContainerClass(method.getDeclaringClass());
+                            container.addClass(method.getDeclaringClass());
+                            glueAdaptor.addDefinition(method, annotation);
+                        });
                     });
-                });
-        advisor.logGlueLoadingSuggestions(request);
+
+        }
     }
 
     @Override

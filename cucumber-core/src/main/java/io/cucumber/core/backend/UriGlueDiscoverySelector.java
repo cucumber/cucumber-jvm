@@ -18,7 +18,8 @@ public final class UriGlueDiscoverySelector implements GlueDiscoverySelectors {
 
     @Override
     public boolean equals(@Nullable Object o) {
-        if (!(o instanceof UriGlueDiscoverySelector that)) return false;
+        if (!(o instanceof UriGlueDiscoverySelector that))
+            return false;
         return Objects.equals(uri, that.uri);
     }
 
@@ -32,6 +33,5 @@ public final class UriGlueDiscoverySelector implements GlueDiscoverySelectors {
         return "UriGlueDiscoverySelector[" +
                 "uri=" + uri + ']';
     }
-
 
 }

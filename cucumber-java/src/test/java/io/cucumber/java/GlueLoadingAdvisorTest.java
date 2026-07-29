@@ -19,9 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class GlueLoadingAdvisorTest {
 
-    final GlueDiscoveryRequest request = GlueDiscoveryRequest.builder()
-            .selectors(selectUri("classpath:/com"))
-            .build();
     final TestClock clock = new TestClock(Instant.now(), ZoneId.systemDefault());
     final LogRecordListener listener = new LogRecordListener();
 
@@ -33,15 +30,16 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_default_options_class_without_glue() {
-        RuntimeOptions options = RuntimeOptions.defaultOptions();
-        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:com/example/project"))
+                .options(RuntimeOptions.defaultOptions())
+                .build();
 
-        // When loading a lot of classes
-        advisor.glueLoadingStarted();
-        advisor.addGlueClass(GlueLoadingAdvisor.class);
-        clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(request);
-
+        try (var advisor = new GlueLoadingAdvisor(request, clock)) {
+            // When loading a lot of classes
+            advisor.addGlueClass(GlueLoadingAdvisor.class);
+            clock.tick(Duration.ofSeconds(1));
+        }
         // Then we log some hint message to improve the situation
         String message = listener.getLogRecords().get(0).getMessage();
         assertThat(message).startsWith("""
@@ -52,16 +50,18 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_default_options_public_static_inner_classes() {
-        RuntimeOptions options = RuntimeOptions.defaultOptions();
-        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:com/example/project"))
+                .options(RuntimeOptions.defaultOptions())
+                .build();
 
-        // When loading a lot of classes
-        advisor.glueLoadingStarted();
-        advisor.addGlueClass(Steps.class);
-        advisor.addContainerClass(Steps.class);
-        advisor.addGlueClass(PublicStaticInnerClass.class);
-        clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(request);
+        try (var advisor = new GlueLoadingAdvisor(request, clock)) {
+            // When loading a lot of classes
+            advisor.addGlueClass(Steps.class);
+            advisor.addContainerClass(Steps.class);
+            advisor.addGlueClass(PublicStaticInnerClass.class);
+            clock.tick(Duration.ofSeconds(1));
+        }
 
         // Then we log some hint message to improve the situation
         String message = listener.getLogRecords().get(0).getMessage();
@@ -78,16 +78,18 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_default_options_non_public_static_inner_classes() {
-        RuntimeOptions options = RuntimeOptions.defaultOptions();
-        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:com/example/project"))
+                .options(RuntimeOptions.defaultOptions())
+                .build();
 
-        // When loading a lot of classes
-        advisor.glueLoadingStarted();
-        advisor.addGlueClass(Steps.class);
-        advisor.addContainerClass(Steps.class);
-        advisor.addGlueClass(NonPublicStaticInnerClass.class);
-        clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(request);
+        try (var advisor = new GlueLoadingAdvisor(request, clock)) {
+            // When loading a lot of classes
+            advisor.addGlueClass(Steps.class);
+            advisor.addContainerClass(Steps.class);
+            advisor.addGlueClass(NonPublicStaticInnerClass.class);
+            clock.tick(Duration.ofSeconds(1));
+        }
 
         // Then we log some hint message to improve the situation
         String message = listener.getLogRecords().get(0).getMessage();
@@ -104,16 +106,18 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_default_options() {
-        RuntimeOptions options = RuntimeOptions.defaultOptions();
-        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:com/example/project"))
+                .options(RuntimeOptions.defaultOptions())
+                .build();
 
-        // When loading a lot of classes
-        advisor.glueLoadingStarted();
-        advisor.addGlueClass(GlueLoadingAdvisor.class);
-        advisor.addGlueClass(Steps.class);
-        advisor.addContainerClass(Steps.class);
-        clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(request);
+        try (var advisor = new GlueLoadingAdvisor(request, clock)) {
+            // When loading a lot of classes
+            advisor.addGlueClass(GlueLoadingAdvisor.class);
+            advisor.addGlueClass(Steps.class);
+            advisor.addContainerClass(Steps.class);
+            clock.tick(Duration.ofSeconds(1));
+        }
 
         // Then we log some hint message to improve the situation
         String message = listener.getLogRecords().get(0).getMessage();
@@ -133,15 +137,17 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_default_options_glue_only_classes() {
-        RuntimeOptions options = RuntimeOptions.defaultOptions();
-        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:com/example/project"))
+                .options(RuntimeOptions.defaultOptions())
+                .build();
 
-        // When loading only classes with glue
-        advisor.glueLoadingStarted();
-        advisor.addGlueClass(Steps.class);
-        advisor.addContainerClass(Steps.class);
-        clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(request);
+        try (var advisor = new GlueLoadingAdvisor(request, clock)) {
+            // When loading only classes with glue
+            advisor.addGlueClass(Steps.class);
+            advisor.addContainerClass(Steps.class);
+            clock.tick(Duration.ofSeconds(1));
+        }
 
         // Then no hint is displayed
         assertThat(listener.getLogRecords()).isEmpty();
@@ -149,18 +155,18 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_glue_path_is_default_package() {
-        RuntimeOptions options = RuntimeOptions.defaultOptions();
-        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
-
-        // When loading classes from root package
-        advisor.glueLoadingStarted();
-        advisor.addGlueClass(GlueLoadingAdvisor.class);
-        advisor.addGlueClass(Steps.class);
-        advisor.addContainerClass(Steps.class);
-        clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(GlueDiscoveryRequest.builder()
+        var request = GlueDiscoveryRequest.builder()
                 .selectors(selectUri("classpath:/"))
-                .build());
+                .options(RuntimeOptions.defaultOptions())
+                .build();
+
+        try (var advisor = new GlueLoadingAdvisor(request, clock)) {
+            // When loading classes from root package
+            advisor.addGlueClass(GlueLoadingAdvisor.class);
+            advisor.addGlueClass(Steps.class);
+            advisor.addContainerClass(Steps.class);
+            clock.tick(Duration.ofSeconds(1));
+        }
 
         // Then the default hint is displayed
         String message = listener.getLogRecords().get(0).getMessage();
@@ -176,17 +182,19 @@ class GlueLoadingAdvisorTest {
     @Test
     void logs_loadGlue_hints_no_display() {
         // Given glue loading hint is disabled
-        RuntimeOptions options = new RuntimeOptionsBuilder().setGlueHintEnabled(false).build();
-        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:/"))
+                .options(new RuntimeOptionsBuilder().setGlueHintEnabled(false).build())
+                .build();
 
-        // When loading a lot of classes
-        advisor.glueLoadingStarted();
-        advisor.addGlueClass(GlueLoadingAdvisor.class);
-        advisor.addGlueClass(Steps.class);
-        advisor.addContainerClass(Steps.class);
-        advisor.addGlueClass(PublicStaticInnerClass.class);
-        clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(request);
+        try (var advisor = new GlueLoadingAdvisor(request, clock)) {
+            // When loading a lot of classes
+            advisor.addGlueClass(GlueLoadingAdvisor.class);
+            advisor.addGlueClass(Steps.class);
+            advisor.addContainerClass(Steps.class);
+            advisor.addGlueClass(PublicStaticInnerClass.class);
+            clock.tick(Duration.ofSeconds(1));
+        }
 
         // Then no hint is displayed
         assertThat(listener.getLogRecords()).isEmpty();
@@ -194,30 +202,34 @@ class GlueLoadingAdvisorTest {
 
     @Test
     void logs_loadGlue_hints_no_glue_no_display() {
-        RuntimeOptions options = RuntimeOptions.defaultOptions();
-        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options);
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:com/example/project"))
+                .options(RuntimeOptions.defaultOptions())
+                .build();
 
-        // When loading no classes
-        clock.tick(Duration.ofSeconds(1));
-        advisor.logGlueLoadingSuggestions(request);
-
+        try (var ignored = new GlueLoadingAdvisor(request)) {
+            // When loading no classes
+            clock.tick(Duration.ofSeconds(1));
+        }
         // Then no hint is displayed
         assertThat(listener.getLogRecords()).isEmpty();
     }
 
     @Test
     void logs_loadGlue_hints_below_threshold() {
-        RuntimeOptions options = new RuntimeOptionsBuilder().setGlueHintThreshold(Duration.ofMillis(201)).build();
-        GlueLoadingAdvisor advisor = new GlueLoadingAdvisor(options, clock);
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:/"))
+                .options(new RuntimeOptionsBuilder().setGlueHintThreshold(Duration.ofMillis(201)).build())
+                .build();
 
-        advisor.glueLoadingStarted();
-        advisor.addGlueClass(GlueLoadingAdvisor.class);
-        advisor.addGlueClass(Steps.class);
-        advisor.addContainerClass(Steps.class);
-        advisor.addGlueClass(PublicStaticInnerClass.class);
-        // When loading a lot of classes
-        clock.tick(Duration.ofMillis(300));
-        advisor.logGlueLoadingSuggestions(request);
+        try (var advisor = new GlueLoadingAdvisor(request, clock)) {
+            advisor.addGlueClass(GlueLoadingAdvisor.class);
+            advisor.addGlueClass(Steps.class);
+            advisor.addContainerClass(Steps.class);
+            advisor.addGlueClass(PublicStaticInnerClass.class);
+            // When loading a lot of classes
+            clock.tick(Duration.ofMillis(300));
+        }
 
         // Then no hint is displayed
         assertThat(listener.getLogRecords()).isEmpty();

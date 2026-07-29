@@ -1,7 +1,7 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.backend.UriGlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.UriGlueDiscoverySelector;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.WithLogRecordListener;

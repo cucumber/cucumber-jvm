@@ -1,13 +1,11 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.GlueDiscoveryRequest;
-import io.cucumber.core.backend.Options;
 import io.cucumber.core.backend.UriGlueDiscoverySelector;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.Constants;
 import io.cucumber.core.resource.ClasspathSupport;
-import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Modifier;
 import java.net.URI;
@@ -25,23 +23,29 @@ import java.util.stream.Collectors;
  * This class gives advices to the developer to improve the glue loading
  * performance.
  */
-final class GlueLoadingAdvisor {
+final class GlueLoadingAdvisor implements AutoCloseable {
     private static final Logger log = LoggerFactory.getLogger(GlueLoadingAdvisor.class);
     private final Set<Class<?>> containerClasses = new HashSet<>();
     private final Set<Class<?>> glueClasses = new HashSet<>();
-    private final Options options;
+    private final GlueDiscoveryRequest request;
     private final Clock clock;
-    private @Nullable Instant glueLoadingStart;
+    private final Instant glueLoadingStart;
 
     static final AtomicBoolean loggedOnce = new AtomicBoolean();
 
-    GlueLoadingAdvisor(Options options) {
-        this(options, Clock.systemUTC());
+    GlueLoadingAdvisor(GlueDiscoveryRequest request) {
+        this(request, Clock.systemUTC());
     }
 
-    GlueLoadingAdvisor(Options options, Clock clock) {
-        this.options = options;
+    GlueLoadingAdvisor(GlueDiscoveryRequest request, Clock clock) {
+        this.request = request;
         this.clock = clock;
+        this.glueLoadingStart = clock.instant();
+    }
+
+    @Override
+    public void close() {
+        logGlueLoadingSuggestions();
     }
 
     /**
@@ -50,19 +54,14 @@ final class GlueLoadingAdvisor {
      * {@value Constants#GLUE_HINT_THRESHOLD_PROPERTY_NAME} property. Enabled by
      * {@value Constants#GLUE_HINT_ENABLED_PROPERTY_NAME} property. The
      * suggestions are ordered by decreasing efficiency.
-     *
-     * @param request the discovery request that has been scanned for glue
-     *                classes.
      */
-    void logGlueLoadingSuggestions(GlueDiscoveryRequest request) {
+    private void logGlueLoadingSuggestions() {
+        var options = request.getOptions();
         if (!options.isGlueHintEnabled()) {
             return;
         }
         int glueClassCount = glueClasses.size();
         if (glueClassCount == 0) {
-            return;
-        }
-        if (glueLoadingStart == null) {
             return;
         }
         var duration = Duration.between(glueLoadingStart, Instant.now(clock));
@@ -85,7 +84,8 @@ final class GlueLoadingAdvisor {
 
         List<String> suggestions = new ArrayList<>();
         // TODO suggests to use "cucumber.glue.classes" property
-        // TODO suggests to use "cucumber.glue.included/excluded-classes-pattern" property
+        // TODO suggests to use
+        // "cucumber.glue.included/excluded-classes-pattern" property
         // from https://github.com/cucumber/cucumber-jvm/pull/3120
         addSuggestionCucumberGlue(gluePaths, suggestions);
         addSuggestionRemoveClassWithoutGlueFromGluePackage(suggestions);
@@ -155,10 +155,6 @@ final class GlueLoadingAdvisor {
                     +
                     nonPublicInnerClassesSuggestion + "\n");
         }
-    }
-
-    void glueLoadingStarted() {
-        this.glueLoadingStart = Instant.now(clock);
     }
 
     /**

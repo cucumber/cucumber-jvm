@@ -1,8 +1,8 @@
 package io.cucumber.core.options;
 
 import io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter;
-import io.cucumber.core.backend.UriGlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.UriGlueDiscoverySelector;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;

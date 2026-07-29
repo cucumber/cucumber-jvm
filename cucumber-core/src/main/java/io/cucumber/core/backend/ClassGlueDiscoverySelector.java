@@ -17,7 +17,8 @@ public final class ClassGlueDiscoverySelector implements GlueDiscoverySelectors 
 
     @Override
     public boolean equals(@Nullable Object o) {
-        if (!(o instanceof ClassGlueDiscoverySelector that)) return false;
+        if (!(o instanceof ClassGlueDiscoverySelector that))
+            return false;
         return Objects.equals(name, that.name);
     }
 
@@ -31,6 +32,5 @@ public final class ClassGlueDiscoverySelector implements GlueDiscoverySelectors 
         return "ClassGlueDiscoverySelector[" +
                 "name=" + name + ']';
     }
-
 
 }
