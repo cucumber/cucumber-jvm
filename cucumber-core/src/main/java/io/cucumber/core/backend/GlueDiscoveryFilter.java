@@ -8,11 +8,11 @@ public interface GlueDiscoveryFilter {
 
         boolean apply(String className);
 
-        static ClassNameFilter includeClassNamePatterns(Pattern pattern) {
+        static ClassNameFilter includeClassNamePatterns(Pattern... pattern) {
             return new IncludeClassNameFilter(pattern);
         }
 
-        static ClassNameFilter excludeClassNamePatterns(Pattern pattern) {
+        static ClassNameFilter excludeClassNamePatterns(Pattern... pattern) {
             return new ExcludeClassNameFilter(pattern);
         }
 
