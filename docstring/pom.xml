@@ -16,7 +16,7 @@
         <junit-jupiter.version>6.1.2</junit-jupiter.version>
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <assertj.version>3.27.7</assertj.version>
-        <jspecify.version>1.0.0</jspecify.version>
+        <jspecify.version>1.0.1</jspecify.version>
         <project.Automatic-Module-Name>io.cucumber.docstring</project.Automatic-Module-Name>
         <project.rootdir>..</project.rootdir>
     </properties>
