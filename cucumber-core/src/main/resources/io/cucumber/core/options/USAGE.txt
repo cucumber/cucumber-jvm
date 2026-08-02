@@ -18,7 +18,7 @@ Options:
                                            are  provided Cucumber will search
                                            the classpath.
 
-   --glue-[included|excluded]-class-name-pattern
+   --glue-[included|excluded]-class-name-pattern PATTERN
                                             A pattern for to include or classes
                                             from classpath scanning. e.g:
                                             .*StepDefinitions?|.*Hooks?
