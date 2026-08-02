@@ -101,22 +101,6 @@
             <build>
                 <pluginManagement>
                     <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-jar-plugin</artifactId>
-                            <configuration>
-                                <archive>
-                                    <manifest>
-                                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                        <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                                    </manifest>
-                                    <manifestEntries>
-                                        <Automatic-Module-Name>${project.Automatic-Module-Name}</Automatic-Module-Name>
-                                    </manifestEntries>
-                                </archive>
-                            </configuration>
-                        </plugin>
-
                         <!-- Check code format -->
                         <plugin>
                             <groupId>com.diffplug.spotless</groupId>
@@ -177,6 +161,22 @@
 
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                            <manifestEntries>
+                                <Automatic-Module-Name>${project.Automatic-Module-Name}</Automatic-Module-Name>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+
                 <!-- Semantic version check  -->
                 <plugin>
                     <groupId>org.revapi</groupId>
