@@ -162,7 +162,7 @@ cucumber.filter.tags=                       # a cucumber tag expression.
 cucumber.glue=                              # comma separated package names.
                                             # example: com.example.glue
 
-cucumber.glue-classes=                      # comma separated class names.
+cucumber.glue.classes=                      # comma separated class names.
                                             # example: com.example.StepDefinitionsA, com.example.StepDefinitionsB
 
 cucumber.glue.included-class-name-pattern=  # pattern for included glue classes

@@ -470,6 +470,12 @@ cucumber.glue=                                                 # comma separated
 cucumber.glue.classes=                                         # comma separated class names.
                                                                # example: com.example.StepDefinitionsA, com.example.StepDefinitionsB 
 
+cucumber.glue.included-class-name-pattern=                     # pattern for included glue classes
+                                                               # example: .*StepDefinitions?|.*Hooks?
+
+cucumber.glue.excluded-class-name-pattern=                     # pattern for excluded glue classes
+                                                               # example: .*UnwantedStepDefinitions?|.*UnwantedHooks?
+
 cucumber.glue.hint.enabled=                                    # true or false
                                                                # default: true
                                                                # enable displaying glue hint in case of inneficient configuration.
