@@ -155,10 +155,9 @@ public final class ClasspathSupport {
     }
 
     public static String classPathScanningExplanation() {
-        // TODO: Explain class name matcher
         return """
                 By default Cucumber scans the entire classpath for step definitions.
-                You can restrict this by configuring the glue path.
+                You can restrict this by configuring the glue path and the included or excluded class patterns.
 
                 %s""".formatted(configurationExamples());
     }
@@ -181,11 +180,29 @@ public final class ClasspathSupport {
 
     public static String configurationExamples() {
         return """
-                Examples:
+                ## Configuring the Glue path - Examples:
+
+                JUnit / TestNG:
                  - @CucumberOptions(glue = "com.example.application")
+
+                JUnit Jupiter:
                  - @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.example.application")
+
+                Properties:
                  - src/test/resources/junit-platform.properties   cucumber.glue=com.example.application
                  - src/test/resources/cucumber.properties         cucumber.glue=com.example.application
+
+                ## Configuring the included and excluded class name patterns - Examples:
+
+                Properties:
+                 - src/test/resources/junit-platform.properties   cucumber.glue.included-class-name-pattern=.*StepDefinitions|.*Hooks
+                 - src/test/resources/junit-platform.properties   cucumber.glue.excluded-class-name-pattern=.*UnwantedStepDefinitions|.*UnwantedHooks
+                 - src/test/resources/cucumber.properties   cucumber.glue.included-class-name-pattern=.*StepDefinitions|.*Hooks
+                 - src/test/resources/cucumber.properties   cucumber.glue.excluded-class-name-pattern=.*UnwantedStepDefinitions|.*UnwantedHooks
+
+                JUnit Jupiter:
+                 - @ConfigurationParameter(key = GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME, value = ".*StepDefinitions|.*Hooks")
+                 - @ConfigurationParameter(key = GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME, value = ".*UnwantedStepDefinitions|.*UnwantedHooks")
                 """;
     }
 
