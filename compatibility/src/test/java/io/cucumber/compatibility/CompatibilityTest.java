@@ -70,7 +70,11 @@ final class CompatibilityTest {
         // exception: Cucumber JVM can't fail test runs intentionally
         "test-run-exception",
         // exception: Cucumber JVM does not continue after any failed step
-        "failedish-combinations");
+        "failedish-combinations",
+        // exception: Cucumber JVM skips all steps after the first failing step,
+        // including undefined steps
+        "undefined-multiple",
+        "examples-tables-undefined-multiple");
 
     private static final Map<String, Map<Pattern, Matcher<?>>> divergingExpectations = createDivergingExpectations();
 
