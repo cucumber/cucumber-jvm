@@ -1,7 +1,7 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.UriGlueDiscoverySelector;
 import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.WithLogRecordListener;
@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.stream.Collectors.toList;

@@ -14,6 +14,7 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -24,6 +25,7 @@ public final class RuntimeOptionsBuilder {
     private final List<Pattern> parsedNameFilters = new ArrayList<>();
     private final List<FeatureWithLines> parsedFeaturePaths = new ArrayList<>();
     private final List<URI> parsedGlue = new ArrayList<>();
+    private final Set<String> parsedGlueClasses = new HashSet<>();
     private final List<Options.Plugin> plugins = new ArrayList<>();
     private @Nullable List<FeatureWithLines> parsedRerunPaths = null;
     private @Nullable Integer parsedThreads = null;
@@ -44,6 +46,8 @@ public final class RuntimeOptionsBuilder {
     private @Nullable Boolean parsedPublish;
     private @Nullable Boolean parsedPublishQuiet;
     private @Nullable Boolean parsedEnablePublishPlugin;
+    private List<Pattern> glueIncludedClassNamePatterns = new ArrayList<>();
+    private List<Pattern> glueExcludedClassNamePatterns = new ArrayList<>();
 
     public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
         if (parsedRerunPaths == null) {
@@ -60,6 +64,11 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder addGlue(URI glue) {
         parsedGlue.add(glue);
+        return this;
+    }
+
+    public RuntimeOptionsBuilder addGlueClass(String glueClassName) {
+        parsedGlueClasses.add(glueClassName);
         return this;
     }
 
@@ -140,6 +149,10 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setGlue(this.parsedGlue);
         }
 
+        if (!this.parsedGlueClasses.isEmpty()) {
+            runtimeOptions.setGlueClasses(this.parsedGlueClasses);
+        }
+
         runtimeOptions.addPlugins(this.plugins);
 
         if (parsedObjectFactoryClass != null) {
@@ -176,6 +189,13 @@ public final class RuntimeOptionsBuilder {
 
         if (parsedEnablePublishPlugin != null) {
             runtimeOptions.setEnablePublishPlugin(parsedEnablePublishPlugin);
+        }
+
+        if (!glueIncludedClassNamePatterns.isEmpty()) {
+            runtimeOptions.setGlueIncludedClassNamePatterns(glueIncludedClassNamePatterns);
+        }
+        if (!glueExcludedClassNamePatterns.isEmpty()) {
+            runtimeOptions.setGlueExcludedClassNamePatterns(glueExcludedClassNamePatterns);
         }
 
         return runtimeOptions;
@@ -292,4 +312,11 @@ public final class RuntimeOptionsBuilder {
         return this;
     }
 
+    public void addGlueIncludedClassNamePattern(Pattern pattern) {
+        this.glueIncludedClassNamePatterns.add(pattern);
+    }
+
+    public void addGlueExcludedClassNamePattern(Pattern pattern) {
+        this.glueExcludedClassNamePatterns.add(pattern);
+    }
 }
