@@ -23,7 +23,7 @@
         <messages.version>34.2.1</messages.version>
         <messages-ndjson.version>0.5.2</messages-ndjson.version>
         <pretty-formatter.version>4.0.0</pretty-formatter.version>
-        <query.version>16.1.0</query.version>
+        <query.version>16.1.1</query.version>
         <tag-expressions.version>11.0.1</tag-expressions.version>
         <teamcity-formatter.version>0.3.0</teamcity-formatter.version>
         <testng-xml-formatter.version>0.8.3</testng-xml-formatter.version>
