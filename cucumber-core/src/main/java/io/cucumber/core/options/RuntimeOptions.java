@@ -70,7 +70,6 @@ public final class RuntimeOptions implements
     // For context see: https://mattwynne.net/new-beginning
     private boolean publishQuiet = true;
     private boolean enablePublishPlugin;
-    // TODO: Set to a default value?
     private List<Pattern> glueIncludedClassNamePatterns = emptyList();
     private List<Pattern> glueExcludedClassNamePatterns = emptyList();
 
