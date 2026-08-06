@@ -94,14 +94,42 @@ public @interface CucumberOptions {
     String[] extraGlue() default {};
 
     /**
-     * Addtional classes with glue code.
+     * Additional classes with glue code.
      * <p>
      * These classes are used in addition to the default described in
      * {@code #glue}.
+     * <p>
+     * Classes that explicitly listed as glue are not filtered by either
+     * {@link #includedGlueClassNamePatterns()} or
+     * {@link #excludedGlueClassNamePatterns()}.
      *
      * @return list of class names
      */
     Class<?>[] extraGlueClasses() default {};
+
+    /**
+     * The pattern for included glue classes.
+     * <p>
+     * A glue class is included in classpath scanning if the include pattern
+     * matches it and the exclude pattern doesn't.
+     * <p>
+     * Example: {@code .*StepDefinitions?|.*Hooks?}
+     *
+     * @return list of patterns
+     */
+    String[] includedGlueClassNamePatterns() default {};
+
+    /**
+     * The pattern for excluded glue classes.
+     * <p>
+     * A glue class is included in classpath scanning if the include pattern
+     * matches it and the exclude pattern doesn't.
+     * <p>
+     * Example: {@code .*UnwantedStepDefinitions?|.*UnwantedHooks?}
+     *
+     * @return list of patterns
+     */
+    String[] excludedGlueClassNamePatterns() default {};
 
     /**
      * Only run scenarios tagged with tags matching

@@ -137,7 +137,7 @@ public final class Constants {
      * A comma separated list fully qualified class names e.g.:
      * {@code com.example.StepDefinitionsA, com.example.StepDefinitionsB}.
      * <p>
-     * Classes that explicitly listed as glue are not filtered by
+     * Classes that explicitly listed as glue are not filtered by either
      * {@link #GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME} or
      * {@link #GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME}.
      *

@@ -73,6 +73,16 @@ final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationPa
         }
 
         @Override
+        public String[] includedGlueClassNamePatterns() {
+            return annotation.includedGlueClassNamePatterns();
+        }
+
+        @Override
+        public String[] excludedGlueClassNamePatterns() {
+            return annotation.excludedGlueClassNamePatterns();
+        }
+
+        @Override
         public String tags() {
             return annotation.tags();
         }

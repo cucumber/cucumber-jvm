@@ -53,6 +53,8 @@ cucumber.glue=                              # comma separated package names.
 
 cucumber.glue-classes=                      # comma separated class names.
                                             # example: com.example.StepDefinitionsA, com.example.StepDefinitionsB
+                                            # note: classes that are explicitly included are not filtered by either the
+                                            # included or excluded class name patterns
 
 cucumber.glue.included-class-name-pattern=  # pattern for included glue classes
                                             # example: .*StepDefinitions?|.*Hooks?

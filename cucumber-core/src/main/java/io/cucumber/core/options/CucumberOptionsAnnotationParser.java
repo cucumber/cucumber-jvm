@@ -42,6 +42,8 @@ public final class CucumberOptionsAnnotationParser {
                 addName(options, args);
                 addSnippets(options, args);
                 addGlue(options, args);
+                addGlueIncludedClassNamePatterns(options, args);
+                addGlueExcludedClassNamePatterns(options, args);
                 addFeatures(options, args);
                 addObjectFactory(options, args);
                 addUuidGenerator(options, args);
@@ -51,6 +53,20 @@ public final class CucumberOptionsAnnotationParser {
         addDefaultFeaturePathIfNoFeaturePathIsSpecified(args, clazz);
         addDefaultGlueIfNoOverridingGlueIsSpecified(args, clazz);
         return args;
+    }
+
+    private void addGlueIncludedClassNamePatterns(CucumberOptions options, RuntimeOptionsBuilder args) {
+        var patterns = options.includedGlueClassNamePatterns();
+        for (String pattern : patterns) {
+            args.addGlueIncludedClassNamePattern(Pattern.compile(pattern));
+        }
+    }
+
+    private void addGlueExcludedClassNamePatterns(CucumberOptions options, RuntimeOptionsBuilder args) {
+        var patterns = options.includedGlueClassNamePatterns();
+        for (String pattern : patterns) {
+            args.addGlueExcludedClassNamePattern(Pattern.compile(pattern));
+        }
     }
 
     private boolean hasSuperClass(Class<?> classWithOptions) {
@@ -209,6 +225,14 @@ public final class CucumberOptionsAnnotationParser {
 
         default Class<?>[] extraGlueGlasses() {
             return new Class[0];
+        }
+
+        default String[] includedGlueClassNamePatterns() {
+            return new String[0];
+        }
+
+        default String[] excludedGlueClassNamePatterns() {
+            return new String[0];
         }
 
         String tags();
