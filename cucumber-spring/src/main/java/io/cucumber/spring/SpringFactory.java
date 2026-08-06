@@ -85,14 +85,17 @@ public final class SpringFactory implements ObjectFactory {
 
     private void checkOnlyOneClassHasCucumberContextConfiguration(Class<?> stepClass) {
         if (withCucumberContextConfiguration != null) {
-            throw new CucumberBackendException("""
-                    Glue class %%1$s and %%2$s are both (meta-)annotated with @CucumberContextConfiguration.
-                    Please ensure only one class configures the spring context
+            throw new CucumberBackendException(
+                """
+                        Glue class %%1$s and %%2$s are both (meta-)annotated with @CucumberContextConfiguration.
+                        Please ensure only one class configures the spring context
 
-                    By default Cucumber scans the entire classpath for context configuration.
-                    You can restrict this by configuring the glue path.
-                    %s""".formatted(ClasspathSupport.configurationExamples())
-                    .formatted(stepClass, withCucumberContextConfiguration));
+                        By default Cucumber scans the entire classpath for context configuration.
+                        You can restrict this by configuring the glue path and/or the included or excluded glue class patterns.
+
+                        %s"""
+                        .formatted(ClasspathSupport.configurationExamples())
+                        .formatted(stepClass, withCucumberContextConfiguration));
         }
     }
 

@@ -63,7 +63,7 @@ public final class CucumberOptionsAnnotationParser {
     }
 
     private void addGlueExcludedClassNamePatterns(CucumberOptions options, RuntimeOptionsBuilder args) {
-        var patterns = options.includedGlueClassNamePatterns();
+        var patterns = options.excludedGlueClassNamePatterns();
         for (String pattern : patterns) {
             args.addGlueExcludedClassNamePattern(Pattern.compile(pattern));
         }

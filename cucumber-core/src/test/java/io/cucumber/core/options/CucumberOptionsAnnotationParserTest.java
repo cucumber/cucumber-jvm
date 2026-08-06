@@ -1,5 +1,7 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.ClassGlueDiscoverySelector;
+import io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.UriGlueDiscoverySelector;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
@@ -25,6 +27,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import static io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter.excludeClassNamePatterns;
+import static io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter.includeClassNamePatterns;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectClass;
 import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -225,12 +230,35 @@ class CucumberOptionsAnnotationParserTest {
     }
 
     @Test
+    void create_with_glue_classes() {
+        RuntimeOptions runtimeOptions = parser().parse(ClassWithGlueClasses.class).build();
+
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getSelectorsByType(ClassGlueDiscoverySelector.class),
+            contains(selectClass(TestStepDefinitions.class.getName())));
+    }
+
+    @Test
     void create_with_extra_glue() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithExtraGlue.class).build();
 
         assertThat(runtimeOptions.getGlueDiscoveryRequest().getSelectorsByType(UriGlueDiscoverySelector.class),
             contains(selectUri("classpath:/app/features/hooks"), selectUri("classpath:/io/cucumber/core/options")));
+    }
 
+    @Test
+    void create_with_class_with_included_glue_class_name_patterns() {
+        RuntimeOptions runtimeOptions = parser().parse(ClassWithIncludedGlueClassNamePatterns.class).build();
+
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getFiltersByType(ClassNameFilter.class),
+            contains(includeClassNamePatterns(Pattern.compile(".*NounStepDefinitions?"))));
+    }
+
+    @Test
+    void create_with_class_with_excluded_glue_class_name_patterns() {
+        RuntimeOptions runtimeOptions = parser().parse(ClassWithExcludedGlueClassNamePatterns.class).build();
+
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getFiltersByType(ClassNameFilter.class),
+            contains(excludeClassNamePatterns(Pattern.compile(".*UnwantedDefinitions?"))));
     }
 
     @Test
@@ -345,8 +373,27 @@ class CucumberOptionsAnnotationParserTest {
         // empty
     }
 
+    @CucumberOptions(glueClasses = TestStepDefinitions.class)
+    private static final class ClassWithGlueClasses {
+        // empty
+    }
+
+    private static final class TestStepDefinitions {
+        // empty
+    }
+
     @CucumberOptions(extraGlue = "app.features.hooks")
     private static class ClassWithExtraGlue {
+        // empty
+    }
+
+    @CucumberOptions(includedGlueClassNamePatterns = ".*NounStepDefinitions?")
+    private static final class ClassWithIncludedGlueClassNamePatterns {
+        // empty
+    }
+
+    @CucumberOptions(excludedGlueClassNamePatterns = ".*UnwantedDefinitions?")
+    private static final class ClassWithExcludedGlueClassNamePatterns {
         // empty
     }
 
@@ -398,8 +445,23 @@ class CucumberOptionsAnnotationParserTest {
         }
 
         @Override
+        public Class<?>[] glueGlasses() {
+            return annotation.glueClasses();
+        }
+
+        @Override
         public String[] extraGlue() {
             return annotation.extraGlue();
+        }
+
+        @Override
+        public String[] includedGlueClassNamePatterns() {
+            return annotation.includedGlueClassNamePatterns();
+        }
+
+        @Override
+        public String[] excludedGlueClassNamePatterns() {
+            return annotation.excludedGlueClassNamePatterns();
         }
 
         @Override

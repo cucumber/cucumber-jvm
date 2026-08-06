@@ -157,7 +157,7 @@ public final class ClasspathSupport {
     public static String classPathScanningExplanation() {
         return """
                 By default Cucumber scans the entire classpath for step definitions.
-                You can restrict this by configuring the glue path and the included or excluded class patterns.
+                You can restrict this by configuring the glue path and/or the included or excluded glue class patterns.
 
                 %s""".formatted(configurationExamples());
     }
@@ -192,6 +192,18 @@ public final class ClasspathSupport {
                  - src/test/resources/junit-platform.properties   cucumber.glue=com.example.application
                  - src/test/resources/cucumber.properties         cucumber.glue=com.example.application
 
+                ## Configuring individual Glue classes - Examples:
+
+                Properties:
+                 - src/test/resources/junit-platform.properties   cucumber.glue.classes=com.example.AdditionalHooks, com.example.OptionalConfiguration
+                 - src/test/resources/cucumber.properties   cucumber.glue.classes=com.example.AdditionalHooks, com.example.OptionalConfiguration
+
+                TestNG:
+                 - @CucumberOptions(extraGlueClasses = {"com.example.AdditionalHooks", "com.example.OptionalConfiguration"})
+
+                JUnit Jupiter:
+                 - @ConfigurationParameter(key = GLUE_CLASSES_PROPERTY_NAME, value = "com.example.AdditionalHooks, com.example.OptionalConfiguration")
+
                 ## Configuring the included and excluded class name patterns - Examples:
 
                 Properties:
@@ -199,6 +211,10 @@ public final class ClasspathSupport {
                  - src/test/resources/junit-platform.properties   cucumber.glue.excluded-class-name-pattern=.*UnwantedStepDefinitions|.*UnwantedHooks
                  - src/test/resources/cucumber.properties   cucumber.glue.included-class-name-pattern=.*StepDefinitions|.*Hooks
                  - src/test/resources/cucumber.properties   cucumber.glue.excluded-class-name-pattern=.*UnwantedStepDefinitions|.*UnwantedHooks
+
+                TestNG:
+                 - @CucumberOptions(includedGlueClassNamePatterns = ".*StepDefinitions|.*Hooks")
+                 - @CucumberOptions(excludedGlueClassNamePatterns = ".*UnwantedStepDefinitions|.*UnwantedHooks")
 
                 JUnit Jupiter:
                  - @ConfigurationParameter(key = GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME, value = ".*StepDefinitions|.*Hooks")

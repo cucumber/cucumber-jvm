@@ -17,7 +17,13 @@ public @interface CucumberOptions {
 
     String[] glue() default {};
 
+    Class<?>[] glueClasses() default {};
+
     String[] extraGlue() default {};
+
+    String[] includedGlueClassNamePatterns() default {};
+
+    String[] excludedGlueClassNamePatterns() default {};
 
     String tags() default "";
 
