@@ -10,6 +10,8 @@ import org.apiguardian.api.API;
 
 import java.util.Optional;
 
+import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
+
 /**
  * Cucumber Main. Runs Cucumber as a CLI.
  * <p>
@@ -88,7 +90,29 @@ public final class Main {
                 .withClassLoader(() -> classLoader)
                 .build();
 
-        runtime.run();
+        return execute(runtime);
+    }
+
+    /**
+     * Runs the given runtime and converts failures into a non-zero exit status.
+     * <p>
+     * {@code @BeforeAll} / {@code @AfterAll} hooks currently rethrow so they
+     * can surface failures without full reporting support. Catching here
+     * ensures the CLI still reaches {@link System#exit(int)} and shuts down the
+     * JVM even when non-daemon threads remain (for example a non-daemon
+     * {@link java.util.Timer}).
+     *
+     * @see <a href=
+     *      "https://github.com/cucumber/cucumber-jvm/issues/3104">#3104</a>
+     */
+    static byte execute(Runtime runtime) {
+        try {
+            runtime.run();
+        } catch (Throwable t) {
+            rethrowIfUnrecoverable(t);
+            t.printStackTrace(System.err);
+            return 1;
+        }
         return runtime.exitStatus();
     }
 
