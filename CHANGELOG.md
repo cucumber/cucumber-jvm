@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Support `cucumber.execution.threads` property when executing from CLI ([#3183](https://github.com/cucumber/cucumber-jvm/pull/3183))
 
 ### Fixed
+- [Core] CLI always calls `System.exit` after `@BeforeAll` / `@AfterAll` failures so non-daemon threads cannot hang the JVM ([#3104](https://github.com/cucumber/cucumber-jvm/issues/3104), [#3226](https://github.com/cucumber/cucumber-jvm/pull/3226))
 - [JUnit Platform Engine] Accept partial matches with `cucumber.filter.name` and align the behavior with JUnit 4 and CLI ([#3174](https://github.com/cucumber/cucumber-jvm/pull/3174))
 - [JUnit Platform Engine] Don't require global read lock ([#3103](https://github.com/cucumber/cucumber-jvm/pull/3103))
 
