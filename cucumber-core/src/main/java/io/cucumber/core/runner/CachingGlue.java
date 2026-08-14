@@ -20,6 +20,7 @@ import io.cucumber.core.stepexpression.StepExpression;
 import io.cucumber.core.stepexpression.StepExpressionFactory;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.cucumberexpressions.CucumberExpression;
+import io.cucumber.cucumberexpressions.DuplicateTypeNameException;
 import io.cucumber.cucumberexpressions.Expression;
 import io.cucumber.cucumberexpressions.ParameterByTypeTransformer;
 import io.cucumber.cucumberexpressions.ParameterType;
@@ -276,9 +277,19 @@ final class CachingGlue implements Glue {
 
         // TODO: separate prepared and unprepared glue into different classes
         // parameters changed from the previous scenario => re-register them
+        Map<String, ParameterTypeDefinition> definedParameterTypes = new HashMap<>();
         parameterTypeDefinitions.forEach(ptd -> {
             ParameterType<?> parameterType = ptd.parameterType();
-            stepTypeRegistry.defineParameterType(parameterType);
+            try {
+                stepTypeRegistry.defineParameterType(parameterType);
+            } catch (DuplicateTypeNameException e) {
+                throw new DuplicateParameterTypeDefinitionException(
+                    parameterType.getName(),
+                    definedParameterTypes.get(parameterType.getName()),
+                    ptd,
+                    e);
+            }
+            definedParameterTypes.put(parameterType.getName(), ptd);
             emitParameterTypeDefined(ptd);
         });
         dataTableTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDataTableType(dtd.dataTableType()));
