@@ -50,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -75,6 +76,27 @@ class CachingGlueTest {
             DuplicateStepDefinitionException.class,
             () -> glue.prepareGlue(language));
         assertThat(exception.getMessage(), equalTo("Duplicate step definitions in foo.bf:10 and bar.bf:90"));
+    }
+
+    @Test
+    void throws_duplicate_error_with_locations_on_dupe_parameter_types() {
+        ParameterTypeDefinition a = mock(ParameterTypeDefinition.class);
+        doReturn(new ParameterType<>("date", "[0-9]{4}", Object.class, (String arg) -> new Object()))
+                .when(a).parameterType();
+        when(a.getLocation()).thenReturn("com.example.StepsA.date()");
+        glue.addParameterType(a);
+
+        ParameterTypeDefinition b = mock(ParameterTypeDefinition.class);
+        doReturn(new ParameterType<>("date", "[0-9]{2}", Object.class, (String arg) -> new Object()))
+                .when(b).parameterType();
+        when(b.getLocation()).thenReturn("com.example.StepsB.date()");
+        glue.addParameterType(b);
+
+        DuplicateParameterTypeDefinitionException exception = assertThrows(
+            DuplicateParameterTypeDefinitionException.class,
+            () -> glue.prepareGlue(language));
+        assertThat(exception.getMessage(), equalTo(
+            "Duplicate parameter type with name date defined in com.example.StepsA.date() and com.example.StepsB.date()"));
     }
 
     @Test
