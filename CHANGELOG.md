@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.34.7] - 2026-08-17
 ### Fixed
 - [Core] Update dependency io.cucumber:messages-ndjson to v0.3.6
 - [Core] Update dependency com.fasterxml.jackson:jackson-bom to v2.22.2
@@ -611,7 +613,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.6...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.7...HEAD
+[7.34.7]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.6...v7.34.7
 [7.34.6]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.5...v7.34.6
 [7.34.5]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.4...v7.34.5
 [7.34.4]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.3...v7.34.4
