@@ -247,7 +247,8 @@ class GuiceFactoryTest {
                 Please ensure only one class configures the Guice context
 
                 By default Cucumber scans the entire classpath for context configuration.
-                You can restrict this by configuring the glue path.
+                You can restrict this by configuring the glue path and/or the included or excluded glue class patterns.
+
                 %s""".formatted(ClasspathSupport.configurationExamples())
                 .formatted(SecondInjectorSource.class, YourInjectorSource.class);
         assertThat("Unexpected exception message", actualThrown.getMessage(), is(exceptionMessage));

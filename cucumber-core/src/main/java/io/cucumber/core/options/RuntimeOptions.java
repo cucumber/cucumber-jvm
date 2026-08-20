@@ -1,7 +1,8 @@
 package io.cucumber.core.options;
 
+import io.cucumber.core.backend.GlueDiscoveryFilter;
 import io.cucumber.core.backend.GlueDiscoveryRequest;
-import io.cucumber.core.backend.GlueDiscoverySelector;
+import io.cucumber.core.backend.GlueDiscoverySelectors;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
@@ -25,6 +26,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
 import static java.lang.Boolean.FALSE;
@@ -43,6 +45,7 @@ public final class RuntimeOptions implements
         io.cucumber.core.eventbus.Options {
 
     private final List<URI> glue = new ArrayList<>();
+    private final List<String> glueClasses = new ArrayList<>();
     private final List<Expression> tagExpressions = new ArrayList<>();
     private final List<Pattern> nameFilters = new ArrayList<>();
     private final List<FeatureWithLines> featurePaths = new ArrayList<>();
@@ -67,6 +70,8 @@ public final class RuntimeOptions implements
     // For context see: https://mattwynne.net/new-beginning
     private boolean publishQuiet = true;
     private boolean enablePublishPlugin;
+    private List<Pattern> glueIncludedClassNamePatterns = emptyList();
+    private List<Pattern> glueExcludedClassNamePatterns = emptyList();
 
     private RuntimeOptions() {
 
@@ -81,7 +86,7 @@ public final class RuntimeOptions implements
     }
 
     void addDefaultGlueIfAbsent() {
-        if (glue.isEmpty()) {
+        if (glue.isEmpty() && glueClasses.isEmpty()) {
             glue.add(rootPackageUri());
         }
     }
@@ -196,9 +201,24 @@ public final class RuntimeOptions implements
     @Override
     public GlueDiscoveryRequest getGlueDiscoveryRequest() {
         return GlueDiscoveryRequest.builder() //
-                .options(this)
-                .selectors(glue.stream().map(GlueDiscoverySelector::selectUri).toList()) //
+                .options(this) //
+                .filters(createClassNamePatternFilters())
+                .selectors(createGlueDiscoverySelectors()) //
                 .build();
+    }
+
+    private List<? extends GlueDiscoverySelectors> createGlueDiscoverySelectors() {
+        var uriSelectors = glue.stream().map(GlueDiscoverySelectors::selectUri);
+        var classSelectors = glueClasses.stream().map(GlueDiscoverySelectors::selectClass);
+        return Stream.concat(uriSelectors, classSelectors).toList();
+    }
+
+    private List<? extends GlueDiscoveryFilter> createClassNamePatternFilters() {
+        var included = glueIncludedClassNamePatterns.stream()
+                .map(GlueDiscoveryFilter.ClassNameFilter::includeClassNamePatterns);
+        var excluded = glueExcludedClassNamePatterns.stream()
+                .map(GlueDiscoveryFilter.ClassNameFilter::excludeClassNamePatterns);
+        return Stream.concat(included, excluded).toList();
     }
 
     void setUuidGeneratorClass(Class<? extends UuidGenerator> uuidGeneratorClass) {
@@ -216,6 +236,11 @@ public final class RuntimeOptions implements
     void setGlue(List<URI> parsedGlue) {
         glue.clear();
         glue.addAll(parsedGlue);
+    }
+
+    void setGlueClasses(Set<String> parsedGlue) {
+        glueClasses.clear();
+        glueClasses.addAll(parsedGlue);
     }
 
     @Override
@@ -302,6 +327,14 @@ public final class RuntimeOptions implements
 
     void setEnablePublishPlugin(boolean enablePublishPlugin) {
         this.enablePublishPlugin = enablePublishPlugin;
+    }
+
+    void setGlueIncludedClassNamePatterns(List<Pattern> glueIncludedClassNamePatterns) {
+        this.glueIncludedClassNamePatterns = glueIncludedClassNamePatterns;
+    }
+
+    void setGlueExcludedClassNamePatterns(List<Pattern> glueExcludedClassNamePatterns) {
+        this.glueExcludedClassNamePatterns = glueExcludedClassNamePatterns;
     }
 
 }

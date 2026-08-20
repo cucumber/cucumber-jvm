@@ -9,7 +9,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
-@SuppressWarnings("NullAway") // TestNGs assertNotNull not recongized
+@SuppressWarnings("NullAway") // TestNGs assertNotNull not recognized
 final class TestNGCucumberOptionsProviderTest {
 
     private TestNGCucumberOptionsProvider optionsProvider;
@@ -32,7 +32,7 @@ final class TestNGCucumberOptionsProviderTest {
         io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
                 .getOptions(ClassWithCustomObjectFactory.class);
         assertNotNull(options);
-        assertEquals(TestObjectFactory.class, options.objectFactory());
+        assertEquals(options.objectFactory(), TestObjectFactory.class);
     }
 
     @Test
@@ -48,7 +48,23 @@ final class TestNGCucumberOptionsProviderTest {
         io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
                 .getOptions(ClassWithCustomUuidGenerator.class);
         assertNotNull(options);
-        assertEquals(IncrementingUuidGenerator.class, options.uuidGenerator());
+        assertEquals(options.uuidGenerator(), IncrementingUuidGenerator.class);
+    }
+
+    @Test
+    void includedGlueClassNamePatterns() {
+        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+                .getOptions(ClassWithIncludedGlueClassNamePatterns.class);
+        assertNotNull(options);
+        assertEquals(options.includedGlueClassNamePatterns(), new String[] { ".*NounStepDefinitions?" });
+    }
+
+    @Test
+    void excludedGlueClassNamePatterns() {
+        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+                .getOptions(ClassWithExcludedGlueClassNamePatterns.class);
+        assertNotNull(options);
+        assertEquals(options.excludedGlueClassNamePatterns(), new String[] { ".*UnwantedStepDefinitions?" });
     }
 
     @CucumberOptions
@@ -63,6 +79,16 @@ final class TestNGCucumberOptionsProviderTest {
 
     @CucumberOptions(uuidGenerator = IncrementingUuidGenerator.class)
     private static final class ClassWithCustomUuidGenerator {
+
+    }
+
+    @CucumberOptions(includedGlueClassNamePatterns = ".*NounStepDefinitions?")
+    private static final class ClassWithIncludedGlueClassNamePatterns {
+
+    }
+
+    @CucumberOptions(excludedGlueClassNamePatterns = ".*UnwantedStepDefinitions?")
+    private static final class ClassWithExcludedGlueClassNamePatterns {
 
     }
 

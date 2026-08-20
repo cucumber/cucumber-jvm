@@ -15,7 +15,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.util.List;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectClass;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
 import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -51,7 +52,6 @@ class JavaBackendTest {
                 .selectors(selectUri("classpath:io/cucumber/java/steps")) //
                 .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
         verify(factory).addClass(Steps.class);
     }
 
@@ -62,7 +62,15 @@ class JavaBackendTest {
                 .selectors(selectUri("classpath:io/cucumber/java/steps")) //
                 .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
+        verify(factory, times(1)).addClass(Steps.class);
+    }
+
+    @Test
+    void finds_step_definitions_once_by_class_name() {
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectClass(Steps.class.getName()))
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory, times(1)).addClass(Steps.class);
     }
 

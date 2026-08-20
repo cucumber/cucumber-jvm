@@ -22,8 +22,11 @@ import static io.cucumber.core.options.Constants.EXECUTION_THREADS_PROPERTY_NAME
 import static io.cucumber.core.options.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.GLUE_CLASSES_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.GLUE_HINT_ENABLED_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.GLUE_HINT_THRESHOLD_PROPERTY_NAME;
+import static io.cucumber.core.options.Constants.GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OBJECT_FACTORY_PROPERTY_NAME;
 import static io.cucumber.core.options.Constants.OPTIONS_PROPERTY_NAME;
@@ -100,6 +103,21 @@ public final class CucumberPropertiesParser {
             GLUE_PROPERTY_NAME,
             splitAndMap(GluePath::parse),
             builder::addGlue);
+
+        parseAll(properties,
+            GLUE_CLASSES_PROPERTY_NAME,
+            splitAndMap(identity()),
+            builder::addGlueClass);
+
+        parse(properties,
+            GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
+            Pattern::compile,
+            builder::addGlueExcludedClassNamePattern);
+
+        parse(properties,
+            GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
+            Pattern::compile,
+            builder::addGlueExcludedClassNamePattern);
 
         parse(properties,
             GLUE_HINT_ENABLED_PROPERTY_NAME,

@@ -12,7 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectClass;
+import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
 import static java.lang.Thread.currentThread;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,7 +40,15 @@ final class SpringBackendTest {
                 .selectors(selectUri("classpath:io/cucumber/spring/annotationconfig")) //
                 .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
+        verify(factory).addClass(AnnotationContextConfiguration.class);
+    }
+
+    @Test
+    void finds_annotation_context_configuration_by_classname() {
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectClass(AnnotationContextConfiguration.class.getName())) //
+                .build();
+        backend.loadGlue(glue, request);
         verify(factory).addClass(AnnotationContextConfiguration.class);
     }
 
@@ -50,7 +59,6 @@ final class SpringBackendTest {
                 .selectors(selectUri("classpath:io/cucumber/spring/annotationconfig")) //
                 .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
         verify(factory, times(1)).addClass(AnnotationContextConfiguration.class);
     }
 
@@ -60,7 +68,6 @@ final class SpringBackendTest {
                 .selectors(selectUri("classpath:io/cucumber/spring/cucumbercontextconfigannotation")) //
                 .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
         verify(factory, times(0)).addClass(AbstractWithComponentAnnotation.class);
     }
 
@@ -70,7 +77,6 @@ final class SpringBackendTest {
                 .selectors(selectUri("classpath:io/cucumber/spring/cucumbercontextconfigannotation")) //
                 .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
         verify(factory, times(0)).addClass(AnnotatedInterface.class);
     }
 
@@ -80,7 +86,6 @@ final class SpringBackendTest {
                 .selectors(selectUri("classpath:io/cucumber/spring/cucumbercontextconfigannotation")) //
                 .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
         verify(factory, times(1)).addClass(WithMetaAnnotation.class);
     }
 

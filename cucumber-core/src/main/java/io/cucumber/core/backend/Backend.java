@@ -1,6 +1,5 @@
 package io.cucumber.core.backend;
 
-import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
 import org.apiguardian.api.API;
 import org.jspecify.annotations.Nullable;
 
