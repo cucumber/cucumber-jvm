@@ -188,6 +188,28 @@ public class StepDefinitions {
 }
 ```
 
+`Scenario.attach` puts a screenshot or other media into the report. Use it from
+glue code (hooks or step definitions). Plugin `EventListener`s do not receive a
+`Scenario` instance — they see an `EmbedEvent` after the attachment is made.
+
+```java
+package io.cucumber.example;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Scenario;
+
+public class Attachments {
+
+    @After
+    public void attachScreenshot(Scenario scenario) {
+        if (scenario.isFailed()) {
+            byte[] pngBytes = takeScreenshot(); // your UI tool
+            scenario.attach(pngBytes, "image/png", "Failed scenario");
+        }
+    }
+}
+```
+
 ### BeforeStep / AfterStep
 
 `BeforeStep` and `AfterStep` hooks are executed before and after each step is
