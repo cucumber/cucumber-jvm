@@ -182,7 +182,7 @@ public final class ClasspathSupport {
         return """
                 ## Configuring the Glue path - Examples:
 
-                JUnit / TestNG:
+                TestNG:
                  - @CucumberOptions(glue = "com.example.application")
 
                 JUnit Jupiter:

@@ -84,9 +84,6 @@ final class GlueLoadingAdvisor implements AutoCloseable {
 
         List<String> suggestions = new ArrayList<>();
         // TODO suggests to use "cucumber.glue.classes" property
-        // TODO suggests to use
-        // "cucumber.glue.included/excluded-classes-pattern" property
-        // from https://github.com/cucumber/cucumber-jvm/pull/3120
         addSuggestionCucumberGlue(gluePaths, suggestions);
         addSuggestionRemoveClassWithoutGlueFromGluePackage(suggestions);
         addSuggestionChangePublicStaticInnerClassesToPrivateClasses(suggestions);

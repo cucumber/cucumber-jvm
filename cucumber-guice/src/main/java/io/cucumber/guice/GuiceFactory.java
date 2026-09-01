@@ -65,7 +65,7 @@ public final class GuiceFactory implements ObjectFactory {
         if (withInjectorSource != null) {
             throw new CucumberBackendException(
                 """
-                        Glue class %%1$s and %%2$s are both implementing io.cucumber.guice.InjectorSource.
+                        Glue class %%1$s and %%2$s both implement io.cucumber.guice.InjectorSource.
                         Please ensure only one class configures the Guice context
 
                         By default Cucumber scans the entire classpath for context configuration.
