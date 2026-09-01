@@ -1,8 +1,9 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.backend.DefaultObjectFactory;
-import io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter;
-import io.cucumber.core.backend.UriGlueDiscoverySelector;
+import io.cucumber.core.backend.discovery.GlueClassNameFilter;
+import io.cucumber.core.backend.discovery.GlueDiscoveryFilter;
+import io.cucumber.core.backend.discovery.UriGlueDiscoverySelector;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectUri;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -144,8 +145,8 @@ class CucumberConfigurationTest {
 
         assertThat(
             new CucumberConfiguration(config, issueReporter).getGlueDiscoveryRequest()
-                    .getFiltersByType(ClassNameFilter.class),
-            contains(ClassNameFilter.includeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
+                    .getFiltersByType(GlueClassNameFilter.class),
+            contains(GlueDiscoveryFilter.includeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
     }
 
     @Test
@@ -156,8 +157,8 @@ class CucumberConfigurationTest {
 
         assertThat(
             new CucumberConfiguration(config, issueReporter).getGlueDiscoveryRequest()
-                    .getFiltersByType(ClassNameFilter.class),
-            contains(ClassNameFilter.excludeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
+                    .getFiltersByType(GlueClassNameFilter.class),
+            contains(GlueDiscoveryFilter.excludeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
     }
 
     @Test

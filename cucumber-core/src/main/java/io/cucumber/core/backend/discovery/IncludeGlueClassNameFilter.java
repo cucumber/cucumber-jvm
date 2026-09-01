@@ -1,13 +1,13 @@
-package io.cucumber.core.backend;
+package io.cucumber.core.backend.discovery;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-final class IncludeClassNameFilter implements GlueDiscoveryFilter.ClassNameFilter {
+final class IncludeGlueClassNameFilter implements GlueClassNameFilter {
     private final List<Pattern> patterns;
 
-    IncludeClassNameFilter(Pattern... patterns) {
+    IncludeGlueClassNameFilter(Pattern... patterns) {
         this.patterns = List.of(patterns);
     }
 
@@ -18,7 +18,7 @@ final class IncludeClassNameFilter implements GlueDiscoveryFilter.ClassNameFilte
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof IncludeClassNameFilter that))
+        if (!(o instanceof IncludeGlueClassNameFilter that))
             return false;
         return Objects.equals(getPatterns(), that.getPatterns());
     }

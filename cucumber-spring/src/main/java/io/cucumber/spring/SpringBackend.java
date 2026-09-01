@@ -3,8 +3,8 @@ package io.cucumber.spring;
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.GlueDiscoveryRequest;
-import io.cucumber.core.backend.GlueDiscoverySelectorResolver;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
+import io.cucumber.core.backend.discovery.GlueDiscoverySelectorResolver;
 import io.cucumber.core.resource.ClasspathScanner;
 
 import java.lang.reflect.Modifier;

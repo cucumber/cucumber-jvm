@@ -1,10 +1,10 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.core.backend.GlueDiscoveryFilter;
-import io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter;
-import io.cucumber.core.backend.GlueDiscoveryRequest;
-import io.cucumber.core.backend.GlueDiscoverySelectors;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.discovery.GlueClassNameFilter;
+import io.cucumber.core.backend.discovery.GlueDiscoveryFilter;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
+import io.cucumber.core.backend.discovery.GlueDiscoverySelector;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectUri;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
@@ -200,13 +200,13 @@ class CucumberConfiguration implements
                 .get(GLUE_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
                         .map(String::trim)
                         .map(GluePath::parse)
-                        .map(GlueDiscoverySelectors::selectUri))
+                        .map(GlueDiscoverySelector::selectUri))
                 .orElseGet(Stream::empty);
 
         var classSelectors = configurationParameters
                 .get(GLUE_CLASSES_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
                         .map(String::trim)
-                        .map(GlueDiscoverySelectors::selectClass))
+                        .map(GlueDiscoverySelector::selectClass))
                 .orElseGet(Stream::empty);
 
         var selectors = Stream.concat(uriSelectors, classSelectors).toList();
@@ -224,18 +224,18 @@ class CucumberConfiguration implements
                 .build();
     }
 
-    private Optional<ClassNameFilter> includedClassNamePattern() {
+    private Optional<GlueClassNameFilter> includedClassNamePattern() {
         return configurationParameters
                 .get(GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
                     Pattern::compile)
-                .map(ClassNameFilter::includeClassNamePatterns);
+                .map(GlueDiscoveryFilter::includeClassNamePatterns);
     }
 
-    private Optional<ClassNameFilter> excludedClassNamePattern() {
+    private Optional<GlueClassNameFilter> excludedClassNamePattern() {
         return configurationParameters
                 .get(GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
                     Pattern::compile)
-                .map(ClassNameFilter::excludeClassNamePatterns);
+                .map(GlueDiscoveryFilter::excludeClassNamePatterns);
     }
 
     boolean isParallelExecutionEnabled() {

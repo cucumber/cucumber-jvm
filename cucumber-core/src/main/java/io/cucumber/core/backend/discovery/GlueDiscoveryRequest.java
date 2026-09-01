@@ -1,5 +1,10 @@
-package io.cucumber.core.backend;
+package io.cucumber.core.backend.discovery;
 
+import io.cucumber.core.backend.Backend;
+import io.cucumber.core.backend.Glue;
+import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.Options;
+import org.apiguardian.api.API;
 import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
@@ -11,20 +16,21 @@ import java.util.Set;
  * A request for a {@link Backend} to discover {@link Glue} code in specific
  * location.
  */
+@API(status = API.Status.EXPERIMENTAL, since = "8.0.0")
 public interface GlueDiscoveryRequest {
 
     static Builder builder() {
         return new Builder();
     }
 
-    <T extends GlueDiscoverySelectors> List<T> getSelectorsByType(Class<T> selector);
+    <T extends GlueDiscoverySelector> List<T> getSelectorsByType(Class<T> selector);
 
     <T extends GlueDiscoveryFilter> List<T> getFiltersByType(Class<T> filterType);
 
     Options getOptions();
 
     final class Builder {
-        private final Set<GlueDiscoverySelectors> selectors = new LinkedHashSet<>();
+        private final Set<GlueDiscoverySelector> selectors = new LinkedHashSet<>();
         private final Set<GlueDiscoveryFilter> filters = new LinkedHashSet<>();
         private Options options = new DefaultOptions();
 
@@ -32,12 +38,12 @@ public interface GlueDiscoveryRequest {
 
         }
 
-        public Builder selectors(GlueDiscoverySelectors... selectors) {
+        public Builder selectors(GlueDiscoverySelector... selectors) {
             this.selectors.addAll(List.of(selectors));
             return this;
         }
 
-        public Builder selectors(List<? extends GlueDiscoverySelectors> selectors) {
+        public Builder selectors(List<? extends GlueDiscoverySelector> selectors) {
             this.selectors.addAll(selectors);
             return this;
         }
@@ -81,11 +87,11 @@ public interface GlueDiscoveryRequest {
 
     final class DefaultGlueDiscoveryRequest implements GlueDiscoveryRequest {
         private final Options options;
-        private final List<GlueDiscoverySelectors> selectors;
+        private final List<GlueDiscoverySelector> selectors;
         private final List<GlueDiscoveryFilter> filters;
 
         public DefaultGlueDiscoveryRequest(
-                Options options, List<GlueDiscoverySelectors> selectors, List<GlueDiscoveryFilter> filters
+                Options options, List<GlueDiscoverySelector> selectors, List<GlueDiscoveryFilter> filters
         ) {
             this.options = options;
             this.selectors = selectors;
@@ -93,7 +99,7 @@ public interface GlueDiscoveryRequest {
         }
 
         @Override
-        public <T extends GlueDiscoverySelectors> List<T> getSelectorsByType(Class<T> selectorType) {
+        public <T extends GlueDiscoverySelector> List<T> getSelectorsByType(Class<T> selectorType) {
             return selectors.stream() //
                     .filter(selectorType::isInstance) //
                     .map(selectorType::cast) //

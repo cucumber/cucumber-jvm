@@ -1,9 +1,9 @@
-package io.cucumber.core.backend;
+package io.cucumber.core.backend.discovery;
 
-import io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter;
 import io.cucumber.core.resource.ClassFilter;
 import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
+import org.apiguardian.api.API;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -12,6 +12,10 @@ import java.util.stream.Stream;
 
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME;
 
+/**
+ * Resolves a {@link GlueDiscoveryRequest} into a stream of classes.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "8.0.0")
 public final class GlueDiscoverySelectorResolver {
 
     private final ClasspathScanner classFinder;
@@ -23,7 +27,7 @@ public final class GlueDiscoverySelectorResolver {
     }
 
     public Stream<Class<?>> resolve(GlueDiscoveryRequest request) {
-        var classNameFilters = request.getFiltersByType(ClassNameFilter.class);
+        var classNameFilters = request.getFiltersByType(GlueClassNameFilter.class);
         var classNamePredicate = classNameFilters.stream()
                 .map(filter -> (Predicate<String>) filter::apply)
                 .reduce(className -> true, Predicate::and);

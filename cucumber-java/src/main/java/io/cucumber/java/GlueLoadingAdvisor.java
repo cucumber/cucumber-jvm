@@ -1,7 +1,7 @@
 package io.cucumber.java;
 
-import io.cucumber.core.backend.GlueDiscoveryRequest;
-import io.cucumber.core.backend.UriGlueDiscoverySelector;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
+import io.cucumber.core.backend.discovery.UriGlueDiscoverySelector;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.Constants;

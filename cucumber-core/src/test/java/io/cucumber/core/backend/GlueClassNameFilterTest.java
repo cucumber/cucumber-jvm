@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
 
-import static io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter.excludeClassNamePatterns;
-import static io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter.includeClassNamePatterns;
+import static io.cucumber.core.backend.discovery.GlueDiscoveryFilter.excludeClassNamePatterns;
+import static io.cucumber.core.backend.discovery.GlueDiscoveryFilter.includeClassNamePatterns;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ClassNameFilterTest {
+class GlueClassNameFilterTest {
 
     @Test
     void includes() {

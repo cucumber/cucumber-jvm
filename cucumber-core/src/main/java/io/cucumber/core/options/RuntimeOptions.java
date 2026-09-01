@@ -1,9 +1,9 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.backend.GlueDiscoveryFilter;
-import io.cucumber.core.backend.GlueDiscoveryRequest;
-import io.cucumber.core.backend.GlueDiscoverySelectors;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.discovery.GlueDiscoveryFilter;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
+import io.cucumber.core.backend.discovery.GlueDiscoverySelector;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.order.PickleOrder;
@@ -207,17 +207,17 @@ public final class RuntimeOptions implements
                 .build();
     }
 
-    private List<? extends GlueDiscoverySelectors> createGlueDiscoverySelectors() {
-        var uriSelectors = glue.stream().map(GlueDiscoverySelectors::selectUri);
-        var classSelectors = glueClasses.stream().map(GlueDiscoverySelectors::selectClass);
+    private List<? extends GlueDiscoverySelector> createGlueDiscoverySelectors() {
+        var uriSelectors = glue.stream().map(GlueDiscoverySelector::selectUri);
+        var classSelectors = glueClasses.stream().map(GlueDiscoverySelector::selectClass);
         return Stream.concat(uriSelectors, classSelectors).toList();
     }
 
     private List<? extends GlueDiscoveryFilter> createClassNamePatternFilters() {
         var included = glueIncludedClassNamePatterns.stream()
-                .map(GlueDiscoveryFilter.ClassNameFilter::includeClassNamePatterns);
+                .map(GlueDiscoveryFilter::includeClassNamePatterns);
         var excluded = glueExcludedClassNamePatterns.stream()
-                .map(GlueDiscoveryFilter.ClassNameFilter::excludeClassNamePatterns);
+                .map(GlueDiscoveryFilter::excludeClassNamePatterns);
         return Stream.concat(included, excluded).toList();
     }
 

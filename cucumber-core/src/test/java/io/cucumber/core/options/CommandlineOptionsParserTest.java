@@ -1,8 +1,8 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.backend.UriGlueDiscoverySelector;
+import io.cucumber.core.backend.discovery.GlueClassNameFilter;
+import io.cucumber.core.backend.discovery.UriGlueDiscoverySelector;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
@@ -39,7 +39,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
+import static io.cucumber.core.backend.discovery.GlueDiscoveryFilter.excludeClassNamePatterns;
+import static io.cucumber.core.backend.discovery.GlueDiscoveryFilter.includeClassNamePatterns;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectUri;
 import static io.cucumber.core.options.Constants.FILTER_TAGS_PROPERTY_NAME;
 import static io.cucumber.core.plugin.IsEqualCompressingLineSeparators.equalCompressingLineSeparators;
 import static io.cucumber.core.resource.ClasspathSupport.rootPackageUri;
@@ -217,8 +219,8 @@ class CommandlineOptionsParserTest {
         RuntimeOptions options = parser
                 .parse("--glue-included-class-name-pattern", "NounStepDefinitions")
                 .build();
-        assertThat(options.getGlueDiscoveryRequest().getFiltersByType(ClassNameFilter.class),
-            contains(ClassNameFilter.includeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
+        assertThat(options.getGlueDiscoveryRequest().getFiltersByType(GlueClassNameFilter.class),
+            contains(includeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
     }
 
     @Test
@@ -226,8 +228,8 @@ class CommandlineOptionsParserTest {
         RuntimeOptions options = parser
                 .parse("--glue-excluded-class-name-pattern", "NounStepDefinitions")
                 .build();
-        assertThat(options.getGlueDiscoveryRequest().getFiltersByType(ClassNameFilter.class),
-            contains(ClassNameFilter.excludeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
+        assertThat(options.getGlueDiscoveryRequest().getFiltersByType(GlueClassNameFilter.class),
+            contains(excludeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
     }
 
     @Test

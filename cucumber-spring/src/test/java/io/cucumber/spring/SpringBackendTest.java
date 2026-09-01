@@ -1,8 +1,8 @@
 package io.cucumber.spring;
 
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
 import io.cucumber.spring.annotationconfig.AnnotationContextConfiguration;
 import io.cucumber.spring.cucumbercontextconfigannotation.AbstractWithComponentAnnotation;
 import io.cucumber.spring.cucumbercontextconfigannotation.AnnotatedInterface;
@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 
-import static io.cucumber.core.backend.GlueDiscoverySelectors.selectClass;
-import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectClass;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectUri;
 import static java.lang.Thread.currentThread;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;

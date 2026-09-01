@@ -4,6 +4,7 @@ import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE, since = "5.0.0")
 public final class Constants {
 
     /**

@@ -1,9 +1,9 @@
 package io.cucumber.core.options;
 
-import io.cucumber.core.backend.ClassGlueDiscoverySelector;
-import io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.backend.UriGlueDiscoverySelector;
+import io.cucumber.core.backend.discovery.ClassGlueDiscoverySelector;
+import io.cucumber.core.backend.discovery.GlueClassNameFilter;
+import io.cucumber.core.backend.discovery.UriGlueDiscoverySelector;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.exception.CucumberException;
@@ -27,10 +27,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import static io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter.excludeClassNamePatterns;
-import static io.cucumber.core.backend.GlueDiscoveryFilter.ClassNameFilter.includeClassNamePatterns;
-import static io.cucumber.core.backend.GlueDiscoverySelectors.selectClass;
-import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
+import static io.cucumber.core.backend.discovery.GlueDiscoveryFilter.excludeClassNamePatterns;
+import static io.cucumber.core.backend.discovery.GlueDiscoveryFilter.includeClassNamePatterns;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectClass;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectUri;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -249,7 +249,7 @@ class CucumberOptionsAnnotationParserTest {
     void create_with_class_with_included_glue_class_name_patterns() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithIncludedGlueClassNamePatterns.class).build();
 
-        assertThat(runtimeOptions.getGlueDiscoveryRequest().getFiltersByType(ClassNameFilter.class),
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getFiltersByType(GlueClassNameFilter.class),
             contains(includeClassNamePatterns(Pattern.compile(".*NounStepDefinitions?"))));
     }
 
@@ -257,7 +257,7 @@ class CucumberOptionsAnnotationParserTest {
     void create_with_class_with_excluded_glue_class_name_patterns() {
         RuntimeOptions runtimeOptions = parser().parse(ClassWithExcludedGlueClassNamePatterns.class).build();
 
-        assertThat(runtimeOptions.getGlueDiscoveryRequest().getFiltersByType(ClassNameFilter.class),
+        assertThat(runtimeOptions.getGlueDiscoveryRequest().getFiltersByType(GlueClassNameFilter.class),
             contains(excludeClassNamePatterns(Pattern.compile(".*UnwantedDefinitions?"))));
     }
 

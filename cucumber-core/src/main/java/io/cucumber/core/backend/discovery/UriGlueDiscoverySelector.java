@@ -1,11 +1,16 @@
-package io.cucumber.core.backend;
+package io.cucumber.core.backend.discovery;
 
+import org.apiguardian.api.API;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.util.Objects;
 
-public final class UriGlueDiscoverySelector implements GlueDiscoverySelectors {
+/**
+ * A selector for specific uris.
+ */
+@API(status = API.Status.EXPERIMENTAL, since = "8.0.0")
+public final class UriGlueDiscoverySelector implements GlueDiscoverySelector {
     private final URI uri;
 
     UriGlueDiscoverySelector(URI uri) {

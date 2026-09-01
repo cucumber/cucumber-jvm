@@ -1,6 +1,6 @@
 package io.cucumber.java;
 
-import io.cucumber.core.backend.GlueDiscoveryRequest;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.RuntimeOptions;
@@ -14,7 +14,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 
-import static io.cucumber.core.backend.GlueDiscoverySelectors.selectUri;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectUri;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GlueLoadingAdvisorTest {

@@ -4,11 +4,11 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Container;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.Lookup;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
 
 import java.lang.reflect.Type;
 import java.text.MessageFormat;

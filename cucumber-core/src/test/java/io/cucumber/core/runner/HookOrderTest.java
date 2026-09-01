@@ -1,9 +1,9 @@
 package io.cucumber.core.runner;
 
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
