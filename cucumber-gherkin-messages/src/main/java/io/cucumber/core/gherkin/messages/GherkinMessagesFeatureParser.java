@@ -7,6 +7,7 @@ import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.gherkin.GherkinDialect;
 import io.cucumber.gherkin.GherkinDialects;
 import io.cucumber.gherkin.GherkinParser;
+import io.cucumber.gherkin.GherkinParser.IdGenerator;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.GherkinDocument;
 import io.cucumber.messages.types.ParseError;
@@ -39,7 +40,7 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
     @Override
     public Optional<Feature> parse(URI path, InputStream source, Supplier<UUID> idGenerator) throws IOException {
         List<Envelope> envelopes = GherkinParser.builder()
-                .idGenerator(() -> idGenerator.get().toString())
+                .idGenerator((IdGenerator) () -> idGenerator.get().toString())
                 .build()
                 .parse(path.toString(), source)
                 .collect(toList());
@@ -73,7 +74,7 @@ public final class GherkinMessagesFeatureParser implements FeatureParser {
                     List<io.cucumber.messages.types.Pickle> pickleMessages = envelopes.stream()
                             .map(Envelope::getPickle)
                             .flatMap(Optional::stream)
-                            .collect(toList());
+                            .toList();
 
                     List<Pickle> pickles = pickleMessages.stream()
                             .map(pickle -> new GherkinMessagesPickle(pickle, path, dialect, cucumberQuery))
