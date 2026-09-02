@@ -32,6 +32,9 @@ import static io.cucumber.core.cli.CommandlineOptions.COUNT;
 import static io.cucumber.core.cli.CommandlineOptions.DRY_RUN;
 import static io.cucumber.core.cli.CommandlineOptions.DRY_RUN_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.GLUE;
+import static io.cucumber.core.cli.CommandlineOptions.GLUE_CLASS;
+import static io.cucumber.core.cli.CommandlineOptions.GLUE_EXCLUDED_CLASS_NAME_PATTERN;
+import static io.cucumber.core.cli.CommandlineOptions.GLUE_INCLUDED_CLASS_NAME_PATTERN;
 import static io.cucumber.core.cli.CommandlineOptions.GLUE_SHORT;
 import static io.cucumber.core.cli.CommandlineOptions.HELP;
 import static io.cucumber.core.cli.CommandlineOptions.HELP_SHORT;
@@ -128,6 +131,17 @@ public final class CommandlineOptionsParser {
                 String gluePath = removeArgFor(arg, args);
                 URI parse = GluePath.parse(gluePath);
                 parsedOptions.addGlue(parse);
+            } else if (arg.equals(GLUE_CLASS)) {
+                String glueClassName = removeArgFor(arg, args);
+                parsedOptions.addGlueClass(glueClassName);
+            } else if (arg.equals(GLUE_INCLUDED_CLASS_NAME_PATTERN)) {
+                var glueIncludedClassNamePattern = removeArgFor(arg, args);
+                var pattern = Pattern.compile(glueIncludedClassNamePattern);
+                parsedOptions.addGlueIncludedClassNamePattern(pattern);
+            } else if (arg.equals(GLUE_EXCLUDED_CLASS_NAME_PATTERN)) {
+                var glueExcludedClassNamePattern = removeArgFor(arg, args);
+                var pattern = Pattern.compile(glueExcludedClassNamePattern);
+                parsedOptions.addGlueExcludedClassNamePattern(pattern);
             } else if (arg.equals(TAGS) || arg.equals(TAGS_SHORT)) {
                 parsedOptions.addTagFilter(TagExpressionParser.parse(removeArgFor(arg, args)));
             } else if (arg.equals(PUBLISH)) {

@@ -4,6 +4,7 @@ import io.cucumber.core.runtime.ObjectFactoryServiceLoader;
 import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import org.apiguardian.api.API;
 
+@API(status = API.Status.STABLE, since = "5.0.0")
 public final class Constants {
 
     /**
@@ -130,6 +131,43 @@ public final class Constants {
      * @see io.cucumber.core.feature.GluePath
      */
     public static final String GLUE_PROPERTY_NAME = "cucumber.glue";
+
+    /**
+     * Property name to set the glue classes: {@value}
+     * <p>
+     * A comma separated list fully qualified class names e.g.:
+     * {@code com.example.StepDefinitionsA, com.example.StepDefinitionsB}.
+     * <p>
+     * Classes that explicitly listed as glue are not filtered by either
+     * {@link #GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME} or
+     * {@link #GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME}.
+     *
+     * @see io.cucumber.core.feature.GluePath
+     */
+    @API(status = API.Status.EXPERIMENTAL, since = "8.0.0")
+    public static final String GLUE_CLASSES_PROPERTY_NAME = "cucumber.glue.classes";
+
+    /**
+     * Property name to set the pattern for included glue classes: {@value}
+     * <p>
+     * A glue class is included in classpath scanning if the include pattern
+     * matches it and the exclude pattern doesn't.
+     * <p>
+     * Example: {@code .*StepDefinitions?|.*Hooks?}
+     */
+    @API(status = API.Status.EXPERIMENTAL, since = "8.0.0")
+    public static final String GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME = "cucumber.glue.included-class-name-pattern";
+
+    /**
+     * Property name to set the pattern for excluded glue classes: {@value}
+     * <p>
+     * A glue class is included in classpath scanning if the include pattern
+     * matches it and the exclude pattern doesn't.
+     * <p>
+     * Example: {@code .*UnwantedStepDefinitions?|.*UnwantedHooks?}
+     */
+    @API(status = API.Status.EXPERIMENTAL, since = "8.0.0")
+    public static final String GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME = "cucumber.glue.excluded-class-name-pattern";
 
     /**
      * Property name to enable displaying cucumber glue loading hints: {@value}

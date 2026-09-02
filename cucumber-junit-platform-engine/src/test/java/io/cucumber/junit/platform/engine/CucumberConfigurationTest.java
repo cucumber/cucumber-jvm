@@ -1,7 +1,10 @@
 package io.cucumber.junit.platform.engine;
 
 import io.cucumber.core.backend.DefaultObjectFactory;
-import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
+import io.cucumber.core.backend.discovery.ClassGlueDiscoverySelector;
+import io.cucumber.core.backend.discovery.GlueClassNameFilter;
+import io.cucumber.core.backend.discovery.GlueDiscoveryFilter;
+import io.cucumber.core.backend.discovery.UriGlueDiscoverySelector;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
 import io.cucumber.core.plugin.Options;
 import io.cucumber.core.snippets.SnippetType;
@@ -13,8 +16,10 @@ import org.junit.platform.engine.support.discovery.DiscoveryIssueReporter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectClass;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectUri;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -132,6 +137,72 @@ class CucumberConfigurationTest {
             contains(
                 selectUri("classpath:/com/example/app"),
                 selectUri("classpath:/com/example/glue")));
+    }
+
+    @Test
+    void getGlueIgnoresEmptyValues() {
+        ConfigurationParameters config = new MapConfigurationParameters(
+            Constants.GLUE_PROPERTY_NAME,
+            "com.example.app, ,com.example.glue");
+
+        assertThat(
+            new CucumberConfiguration(config, issueReporter).getGlueDiscoveryRequest()
+                    .getSelectorsByType(UriGlueDiscoverySelector.class),
+            contains(
+                selectUri("classpath:/com/example/app"),
+                selectUri("classpath:/com/example/glue")));
+    }
+
+    @Test
+    void getGlueClasses() {
+        ConfigurationParameters config = new MapConfigurationParameters(
+            Constants.GLUE_CLASSES_PROPERTY_NAME,
+            "com.example.StepDefinitions, com.example.MoreStepDefinitions");
+
+        assertThat(
+            new CucumberConfiguration(config, issueReporter).getGlueDiscoveryRequest()
+                    .getSelectorsByType(ClassGlueDiscoverySelector.class),
+            contains(
+                selectClass("com.example.StepDefinitions"),
+                selectClass("com.example.MoreStepDefinitions")));
+    }
+
+    @Test
+    void getGlueClassesIgnoresEmptyValues() {
+        ConfigurationParameters config = new MapConfigurationParameters(
+            Constants.GLUE_CLASSES_PROPERTY_NAME,
+            "com.example.StepDefinitions, ,com.example.MoreStepDefinitions");
+
+        assertThat(
+            new CucumberConfiguration(config, issueReporter).getGlueDiscoveryRequest()
+                    .getSelectorsByType(ClassGlueDiscoverySelector.class),
+            contains(
+                selectClass("com.example.StepDefinitions"),
+                selectClass("com.example.MoreStepDefinitions")));
+    }
+
+    @Test
+    void getGlueIncludedClassNamePattern() {
+        ConfigurationParameters config = new MapConfigurationParameters(
+            Constants.GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
+            "NounStepDefinitions");
+
+        assertThat(
+            new CucumberConfiguration(config, issueReporter).getGlueDiscoveryRequest()
+                    .getFiltersByType(GlueClassNameFilter.class),
+            contains(GlueDiscoveryFilter.includeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
+    }
+
+    @Test
+    void getGlueExcludedClassNamePattern() {
+        ConfigurationParameters config = new MapConfigurationParameters(
+            Constants.GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
+            "NounStepDefinitions");
+
+        assertThat(
+            new CucumberConfiguration(config, issueReporter).getGlueDiscoveryRequest()
+                    .getFiltersByType(GlueClassNameFilter.class),
+            contains(GlueDiscoveryFilter.excludeClassNamePatterns(Pattern.compile("NounStepDefinitions"))));
     }
 
     @Test

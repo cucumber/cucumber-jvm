@@ -2,8 +2,8 @@ package io.cucumber.guice;
 
 import io.cucumber.core.backend.BackendProviderService;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
 import io.cucumber.guice.integration.YourInjectorSource;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -11,7 +11,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 
 import java.util.function.Supplier;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectClass;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectUri;
 import static java.lang.Thread.currentThread;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -51,6 +52,16 @@ class GuiceBackendTest {
                 .build();
         backend.loadGlue(glue, request);
         verify(factory, times(1)).addClass(YourInjectorSource.class);
+    }
+
+    @Test
+    void finds_injector_source_impls_by_classname() {
+        GuiceBackend backend = new GuiceBackend(factory, classLoader);
+        GlueDiscoveryRequest request = GlueDiscoveryRequest.builder() //
+                .selectors(selectClass(YourInjectorSource.class.getName())) //
+                .build();
+        backend.loadGlue(glue, request);
+        verify(factory).addClass(YourInjectorSource.class);
     }
 
     @Test

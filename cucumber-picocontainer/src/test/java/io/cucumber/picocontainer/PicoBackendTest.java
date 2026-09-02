@@ -1,8 +1,8 @@
 package io.cucumber.picocontainer;
 
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
 import io.cucumber.picocontainer.annotationconfig.DatabaseConnectionProvider;
 import io.cucumber.picocontainer.annotationconfig.ExamplePicoConfiguration;
 import io.cucumber.picocontainer.annotationconfig.UrlToUriProvider;
@@ -12,7 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static io.cucumber.core.backend.GlueDiscoverySelector.selectUri;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectClass;
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectUri;
 import static java.lang.Thread.currentThread;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -40,7 +41,6 @@ final class PicoBackendTest {
                 .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
                 .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
         verify(factory, never()).addClass(ExamplePicoConfiguration.class);
     }
 
@@ -50,9 +50,17 @@ final class PicoBackendTest {
                 .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
                 .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
         verify(factory).addClass(UrlToUriProvider.class);
         verify(factory).addClass(DatabaseConnectionProvider.class);
+    }
+
+    @Test
+    void adds_unnested_provider_classes_from_class_name() {
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors(selectClass(UrlToUriProvider.class.getName())) //
+                .build();
+        backend.loadGlue(glue, request);
+        verify(factory).addClass(UrlToUriProvider.class);
     }
 
     @Test
@@ -61,7 +69,6 @@ final class PicoBackendTest {
                 .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
                 .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
         verify(factory).addClass(ExamplePicoConfiguration.NestedUrlProvider.class);
         verify(factory).addClass(ExamplePicoConfiguration.NestedUrlConnectionProvider.class);
     }
@@ -73,7 +80,6 @@ final class PicoBackendTest {
                 .selectors(selectUri("classpath:io/cucumber/picocontainer/annotationconfig")) //
                 .build();
         backend.loadGlue(glue, request);
-        backend.buildWorld();
         verify(factory, never()).addClass(ExamplePicoConfiguration.class);
         verify(factory, times(1)).addClass(ExamplePicoConfiguration.NestedUrlProvider.class);
         verify(factory, times(1)).addClass(ExamplePicoConfiguration.NestedUrlConnectionProvider.class);

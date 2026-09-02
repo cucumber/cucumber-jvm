@@ -338,6 +338,82 @@
             "code": "java.method.removed",
             "old": "method java.util.List<io.cucumber.core.stepexpression.Argument> io.cucumber.core.stepexpression.StepExpression::match(java.lang.String, java.util.List<java.util.List<java.lang.String>>, java.lang.reflect.Type[])",
             "justification": "Internal refactoring"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.added",
+            "old": "method void io.cucumber.core.backend.Backend::loadGlue(io.cucumber.core.backend.Glue, java.util.List<java.net.URI>)",
+            "new": "method void io.cucumber.core.backend.Backend::loadGlue(io.cucumber.core.backend.Glue, java.util.List<java.net.URI>)",
+            "annotation": "@org.apiguardian.api.API(status = org.apiguardian.api.API.Status.DEPRECATED, since = \"8.0.0\")",
+            "justification": "Documentation"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.added",
+            "old": "class io.cucumber.core.options.Constants",
+            "new": "class io.cucumber.core.options.Constants",
+            "annotation": "@org.apiguardian.api.API(status = org.apiguardian.api.API.Status.STABLE, since = \"5.0.0\")",
+            "justification": "Documentation"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.visibilityIncreased",
+            "old": "method java.util.Optional<java.lang.Class<?>> io.cucumber.core.resource.ClasspathScanner::safelyLoadClass(java.lang.String)",
+            "new": "method java.util.Optional<java.lang.Class<?>> io.cucumber.core.resource.ClasspathScanner::safelyLoadClass(java.lang.String)",
+            "oldVisibility": "private",
+            "newVisibility": "public",
+            "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.visibilityIncreased",
+            "old": "method java.util.List<java.lang.Class<?>> io.cucumber.core.resource.ClasspathScanner::scanForClassesInPackage(java.lang.String, java.util.function.Predicate<java.lang.Class<?>>)",
+            "new": "method java.util.List<java.lang.Class<?>> io.cucumber.core.resource.ClasspathScanner::scanForClassesInPackage(java.lang.String, java.util.function.Predicate<java.lang.Class<?>>)",
+            "oldVisibility": "private",
+            "newVisibility": "public",
+            "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.addedToInterface",
+            "new": "method io.cucumber.core.backend.discovery.GlueDiscoveryRequest io.cucumber.core.runner.Options::getGlueDiscoveryRequest()",
+            "justification": "Support filtering glue classes before loading"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "class io.cucumber.core.backend.discovery.ClassGlueDiscoverySelector",
+            "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.discovery.GlueClassNameFilter",
+            "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.discovery.GlueDiscoveryFilter",
+            "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.discovery.GlueDiscoveryRequest",
+            "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.discovery.GlueDiscoverySelector",
+            "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "class io.cucumber.core.backend.discovery.UriGlueDiscoverySelector",
+            "justification": "Support discovery of single glue classes"
           }
         ]
       }

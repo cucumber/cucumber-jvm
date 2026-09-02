@@ -1,6 +1,7 @@
 package io.cucumber.core.backend;
 
-import io.cucumber.core.backend.GlueDiscoverySelector.UriGlueDiscoverySelector;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
+import io.cucumber.core.backend.discovery.UriGlueDiscoverySelector;
 import org.apiguardian.api.API;
 import org.jspecify.annotations.Nullable;
 
@@ -17,6 +18,7 @@ public interface Backend {
      * @param glue    Glue that provides the steps to be executed.
      * @param request A request to discover glue code in specific locations.
      */
+    @API(status = API.Status.EXPERIMENTAL, since = "8.0.0")
     default void loadGlue(Glue glue, GlueDiscoveryRequest request) {
         var gluePaths = request.getSelectorsByType(UriGlueDiscoverySelector.class) //
                 .stream() //
@@ -35,6 +37,7 @@ public interface Backend {
      *                       instead.
      */
     @Deprecated
+    @API(status = API.Status.DEPRECATED, since = "8.0.0")
     default void loadGlue(Glue glue, List<URI> gluePaths) {
 
     }

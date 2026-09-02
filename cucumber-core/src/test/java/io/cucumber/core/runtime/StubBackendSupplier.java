@@ -2,11 +2,11 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.Snippet;
 import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.backend.StepDefinition;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
 import io.cucumber.core.snippets.TestSnippet;
 
 import java.util.Arrays;

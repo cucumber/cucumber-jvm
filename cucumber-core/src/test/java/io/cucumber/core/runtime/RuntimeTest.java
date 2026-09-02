@@ -2,13 +2,13 @@ package io.cucumber.core.runtime;
 
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.Glue;
-import io.cucumber.core.backend.GlueDiscoveryRequest;
 import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.backend.TestCaseState;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
 import io.cucumber.core.exception.CucumberException;

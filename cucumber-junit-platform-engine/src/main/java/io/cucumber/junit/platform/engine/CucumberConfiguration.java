@@ -1,8 +1,10 @@
 package io.cucumber.junit.platform.engine;
 
-import io.cucumber.core.backend.GlueDiscoveryRequest;
-import io.cucumber.core.backend.GlueDiscoverySelector;
 import io.cucumber.core.backend.ObjectFactory;
+import io.cucumber.core.backend.discovery.GlueClassNameFilter;
+import io.cucumber.core.backend.discovery.GlueDiscoveryFilter;
+import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
+import io.cucumber.core.backend.discovery.GlueDiscoverySelector;
 import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureWithLines;
 import io.cucumber.core.feature.GluePath;
@@ -33,7 +35,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectUri;
 import static io.cucumber.core.resource.ClasspathSupport.CLASSPATH_SCHEME_PREFIX;
 import static io.cucumber.junit.platform.engine.Constants.ANSI_COLORS_DISABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.EXECUTION_DRY_RUN_PROPERTY_NAME;
@@ -42,8 +46,11 @@ import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE
 import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_NAME_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.FILTER_TAGS_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_CLASSES_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_HINT_ENABLED_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_HINT_THRESHOLD_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_DISCOVERY_AS_ROOT_ENGINE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.JUNIT_PLATFORM_NAMING_STRATEGY_PROPERTY_NAME;
@@ -56,6 +63,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PUBLISH_TOKEN_P
 import static io.cucumber.junit.platform.engine.Constants.SNIPPET_TYPE_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.Constants.UUID_GENERATOR_PROPERTY_NAME;
 import static io.cucumber.junit.platform.engine.DefaultNamingStrategyProvider.SUREFIRE;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
 
@@ -168,8 +176,7 @@ class CucumberConfiguration implements
     @Override
     public Duration getGlueHintThreshold() {
         return configurationParameters
-                .get(GLUE_HINT_THRESHOLD_PROPERTY_NAME)
-                .map(Duration::parse)
+                .get(GLUE_HINT_THRESHOLD_PROPERTY_NAME, Duration::parse)
                 .orElseGet(() -> Duration.ofMillis(100));
     }
 
@@ -189,18 +196,48 @@ class CucumberConfiguration implements
 
     @Override
     public GlueDiscoveryRequest getGlueDiscoveryRequest() {
-        var selectors = configurationParameters
-                .get(GLUE_PROPERTY_NAME, s -> Arrays.asList(s.split(",")))
-                .orElse(Collections.singletonList(CLASSPATH_SCHEME_PREFIX))
-                .stream()
-                .map(String::trim)
-                .map(GluePath::parse)
-                .map(GlueDiscoverySelector::selectUri)
-                .toList();
+        var uriSelectors = configurationParameters
+                .get(GLUE_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
+                        .map(String::trim)
+                        .filter(part -> !part.isEmpty())
+                        .map(GluePath::parse)
+                        .map(GlueDiscoverySelector::selectUri))
+                .orElseGet(Stream::empty);
+
+        var classSelectors = configurationParameters
+                .get(GLUE_CLASSES_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
+                        .map(String::trim)
+                        .filter(part -> !part.isEmpty())
+                        .map(GlueDiscoverySelector::selectClass))
+                .orElseGet(Stream::empty);
+
+        var selectors = Stream.concat(uriSelectors, classSelectors).toList();
+
+        var defaultSelector = singletonList(selectUri(GluePath.parse(CLASSPATH_SCHEME_PREFIX)));
+
+        var filters = new ArrayList<GlueDiscoveryFilter>(2);
+        includedClassNamePattern().ifPresent(filters::add);
+        excludedClassNamePattern().ifPresent(filters::add);
+
         return GlueDiscoveryRequest.builder()
                 .options(this)
-                .selectors(selectors)
+                .selectors(selectors.isEmpty() ? defaultSelector : selectors)
+                .filters(filters)
                 .build();
+    }
+
+    private Optional<GlueClassNameFilter> includedClassNamePattern() {
+        return configurationParameters
+                .get(GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
+                    Pattern::compile)
+                .map(GlueDiscoveryFilter::includeClassNamePatterns);
+    }
+
+    private Optional<GlueClassNameFilter> excludedClassNamePattern() {
+        return configurationParameters
+                .get(GLUE_EXCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,
+                    Pattern::compile)
+                .map(GlueDiscoveryFilter::excludeClassNamePatterns);
     }
 
     boolean isParallelExecutionEnabled() {
@@ -234,7 +271,7 @@ class CucumberConfiguration implements
                     .map(FeatureWithLines::parse)
                     .map(FeatureWithLinesSelector::from)
                     .collect(Collectors.toSet()))
-                .orElse(Collections.emptySet());
+                .orElseGet(Collections::emptySet);
     }
 
     ExecutionMode getExecutionModeFeature() {

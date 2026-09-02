@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [JUnit Platform] Use `ParallelHierarchicalTestExecutorServiceFactory` ([#3105](https://github.com/cucumber/cucumber-jvm/pull/3105))
 - [Core] Support both DocString and DataTable arguments on steps ([#3213](https://github.com/cucumber/cucumber-jvm/pull/3213))
 - [Core] Support `cucumber.execution.threads` property when executing from CLI ([#3183](https://github.com/cucumber/cucumber-jvm/pull/3183))
+- [Core] Support registering individual glue classes via `cucumber.glue.classes` property or the `--glue-classes` CLI option ([#3120](https://github.com/cucumber/cucumber-jvm/pull/3120)).
+- [Core] Support class filtering before class loading via the `{included,excluded}-class-name-pattern` property and the `--glue-{included,excluded}-class-name-pattern`  CLI option. ([#3120](https://github.com/cucumber/cucumber-jvm/pull/3120)).
 
 ### Fixed
 - [JUnit Platform Engine] Accept partial matches with `cucumber.filter.name` and align the behavior with JUnit 4 and CLI ([#3174](https://github.com/cucumber/cucumber-jvm/pull/3174))

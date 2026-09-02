@@ -71,6 +71,18 @@ public @interface CucumberOptions {
     String[] glue() default {};
 
     /**
+     * Classes with glue code.
+     * <p>
+     * When no glue is provided, Cucumber will use the package of the annotated
+     * class. For example, if the annotated class is
+     * {@code com.example.RunCucumber} then glue is assumed to be located in
+     * {@code com.example}.
+     *
+     * @return list of class names
+     */
+    Class<?>[] glueClasses() default {};
+
+    /**
      * Package to load additional glue code (step definitions, hooks and
      * plugins) from. E.g: {@code com.example.app}
      * <p>
@@ -80,6 +92,44 @@ public @interface CucumberOptions {
      * @return list of package names
      */
     String[] extraGlue() default {};
+
+    /**
+     * Additional classes with glue code.
+     * <p>
+     * These classes are used in addition to the default described in
+     * {@code #glue}.
+     * <p>
+     * Classes that explicitly listed as glue are not filtered by either
+     * {@link #includedGlueClassNamePatterns()} or
+     * {@link #excludedGlueClassNamePatterns()}.
+     *
+     * @return list of class names
+     */
+    Class<?>[] extraGlueClasses() default {};
+
+    /**
+     * The pattern for included glue classes.
+     * <p>
+     * A glue class is included in classpath scanning if the include pattern
+     * matches it and the exclude pattern doesn't.
+     * <p>
+     * Example: {@code .*StepDefinitions?|.*Hooks?}
+     *
+     * @return list of patterns
+     */
+    String[] includedGlueClassNamePatterns() default {};
+
+    /**
+     * The pattern for excluded glue classes.
+     * <p>
+     * A glue class is included in classpath scanning if the include pattern
+     * matches it and the exclude pattern doesn't.
+     * <p>
+     * Example: {@code .*UnwantedStepDefinitions?|.*UnwantedHooks?}
+     *
+     * @return list of patterns
+     */
+    String[] excludedGlueClassNamePatterns() default {};
 
     /**
      * Only run scenarios tagged with tags matching

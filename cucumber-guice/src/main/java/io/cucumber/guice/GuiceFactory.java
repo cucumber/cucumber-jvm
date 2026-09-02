@@ -63,14 +63,17 @@ public final class GuiceFactory implements ObjectFactory {
 
     private void checkOnlyOneClassHasInjectorSource(Class<?> stepClass) {
         if (withInjectorSource != null) {
-            throw new CucumberBackendException(("" +
-                    "Glue class %1$s and %2$s are both implementing io.cucumber.guice.InjectorSource.\n" +
-                    "Please ensure only one class configures the Guice context\n" +
-                    "\n" +
-                    "By default Cucumber scans the entire classpath for context configuration.\n" +
-                    "You can restrict this by configuring the glue path.\n" +
-                    ClasspathSupport.configurationExamples())
-                    .formatted(stepClass, withInjectorSource));
+            throw new CucumberBackendException(
+                """
+                        Glue class %%1$s and %%2$s both implement io.cucumber.guice.InjectorSource.
+                        Please ensure only one class configures the Guice context
+
+                        By default Cucumber scans the entire classpath for context configuration.
+                        You can restrict this by configuring the glue classes, glue path, and/or the included or excluded glue class patterns.
+
+                        %s"""
+                        .formatted(ClasspathSupport.configurationExamples())
+                        .formatted(stepClass, withInjectorSource));
         }
     }
 
