@@ -96,7 +96,7 @@ class CachingGlueTest {
             DuplicateParameterTypeDefinitionException.class,
             () -> glue.prepareGlue(language));
         assertThat(exception.getMessage(), equalTo(
-            "Duplicate parameter type with name date defined in com.example.StepsA.date() and com.example.StepsB.date()"));
+            "Duplicate parameter type with name date defined in com.example.StepsA.date(), com.example.StepsB.date()"));
     }
 
     @Test
