@@ -177,16 +177,36 @@ import io.cucumber.java.Before;
 public class StepDefinitions {
 
     @Before("not @zukini")
-    public void before(Scenario scenario) {
+    public void before() {
         // Runs before each scenario *not* tagged with @zukini
     }
 
     @After
-    public void after(Scenario scenario) {
+    public void after() {
         // Runs after each scenario
     }
 }
 ```
+
+The `Scenario` parameter provides access to information about the scenario being executed:
+
+```java
+package io.cucumber.example;
+
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+
+public class StepDefinitions {
+
+    @Before
+    public void before(Scenario scenario) {
+        System.out.println("About to run: " + scenario.getName());
+        System.out.println("Scenario is in file: " + scenario.getUri());
+        System.out.println("Scenario is in line: " + scenario.getLine());
+    }
+}
+```
+
 
 ### BeforeStep / AfterStep
 
@@ -243,7 +263,7 @@ public class StepDefinitions {
 
 ### Attaching logs, files and screenshots
 
-The `Scenario` object can also be used to attach log messages, files and
+The `Scenario` object can be used to attach log messages, files and
 screenshots to a test run. When using the HTML formatter these will be included
 in the report. Providing a media type for attachments will help the HTML
 report render them nicely. See [@cucumber/react-components - Attachments](https://github.com/cucumber/react-components#attachments) 
@@ -257,7 +277,7 @@ import io.cucumber.java.Scenario;
 
 import java.nio.file.Files;
 
-public class Attachments {
+public class StepDefinitions {
 
     @After
     public void logDetails(Scenario scenario) {
@@ -267,6 +287,8 @@ public class Attachments {
 
     @After
     public void attachScreenshot(Scenario scenario) {
+        // Only attach screenshots for failed scenarios to avoid bloating
+        // the report size
         if (scenario.isFailed()) {
             byte[] data = /* Get a screenshot from somewhere */; 
             scenario.attach(data, "image/png", "my-screenshot.png");
