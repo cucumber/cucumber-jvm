@@ -378,6 +378,42 @@
             "code": "java.method.addedToInterface",
             "new": "method io.cucumber.core.backend.discovery.GlueDiscoveryRequest io.cucumber.core.runner.Options::getGlueDiscoveryRequest()",
             "justification": "Support filtering glue classes before loading"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "class io.cucumber.core.backend.discovery.ClassGlueDiscoverySelector",
+            "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.discovery.GlueClassNameFilter",
+            "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.discovery.GlueDiscoveryFilter",
+            "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.discovery.GlueDiscoveryRequest",
+            "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "interface io.cucumber.core.backend.discovery.GlueDiscoverySelector",
+            "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "class io.cucumber.core.backend.discovery.UriGlueDiscoverySelector",
+            "justification": "Support discovery of single glue classes"
           }
         ]
       }
