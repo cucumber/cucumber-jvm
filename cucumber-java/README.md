@@ -178,12 +178,12 @@ public class StepDefinitions {
 
     @Before("not @zukini")
     public void before(Scenario scenario) {
-        scenario.log("Runs before each scenarios *not* tagged with @zukini");
+        // Runs before each scenario *not* tagged with @zukini
     }
 
     @After
     public void after(Scenario scenario) {
-        scenario.log("Runs after each scenarios");
+        // Runs after each scenario
     }
 }
 ```
@@ -206,12 +206,12 @@ public class StepDefinitions {
 
     @BeforeStep("not @zukini")
     public void before(Scenario scenario) {
-        scenario.log("Runs before each step in scenarios *not* tagged with @zukini");
+        // Runs before each step in scenarios *not* tagged with @zukini
     }
 
     @AfterStep
     public void after(Scenario scenario) {
-        scenario.log("Runs after each step");
+        // Runs after each step
     }
 }
 ```
@@ -230,17 +230,58 @@ public class StepDefinitions {
 
     @BeforeStep
     public void beforeStep(Scenario scenario, Step step) {
-        scenario.log("About to run: " + step.getKeyword() + step.getText());
-        scenario.log("Step is on line: " + step.getLine());
+        System.out.println("About to run: " + step.getKeyword() + step.getText());
+        System.out.println("Step is on line: " + step.getLine());
     }
 
     @AfterStep
     public void afterStep(Scenario scenario, Step step) {
-        scenario.log("Finished: " + step.getText());
+        System.out.println("Finished: " + step.getText());
     }
 }
 ```
-    
+
+### Attaching logs, files and screenshots
+
+The `Scenario` object can also be used to attach log messages, files and
+screenshots to a test run. When using the HTML formatter these will be included
+in the report. Providing a media type for attachments will help the HTML
+report render them nicely. See [@cucumber/react-components - Attachments](https://github.com/cucumber/react-components#attachments) 
+for details.
+
+```java
+package io.cucumber.example;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Scenario;
+
+import java.nio.file.Files;
+
+public class Attachments {
+
+    @After
+    public void logDetails(Scenario scenario) {
+        String details = /* Get details from somewhere */;  
+        scenario.log("Scenario completed with " + details);
+    }
+
+    @After
+    public void attachScreenshot(Scenario scenario) {
+        if (scenario.isFailed()) {
+            byte[] data = /* Get a screenshot from somewhere */; 
+            scenario.attach(data, "image/png", "my-screenshot.png");
+        }
+    }
+
+    @After
+    public void attachPdf(Scenario scenario) {
+        Path path = /* Get a path to a pdf file from somewhere */;
+        byte[] data = Files.readAllBytes(path);
+        scenario.attach(data, "application/pdf", path.getFileName());
+    }
+}
+```
+
 ## Transformers 
 
 Cucumber expression parameters, data tables, and doc strings can be transformed
