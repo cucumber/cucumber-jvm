@@ -199,6 +199,7 @@ class CucumberConfiguration implements
         var uriSelectors = configurationParameters
                 .get(GLUE_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
                         .map(String::trim)
+                        .filter(part -> !part.isEmpty())
                         .map(GluePath::parse)
                         .map(GlueDiscoverySelector::selectUri))
                 .orElseGet(Stream::empty);
@@ -206,6 +207,7 @@ class CucumberConfiguration implements
         var classSelectors = configurationParameters
                 .get(GLUE_CLASSES_PROPERTY_NAME, s -> Arrays.stream(s.split(","))
                         .map(String::trim)
+                        .filter(part -> !part.isEmpty())
                         .map(GlueDiscoverySelector::selectClass))
                 .orElseGet(Stream::empty);
 

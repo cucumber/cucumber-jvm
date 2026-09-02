@@ -5,6 +5,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Select a specific class as glue.
  */
@@ -13,7 +15,7 @@ public final class ClassGlueDiscoverySelector implements GlueDiscoverySelector {
     private final String name;
 
     ClassGlueDiscoverySelector(String name) {
-        this.name = name;
+        this.name = requireNonNull(name);
     }
 
     public String name() {

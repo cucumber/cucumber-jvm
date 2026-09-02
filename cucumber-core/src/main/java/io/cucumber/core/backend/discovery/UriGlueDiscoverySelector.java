@@ -6,6 +6,8 @@ import org.jspecify.annotations.Nullable;
 import java.net.URI;
 import java.util.Objects;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * A selector for specific uris.
  */
@@ -14,7 +16,7 @@ public final class UriGlueDiscoverySelector implements GlueDiscoverySelector {
     private final URI uri;
 
     UriGlueDiscoverySelector(URI uri) {
-        this.uri = uri;
+        this.uri = requireNonNull(uri);
     }
 
     public URI uri() {

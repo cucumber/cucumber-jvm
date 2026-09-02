@@ -4,6 +4,8 @@ import org.apiguardian.api.API;
 
 import java.net.URI;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * A selector that defines where the backend should look for Glue classes. For
  * example URI, a class, or a package (not yet implemented).
@@ -20,7 +22,7 @@ public interface GlueDiscoverySelector {
     }
 
     static UriGlueDiscoverySelector selectUri(String uri) {
-        return selectUri(URI.create(uri));
+        return selectUri(URI.create(requireNonNull(uri)));
     }
 
 }
