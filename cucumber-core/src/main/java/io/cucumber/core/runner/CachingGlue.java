@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.groupingBy;
 
 final class CachingGlue implements Glue {
 
@@ -276,11 +277,18 @@ final class CachingGlue implements Glue {
 
         // TODO: separate prepared and unprepared glue into different classes
         // parameters changed from the previous scenario => re-register them
-        parameterTypeDefinitions.forEach(ptd -> {
-            ParameterType<?> parameterType = ptd.parameterType();
-            stepTypeRegistry.defineParameterType(parameterType);
-            emitParameterTypeDefined(ptd);
-        });
+
+        parameterTypeDefinitions.stream() //
+                .collect(groupingBy(parameterTypeDefinition -> parameterTypeDefinition.parameterType().getName()))
+                .forEach((name, parameterTypeDefinitions) -> {
+                    if (parameterTypeDefinitions.size() != 1) {
+                        throw new DuplicateParameterTypeDefinitionException(name, parameterTypeDefinitions);
+                    }
+                    var parameterTypeDefinition = parameterTypeDefinitions.get(0);
+                    var parameterType = parameterTypeDefinition.parameterType();
+                    stepTypeRegistry.defineParameterType(parameterType);
+                    emitParameterTypeDefined(parameterTypeDefinition);
+                });
         dataTableTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDataTableType(dtd.dataTableType()));
         docStringTypeDefinitions.forEach(dtd -> stepTypeRegistry.defineDocStringType(dtd.docStringType()));
 
