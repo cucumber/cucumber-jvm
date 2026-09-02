@@ -80,19 +80,19 @@ class CachingGlueTest {
 
     @Test
     void throws_duplicate_error_with_locations_on_dupe_parameter_types() {
-        ParameterTypeDefinition a = mock(ParameterTypeDefinition.class);
+        var a = mock(ParameterTypeDefinition.class);
         doReturn(new ParameterType<>("date", "[0-9]{4}", Object.class, (String arg) -> new Object()))
                 .when(a).parameterType();
         when(a.getLocation()).thenReturn("com.example.StepsA.date()");
         glue.addParameterType(a);
 
-        ParameterTypeDefinition b = mock(ParameterTypeDefinition.class);
+        var b = mock(ParameterTypeDefinition.class);
         doReturn(new ParameterType<>("date", "[0-9]{2}", Object.class, (String arg) -> new Object()))
                 .when(b).parameterType();
         when(b.getLocation()).thenReturn("com.example.StepsB.date()");
         glue.addParameterType(b);
 
-        DuplicateParameterTypeDefinitionException exception = assertThrows(
+        var exception = assertThrows(
             DuplicateParameterTypeDefinitionException.class,
             () -> glue.prepareGlue(language));
         assertThat(exception.getMessage(), equalTo(
