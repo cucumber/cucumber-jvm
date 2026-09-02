@@ -16,7 +16,7 @@ final class DuplicateParameterTypeDefinitionException extends CucumberException 
 
     private static String createMessage(String name, List<ParameterTypeDefinition> duplicates) {
         var locations = duplicates.stream().map(Located::getLocation).collect(joining(", "));
-        return "Duplicate parameter types with name %s defined in %s"
+        return "Duplicate parameter types with name \"%s\" defined in %s"
                 .formatted(name, locations);
     }
 
