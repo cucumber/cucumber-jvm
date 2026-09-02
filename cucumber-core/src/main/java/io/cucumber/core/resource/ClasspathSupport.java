@@ -157,9 +157,10 @@ public final class ClasspathSupport {
     public static String classPathScanningExplanation() {
         return """
                 By default Cucumber scans the entire classpath for step definitions.
-                You can restrict this by configuring the glue path and/or the included or excluded glue class patterns.
+                You can restrict this by configuring the glue classes, glue path, and/or the included or excluded glue class patterns.
 
-                %s""".formatted(configurationExamples());
+                %s"""
+                .formatted(configurationExamples());
     }
 
     static String nestedJarEntriesExplanation(URI uri) {

@@ -83,7 +83,6 @@ final class GlueLoadingAdvisor implements AutoCloseable {
                 .toList();
 
         List<String> suggestions = new ArrayList<>();
-        // TODO suggests to use "cucumber.glue.classes" property
         addSuggestionCucumberGlue(gluePaths, suggestions);
         addSuggestionRemoveClassWithoutGlueFromGluePackage(suggestions);
         addSuggestionChangePublicStaticInnerClassesToPrivateClasses(suggestions);

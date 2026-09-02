@@ -91,7 +91,7 @@ public final class SpringFactory implements ObjectFactory {
                         Please ensure only one class configures the spring context
 
                         By default Cucumber scans the entire classpath for context configuration.
-                        You can restrict this by configuring the glue path and/or the included or excluded glue class patterns.
+                        You can restrict this by configuring the glue classes, glue path, and/or the included or excluded glue class patterns.
 
                         %s"""
                         .formatted(ClasspathSupport.configurationExamples())
