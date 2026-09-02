@@ -56,6 +56,7 @@ public final class CucumberTestContext {
         objects.put(name, object);
     }
 
+    @Nullable
     Object remove(String name) {
         requireActiveScenario();
         callbacks.remove(name);

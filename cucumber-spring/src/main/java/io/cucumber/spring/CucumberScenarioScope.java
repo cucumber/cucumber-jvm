@@ -19,6 +19,7 @@ class CucumberScenarioScope implements Scope {
     }
 
     @Override
+    @Nullable
     public Object remove(String name) {
         CucumberTestContext context = CucumberTestContext.getInstance();
         return context.remove(name);

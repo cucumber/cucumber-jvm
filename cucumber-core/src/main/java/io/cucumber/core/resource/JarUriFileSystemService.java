@@ -26,7 +26,7 @@ final class JarUriFileSystemService {
     private static final String JAR_URI_SEPARATOR = "!/";
 
     private static final Map<URI, FileSystem> openFiles = new HashMap<>();
-    private static final Map<URI, AtomicInteger> referenceCount = new HashMap<>();
+    private static final Map<URI, AtomicInteger> referenceCounters = new HashMap<>();
 
     private JarUriFileSystemService() {
         /* no-op */
@@ -40,22 +40,28 @@ final class JarUriFileSystemService {
     }
 
     private synchronized static void closeFileSystem(URI jarUri) throws IOException {
-        int referents = requireNonNull(referenceCount.get(jarUri)).decrementAndGet();
-        if (referents == 0) {
-            openFiles.remove(jarUri).close();
-            referenceCount.remove(jarUri);
+        var counter = referenceCounters.get(jarUri);
+        if (counter != null) {
+            int referents = counter.decrementAndGet();
+            if (referents == 0) {
+                referenceCounters.remove(jarUri);
+                var openFile = openFiles.remove(jarUri);
+                if (openFile != null) {
+                    openFile.close();
+                }
+            }
         }
     }
 
     private synchronized static FileSystem openFileSystem(URI jarUri) throws IOException {
         FileSystem existing = openFiles.get(jarUri);
         if (existing != null) {
-            requireNonNull(referenceCount.get(jarUri)).getAndIncrement();
+            requireNonNull(referenceCounters.get(jarUri)).getAndIncrement();
             return existing;
         }
         FileSystem fileSystem = FileSystems.newFileSystem(jarUri, emptyMap());
         openFiles.put(jarUri, fileSystem);
-        referenceCount.put(jarUri, new AtomicInteger(1));
+        referenceCounters.put(jarUri, new AtomicInteger(1));
         return fileSystem;
     }
 
