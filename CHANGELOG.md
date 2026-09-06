@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [7.34.8] - 2026-09-07
 ### Fixed
 - [TestNG] `AbstractTestNGCucumberTests.scenarios()` throws without setup ([#3235](https://github.com/cucumber/cucumber-jvm/pull/3235))
 
@@ -615,7 +617,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Weld] Removed `cucumber-weld` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 - [Needle] Removed `cucumber-needled` in favour of `cucumber-jakarta-cdi` or `cucumber-cdi2`. ([#2276](https://github.com/cucumber/cucumber-jvm/issues/2276) M.P. Korstanje)
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.7...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.8...HEAD
+[7.34.8]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.7...v7.34.8
 [7.34.7]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.6...v7.34.7
 [7.34.6]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.5...v7.34.6
 [7.34.5]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.4...v7.34.5
