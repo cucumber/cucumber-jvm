@@ -62,7 +62,7 @@ public final class ScenariosInDifferentGroupsTest {
     @DataProvider
     public Object[][] serialScenarios() {
         if (testNGCucumberRunner == null) {
-            return new Object[0][0];
+            return TestNGCucumberRunner.provideDryRunScenarios(this.getClass());
         }
 
         return filter(testNGCucumberRunner.provideScenarios(), isSerial);

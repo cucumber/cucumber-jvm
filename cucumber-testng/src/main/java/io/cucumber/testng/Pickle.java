@@ -12,13 +12,19 @@ import java.util.List;
 public final class Pickle {
 
     private final io.cucumber.core.gherkin.Pickle pickle;
+    private final boolean dryRun;
 
-    Pickle(io.cucumber.core.gherkin.Pickle pickle) {
+    Pickle(io.cucumber.core.gherkin.Pickle pickle, boolean dryRun) {
         this.pickle = pickle;
+        this.dryRun = dryRun;
     }
 
     io.cucumber.core.gherkin.Pickle getPickle() {
         return pickle;
+    }
+
+    boolean isDryRun() {
+        return dryRun;
     }
 
     public String getName() {

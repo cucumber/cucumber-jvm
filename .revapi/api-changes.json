@@ -414,6 +414,13 @@
             "code": "java.class.externalClassExposedInAPI",
             "new": "class io.cucumber.core.backend.discovery.UriGlueDiscoverySelector",
             "justification": "Support discovery of single glue classes"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.numberOfParametersChanged",
+            "old": "method java.lang.Object[][] io.cucumber.testng.AbstractTestNGCucumberTests::scenarios()",
+            "new": "method java.lang.Object[][] io.cucumber.testng.AbstractTestNGCucumberTests::scenarios(org.testng.ITestContext)",
+            "justification": "Support providing scenarios during dry-run"
           }
         ]
       }

@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - [Core] Jackson is now an opt-in dependency ([#3206](https://github.com/cucumber/cucumber-jvm/pull/3206))
 - [All] Set baseline to Java 17 ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
+- [TestNG] Provide scenarios during dry-run ([#3234](https://github.com/cucumber/cucumber-jvm/pull/3234))
 - [All] Adopt [JSpecify](https://jspecify.dev/) to declare nullability ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
 - [Core] Update skipped, pending and undefined colors ([cucumber/common#2302](https://github.com/cucumber/common/issues/2302))
 - [Core] Update dependency io.cucumber:ci-environment.version to v14.0.0
@@ -48,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [All] Classes not designed for extension are now final. See [api-changes.json](./.revapi/api-changes.json) for details.
 - [All] Utility classes are no longer instantiatable. See [api-changes.json](./.revapi/api-changes.json) for details.
 
+ 
 ### Removed
 - [OpenEJB] Removed `cucumber-openejb` in favor of `cucumber-jakarta-openejb` ([#3189](https://github.com/cucumber/cucumber-jvm/pull/3189))
 - [OpenEJB] Removed `cucumber-cdi2` in favor of `cucumber-jakarta-cdi` ([#3192](https://github.com/cucumber/cucumber-jvm/pull/3192))
