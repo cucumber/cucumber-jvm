@@ -53,17 +53,18 @@ public abstract class AbstractTestNGCucumberTests {
     }
 
     /**
-     * Returns two dimensional array of {@link PickleWrapper}s with their
+     * Returns two-dimensional array of {@link PickleWrapper}s with their
      * associated {@link FeatureWrapper}s.
      * <p>
      * Sublcasses may override this method, but must invoke it.
      *
-     * @return a two dimensional array of scenarios features.
+     * @return a two-dimensional array of scenarios features.
      */
     @DataProvider
     public Object[][] scenarios() {
         if (testNGCucumberRunner == null) {
-            return new Object[0][0];
+            throw new IllegalStateException(
+                "Tests were started without calling AbstractTestNGCucumberTests::setUpClass");
         }
         return testNGCucumberRunner.provideScenarios();
     }
