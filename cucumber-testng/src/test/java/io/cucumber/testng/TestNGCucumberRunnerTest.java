@@ -6,9 +6,8 @@ import io.cucumber.plugin.event.Event;
 import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.plugin.event.TestRunFinished;
 import io.cucumber.plugin.event.TestRunStarted;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,22 +16,20 @@ import java.util.Map;
 import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 import static io.cucumber.testng.TestNGCucumberRunnerTest.Plugin.events;
 import static java.util.Collections.singletonMap;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SuppressWarnings("NullAway") // TestNGs assertNotNull not recongized
-public final class TestNGCucumberRunnerTest {
+final class TestNGCucumberRunnerTest {
 
-    private TestNGCucumberRunner testNGCucumberRunner;
-
-    @BeforeMethod
-    public void setup() {
+    @BeforeEach
+    void setup() {
         events.clear();
     }
 
     @Test
-    public void runCucumberTest() {
-        testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class);
+    void runCucumberTest() {
+        var testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class);
 
         for (Object[] scenario : testNGCucumberRunner.provideScenarios()) {
             PickleWrapper wrapper = (PickleWrapper) scenario[0];
@@ -41,12 +38,12 @@ public final class TestNGCucumberRunnerTest {
     }
 
     @Test
-    public void runScenarioWithUndefinedSteps() {
-        testNGCucumberRunner = new TestNGCucumberRunner(RunScenarioWithUndefinedSteps.class);
+    void runScenarioWithUndefinedSteps() {
+        var testNGCucumberRunner = new TestNGCucumberRunner(RunScenarioWithUndefinedSteps.class);
         Object[][] scenarios = testNGCucumberRunner.provideScenarios();
 
         // the feature file only contains one scenario
-        assertEquals(scenarios.length, 1);
+        assertThat(scenarios).hasDimensions(1, 2);
         Object[] scenario = scenarios[0];
         PickleWrapper wrapper = (PickleWrapper) scenario[0];
 
@@ -56,21 +53,17 @@ public final class TestNGCucumberRunnerTest {
     }
 
     @Test
-    public void parse_error_propagated_to_testng_test_execution() {
-        try {
-            testNGCucumberRunner = new TestNGCucumberRunner(ParseError.class);
-            Assert.fail("CucumberException not thrown");
-        } catch (FeatureParserException e) {
-            assertEquals(e.getMessage(),
-                """
-                        Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature
-                        (1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Invalid syntax'""");
-        }
+    void parse_error_propagated_to_testng_test_execution() {
+        FeatureParserException exception = assertThrows(FeatureParserException.class,
+            () -> new TestNGCucumberRunner(ParseError.class));
+        assertThat(exception).hasMessage("""
+                Failed to parse resource at: classpath:io/cucumber/error/parse-error.feature
+                (1:1): expected: #EOF, #Language, #TagLine, #FeatureLine, #Comment, #Empty, got 'Invalid syntax'""");
     }
 
     @Test
-    public void provideScenariosIsIdempotent() {
-        testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTestWithPlugin.class);
+    void provideScenariosIsIdempotent() {
+        var testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTestWithPlugin.class);
 
         testNGCucumberRunner.provideScenarios();
         testNGCucumberRunner.provideScenarios();
@@ -85,11 +78,11 @@ public final class TestNGCucumberRunnerTest {
     }
 
     @Test
-    public void runWithCustomOptions() {
+    void runWithCustomOptions() {
         Map<String, String> properties = singletonMap(
             PLUGIN_PROPERTY_NAME, "io.cucumber.testng.TestNGCucumberRunnerTest$Plugin");
 
-        testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class, properties::get);
+        var testNGCucumberRunner = new TestNGCucumberRunner(RunCucumberTest.class, properties::get);
 
         testNGCucumberRunner.provideScenarios();
         testNGCucumberRunner.provideScenarios();

@@ -61,10 +61,11 @@ public abstract class AbstractTestNGCucumberTests {
      * @return a two-dimensional array of scenarios features.
      */
     @DataProvider
-    public Object[][] scenarios() {
+    public Object[][] scenarios(ITestContext context) {
         if (testNGCucumberRunner == null) {
-            throw new IllegalStateException(
-                "Tests were started without calling AbstractTestNGCucumberTests::setUpClass");
+            XmlTest currentXmlTest = context.getCurrentXmlTest();
+            CucumberPropertiesProvider properties = currentXmlTest::getParameter;
+            return TestNGCucumberRunner.provideDryRunScenarios(this.getClass(), properties);
         }
         return testNGCucumberRunner.provideScenarios();
     }

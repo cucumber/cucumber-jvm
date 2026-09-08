@@ -2,69 +2,74 @@ package io.cucumber.testng;
 
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.IncrementingUuidGenerator;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import io.cucumber.core.options.CucumberOptionsAnnotationParser;
+import org.junit.jupiter.api.Test;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings("NullAway") // TestNGs assertNotNull not recognized
 final class TestNGCucumberOptionsProviderTest {
 
-    private TestNGCucumberOptionsProvider optionsProvider;
-
-    @BeforeTest
-    void setUp() {
-        this.optionsProvider = new TestNGCucumberOptionsProvider();
-    }
+    private final TestNGCucumberOptionsProvider optionsProvider = new TestNGCucumberOptionsProvider();
 
     @Test
     void testObjectFactoryWhenNotSpecified() {
-        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+        var options = this.optionsProvider
                 .getOptions(ClassWithDefault.class);
-        assertNotNull(options);
-        assertNull(options.objectFactory());
+
+        assertThat(options)
+                .extracting(CucumberOptionsAnnotationParser.CucumberOptions::objectFactory)
+                .isNull();
     }
 
     @Test
     void testObjectFactory() {
-        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+        var options = this.optionsProvider
                 .getOptions(ClassWithCustomObjectFactory.class);
-        assertNotNull(options);
-        assertEquals(options.objectFactory(), TestObjectFactory.class);
+
+        assertThat(options)
+                .extracting(CucumberOptionsAnnotationParser.CucumberOptions::objectFactory)
+                .isEqualTo(TestObjectFactory.class);
     }
 
     @Test
     void testUuidGeneratorWhenNotSpecified() {
-        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+        var options = this.optionsProvider
                 .getOptions(ClassWithDefault.class);
-        assertNotNull(options);
-        assertNull(options.uuidGenerator());
+
+        assertThat(options)
+                .extracting(CucumberOptionsAnnotationParser.CucumberOptions::uuidGenerator)
+                .isNull();
     }
 
     @Test
     void testUuidGenerator() {
-        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+        var options = this.optionsProvider
                 .getOptions(ClassWithCustomUuidGenerator.class);
-        assertNotNull(options);
-        assertEquals(options.uuidGenerator(), IncrementingUuidGenerator.class);
+
+        assertThat(options)
+                .extracting(CucumberOptionsAnnotationParser.CucumberOptions::uuidGenerator)
+                .isEqualTo(IncrementingUuidGenerator.class);
     }
 
     @Test
     void includedGlueClassNamePatterns() {
-        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+        var options = this.optionsProvider
                 .getOptions(ClassWithIncludedGlueClassNamePatterns.class);
-        assertNotNull(options);
-        assertEquals(options.includedGlueClassNamePatterns(), new String[] { ".*NounStepDefinitions?" });
+
+        assertThat(options)
+                .extracting(CucumberOptionsAnnotationParser.CucumberOptions::includedGlueClassNamePatterns)
+                .isEqualTo(new String[] { ".*NounStepDefinitions?" });
     }
 
     @Test
     void excludedGlueClassNamePatterns() {
-        io.cucumber.core.options.CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
+        CucumberOptionsAnnotationParser.CucumberOptions options = this.optionsProvider
                 .getOptions(ClassWithExcludedGlueClassNamePatterns.class);
-        assertNotNull(options);
-        assertEquals(options.excludedGlueClassNamePatterns(), new String[] { ".*UnwantedStepDefinitions?" });
+
+        assertThat(options)
+                .extracting(CucumberOptionsAnnotationParser.CucumberOptions::excludedGlueClassNamePatterns)
+                .isEqualTo(new String[] { ".*UnwantedStepDefinitions?" });
+
     }
 
     @CucumberOptions
@@ -101,7 +106,7 @@ final class TestNGCucumberOptionsProviderTest {
 
         @Override
         public <T> T getInstance(Class<T> glueClass) {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override

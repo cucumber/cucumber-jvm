@@ -1,7 +1,7 @@
 package io.cucumber.testng;
 
 import io.cucumber.core.eventbus.EventBus;
-import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.eventbus.UuidGenerator;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.Feature;
@@ -33,7 +33,6 @@ import java.util.function.Supplier;
 
 import static io.cucumber.core.runtime.SynchronizedEventBus.synchronize;
 import static io.cucumber.testng.TestCaseResultObserver.observe;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Glue code for running Cucumber via TestNG.
@@ -76,6 +75,27 @@ public final class TestNGCucumberRunner {
     public TestNGCucumberRunner(Class<?> clazz, CucumberPropertiesProvider properties) {
         // Parse the options early to provide fast feedback about invalid
         // options
+        RuntimeOptions runtimeOptions = createRuntimeOptions(clazz, properties);
+        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
+        UuidGenerator idGenerator = createIdGenerator(classLoader, runtimeOptions);
+        FeaturePathFeatureSupplier featureSupplier = createFeatureSupplier(idGenerator, classLoader, runtimeOptions);
+
+        this.filters = new Filters(runtimeOptions);
+        this.features = featureSupplier.get();
+
+        // Start test execution now.
+        EventBus bus = synchronize(new TimeServiceEventBus(Clock.systemUTC(), idGenerator));
+        Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
+        ExitStatus exitStatus = new ExitStatus(runtimeOptions);
+        plugins.addPlugin(exitStatus);
+        plugins.setSerialEventBusOnEventListenerPlugins(bus);
+        context = createExecutionContext(clazz, classLoader, runtimeOptions, bus, exitStatus);
+        context.startTestRun();
+        context.runBeforeAllHooks();
+        features.forEach(context::beforeFeature);
+    }
+
+    private static RuntimeOptions createRuntimeOptions(Class<?> clazz, CucumberPropertiesProvider properties) {
         RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromPropertiesFile())
                 .build();
@@ -93,42 +113,45 @@ public final class TestNGCucumberRunner {
                 .parse(CucumberProperties.fromEnvironment())
                 .build(testngPropertiesOptions);
 
-        RuntimeOptions runtimeOptions = new CucumberPropertiesParser()
+        return new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromSystemProperties())
                 .enablePublishPlugin()
                 .build(environmentOptions);
+    }
 
-        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
+    private static FeaturePathFeatureSupplier createFeatureSupplier(
+            UuidGenerator idGenerator, Supplier<ClassLoader> classLoader, RuntimeOptions runtimeOptions
+    ) {
+        FeatureParser parser = new FeatureParser(idGenerator::generateId);
+        return new FeaturePathFeatureSupplier(classLoader, runtimeOptions, parser);
+    }
+
+    private static UuidGenerator createIdGenerator(Supplier<ClassLoader> classLoader, RuntimeOptions runtimeOptions) {
         UuidGeneratorServiceLoader uuidGeneratorServiceLoader = new UuidGeneratorServiceLoader(classLoader,
             runtimeOptions);
-        EventBus bus = synchronize(
-            new TimeServiceEventBus(Clock.systemUTC(), uuidGeneratorServiceLoader.loadUuidGenerator()));
+        return uuidGeneratorServiceLoader.loadUuidGenerator();
+    }
 
-        FeatureParser parser = new FeatureParser(bus::generateId);
-        FeaturePathFeatureSupplier featureSupplier = new FeaturePathFeatureSupplier(classLoader, runtimeOptions,
-            parser);
-
-        Plugins plugins = new Plugins(new PluginFactory(), runtimeOptions);
-        ExitStatus exitStatus = new ExitStatus(runtimeOptions);
-        plugins.addPlugin(exitStatus);
+    private CucumberExecutionContext createExecutionContext(
+            Class<?> clazz, Supplier<ClassLoader> classLoader, RuntimeOptions runtimeOptions, EventBus bus,
+            ExitStatus exitStatus
+    ) {
         ObjectFactoryServiceLoader objectFactoryServiceLoader = new ObjectFactoryServiceLoader(classLoader,
             runtimeOptions);
         ObjectFactorySupplier objectFactorySupplier = new ThreadLocalObjectFactorySupplier(objectFactoryServiceLoader);
         BackendServiceLoader backendSupplier = new BackendServiceLoader(clazz::getClassLoader, objectFactorySupplier);
-        this.filters = new Filters(runtimeOptions);
         ThreadLocalRunnerSupplier runnerSupplier = new ThreadLocalRunnerSupplier(runtimeOptions, bus, backendSupplier,
             objectFactorySupplier);
-        this.context = new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
-
-        // Start test execution now.
-        plugins.setSerialEventBusOnEventListenerPlugins(bus);
-        features = featureSupplier.get();
-        context.startTestRun();
-        context.runBeforeAllHooks();
-        features.forEach(context::beforeFeature);
+        return new CucumberExecutionContext(bus, exitStatus, runnerSupplier);
     }
 
     public void runScenario(io.cucumber.testng.Pickle pickle) {
+        if (pickle.isDryRun()) {
+            throw new IllegalArgumentException(
+                "Pickle [%s] created by TestNGCucumberRunner.provideDryRunScenarios should not be executed"
+                        .formatted(pickle.getName()));
+        }
+
         context.runTestCase(runner -> {
             try (TestCaseResultObserver observer = observe(runner.getBus())) {
                 Pickle cucumberPickle = pickle.getPickle();
@@ -150,25 +173,64 @@ public final class TestNGCucumberRunner {
     }
 
     /**
-     * Provides an array of {@link PickleWrapper pickles} and
-     * {@link FeatureWrapper features} pairs.
+     * Provides scenarios for execution.
      *
      * @return an array of pickle and feature wrapper pairs.
      */
     public Object[][] provideScenarios() {
-        // Possibly invoked in a multi-threaded context
-        try {
-            return features.stream()
-                    .flatMap(feature -> feature.getPickles().stream()
-                            .filter(filters)
-                            .map(cucumberPickle -> new Object[] {
-                                    new PickleWrapperImpl(new io.cucumber.testng.Pickle(cucumberPickle)),
-                                    new FeatureWrapperImpl(feature) }))
-                    .collect(toList())
-                    .toArray(new Object[0][0]);
-        } catch (CucumberException e) {
-            return new Object[][] { new Object[] { new CucumberExceptionWrapper(e), null } };
-        }
+        // Possibly invoked in a multithreaded context
+        return provideScenarios(features, filters, false);
+    }
+
+    /**
+     * Provides scenarios for executing without initializing Cucumber. These
+     * scenarios can only be used when TestNG does a dry-run.
+     * <p>
+     * For consistent results between dry-run and regular execution, this method
+     * should be used when the {@linkplain TestNGCucumberRunner} is instantiated
+     * by {@link TestNGCucumberRunner(Class)}.
+     *
+     * @param  clazz Which has the {@link CucumberOptions} and
+     *               {@link org.testng.annotations.Test} annotations
+     * @return       an array of pickle and feature wrapper pairs.
+     */
+    @API(status = API.Status.EXPERIMENTAL, since = "8.0.0")
+    public static Object[][] provideDryRunScenarios(Class<?> clazz) {
+        return provideDryRunScenarios(clazz, key -> null);
+    }
+
+    /**
+     * Provides scenarios without initializing Cucumber. These scenarios can
+     * only be used when TestNG does a dry-run. p> For consistent results
+     * between dry-run and regular execution, this method should be used when
+     * the {@linkplain TestNGCucumberRunner} is instantiated by
+     * {@link TestNGCucumberRunner(Class, CucumberPropertiesProvider)}.
+     *
+     * @param  clazz Which has the {@link CucumberOptions} and
+     *               {@link org.testng.annotations.Test} annotations
+     * @return       an array of pickle and feature wrapper pairs.
+     */
+    @API(status = API.Status.EXPERIMENTAL, since = "8.0.0")
+    public static Object[][] provideDryRunScenarios(Class<?> clazz, CucumberPropertiesProvider properties) {
+        RuntimeOptions runtimeOptions = createRuntimeOptions(clazz, properties);
+        Supplier<ClassLoader> classLoader = ClassLoaders::getDefaultClassLoader;
+        UuidGenerator idGenerator = createIdGenerator(classLoader, runtimeOptions);
+        FeaturePathFeatureSupplier featureSupplier = createFeatureSupplier(idGenerator, classLoader, runtimeOptions);
+
+        Filters filters = new Filters(runtimeOptions);
+        List<Feature> features = featureSupplier.get();
+        return provideScenarios(features, filters, true);
+    }
+
+    private static Object[][] provideScenarios(List<Feature> features, Predicate<Pickle> filters, boolean dryrun) {
+        return features.stream()
+                .flatMap(feature -> feature.getPickles().stream()
+                        .filter(filters)
+                        .map(cucumberPickle -> new Object[] {
+
+                                new PickleWrapperImpl(new io.cucumber.testng.Pickle(cucumberPickle, dryrun)),
+                                new FeatureWrapperImpl(feature) }))
+                .toArray(size -> new Object[size][2]);
     }
 
 }
