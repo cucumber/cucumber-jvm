@@ -46,6 +46,7 @@ class TestCaseStateResultTest {
         UUID.randomUUID(),
         new TestCase(
             UUID.randomUUID(),
+            UUID.randomUUID(),
             Collections.emptyList(),
             Collections.emptyList(),
             Collections.emptyList(),

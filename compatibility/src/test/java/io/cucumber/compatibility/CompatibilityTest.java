@@ -62,11 +62,8 @@ final class CompatibilityTest {
         "retry",
         "retry-ambiguous",
         "retry-pending",
-        // exception: Cucumber JVM does not support messages for global hooks
-        "global-hooks",
-        "global-hooks-afterall-error",
+        // exception: Cucumber JVM does not support attachments for global hooks
         "global-hooks-attachments",
-        "global-hooks-beforeall-error",
         // exception: Cucumber JVM can't fail test runs intentionally
         "test-run-exception",
         // exception: Cucumber JVM does not continue after any failed step
@@ -82,6 +79,7 @@ final class CompatibilityTest {
         Map<String, Map<Pattern, Matcher<?>>> exceptions = new LinkedHashMap<>();
 
         Map<Pattern, Matcher<?>> attachment = new LinkedHashMap<>();
+        // exception: ids are not predictable
         attachment.put(Pattern.compile("/testCaseStartedId"), isA(StringNode.class));
         attachment.put(Pattern.compile("/testStepId"), isA(StringNode.class));
         // exception: timestamps and durations are not predictable
@@ -147,12 +145,22 @@ final class CompatibilityTest {
         exceptions.put("stepDefinition", stepDefinition);
 
         Map<Pattern, Matcher<?>> testRunStarted = new LinkedHashMap<>();
-        // exception: not yet implemented
-        testRunStarted.put(Pattern.compile("/id"), isA(MissingNode.class));
+        // exception: ids are not predictable
+        testRunStarted.put(Pattern.compile("/id"), isA(StringNode.class));
         // exception: timestamps and durations are not predictable
         testRunStarted.put(Pattern.compile("/timestamp/seconds"), isA(NumericNode.class));
         testRunStarted.put(Pattern.compile("/timestamp/nanos"), isA(NumericNode.class));
         exceptions.put("testRunStarted", testRunStarted);
+
+        Map<Pattern, Matcher<?>> testRunHookStarted = new LinkedHashMap<>();
+        // exception: ids are not predictable
+        testRunHookStarted.put(Pattern.compile("/id"), isA(StringNode.class));
+        testRunHookStarted.put(Pattern.compile("/testRunStartedId"), isA(StringNode.class));
+        testRunHookStarted.put(Pattern.compile("/hookId"), isA(StringNode.class));
+        // exception: timestamps and durations are not predictable
+        testRunHookStarted.put(Pattern.compile("/timestamp/seconds"), isA(NumericNode.class));
+        testRunHookStarted.put(Pattern.compile("/timestamp/nanos"), isA(NumericNode.class));
+        exceptions.put("testRunHookStarted", testRunHookStarted);
 
         Map<Pattern, Matcher<?>> testCase = new LinkedHashMap<>();
         // exception: ids are not predictable
@@ -162,8 +170,9 @@ final class CompatibilityTest {
         testCase.put(Pattern.compile("/testSteps/.*/pickleStepId"), isA(StringNode.class));
         testCase.put(Pattern.compile("/testSteps/.*/stepDefinitionIds/.*"), isA(StringNode.class));
         testCase.put(Pattern.compile("/testSteps/.*/hookId"), isA(StringNode.class));
-        // exception: not yet implemented
-        testCase.put(Pattern.compile("/testRunStartedId"), isA(MissingNode.class));
+
+        // exception: ids are not predictable
+        testCase.put(Pattern.compile("/testRunStartedId"), isA(StringNode.class));
         exceptions.put("testCase", testCase);
 
         Map<Pattern, Matcher<?>> testCaseStarted = new LinkedHashMap<>();
@@ -191,15 +200,14 @@ final class CompatibilityTest {
         // exception: timestamps and durations are not predictable
         testStepFinished.put(Pattern.compile("/testStepResult/duration/seconds"), isA(IntNode.class));
         testStepFinished.put(Pattern.compile("/testStepResult/duration/nanos"), isA(IntNode.class));
+        testStepFinished.put(Pattern.compile("/timestamp/seconds"), isA(IntNode.class));
+        testStepFinished.put(Pattern.compile("/timestamp/nanos"), isA(IntNode.class));
         // exception: error messages are platform specific
         testStepFinished.put(Pattern.compile("/testStepResult/message"), isA(StringNode.class));
         // exception: exceptions are platform specific
         testStepFinished.put(Pattern.compile("/testStepResult/exception/type"), isA(StringNode.class));
         testStepFinished.put(Pattern.compile("/testStepResult/exception/message"), isA(StringNode.class));
         testStepFinished.put(Pattern.compile("/testStepResult/exception/stackTrace"), isA(StringNode.class));
-        // exception: timestamps and durations are not predictable
-        testStepFinished.put(Pattern.compile("/timestamp/seconds"), isA(IntNode.class));
-        testStepFinished.put(Pattern.compile("/timestamp/nanos"), isA(IntNode.class));
         exceptions.put("testStepFinished", testStepFinished);
 
         Map<Pattern, Matcher<?>> testCaseFinished = new LinkedHashMap<>();
@@ -210,9 +218,25 @@ final class CompatibilityTest {
         testCaseFinished.put(Pattern.compile("/timestamp/nanos"), isA(IntNode.class));
         exceptions.put("testCaseFinished", testCaseFinished);
 
+        Map<Pattern, Matcher<?>> testRunHookFinished = new LinkedHashMap<>();
+        // exception: ids are not predictable
+        testRunHookFinished.put(Pattern.compile("/testRunHookStartedId"), isA(StringNode.class));
+        // exception: timestamps and durations are not predictable
+        testRunHookFinished.put(Pattern.compile("/timestamp/seconds"), isA(NumericNode.class));
+        testRunHookFinished.put(Pattern.compile("/timestamp/nanos"), isA(NumericNode.class));
+        testRunHookFinished.put(Pattern.compile("/result/duration/seconds"), isA(IntNode.class));
+        testRunHookFinished.put(Pattern.compile("/result/duration/nanos"), isA(IntNode.class));
+        // exception: error messages are platform specific
+        testRunHookFinished.put(Pattern.compile("/result/message"), isA(StringNode.class));
+        // exception: exceptions are platform specific
+        testRunHookFinished.put(Pattern.compile("/result/exception/type"), isA(StringNode.class));
+        testRunHookFinished.put(Pattern.compile("/result/exception/message"), isA(StringNode.class));
+        testRunHookFinished.put(Pattern.compile("/result/exception/stackTrace"), isA(StringNode.class));
+        exceptions.put("testRunHookFinished", testRunHookFinished);
+
         Map<Pattern, Matcher<?>> testRunFinished = new LinkedHashMap<>();
-        // exception: not yet implemented
-        testRunFinished.put(Pattern.compile("/testRunStartedId"), isA(MissingNode.class));
+        // exception: ids are not predictable
+        testRunFinished.put(Pattern.compile("/testRunStartedId"), isA(StringNode.class));
         // exception: timestamps and durations are not predictable
         testRunFinished.put(Pattern.compile("/timestamp/seconds"), isA(IntNode.class));
         testRunFinished.put(Pattern.compile("/timestamp/nanos"), isA(IntNode.class));

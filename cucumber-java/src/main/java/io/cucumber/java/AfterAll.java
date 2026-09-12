@@ -22,4 +22,11 @@ public @interface AfterAll {
      * @return the order in which this hook should run.
      */
     int order() default 10000;
+
+    /**
+     * Name of this hook, used for reporting.
+     *
+     * @return the hook name
+     */
+    String name() default "";
 }

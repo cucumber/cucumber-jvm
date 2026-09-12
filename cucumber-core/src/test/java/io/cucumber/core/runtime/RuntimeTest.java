@@ -6,12 +6,11 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StaticHookDefinition;
+import io.cucumber.core.backend.StubPendingException;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
-import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CompositeCucumberException;
-import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.FeatureParserException;
@@ -24,11 +23,8 @@ import io.cucumber.plugin.ConcurrentEventListener;
 import io.cucumber.plugin.EventListener;
 import io.cucumber.plugin.Plugin;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.Result;
-import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.StepDefinedEvent;
 import io.cucumber.plugin.event.StepDefinition;
-import io.cucumber.plugin.event.TestCase;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestRunFinished;
@@ -36,13 +32,13 @@ import io.cucumber.plugin.event.TestRunStarted;
 import io.cucumber.plugin.event.TestStepFinished;
 import io.cucumber.plugin.event.TestStepStarted;
 import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
+import org.opentest4j.AssertionFailedError;
+import org.opentest4j.TestAbortedException;
 
 import java.time.Clock;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,69 +63,116 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@Disabled // TODO: Put tests into separate module
 class RuntimeTest {
-
-    private final static Instant ANY_INSTANT = Instant.ofEpochMilli(1234567890);
-
-    private final EventBus bus = new TimeServiceEventBus(Clock.systemUTC(), UUID::randomUUID);
 
     @Test
     void with_passed_scenarios() {
-        Runtime runtime = createRuntime();
-        bus.send(testCaseFinishedWithStatus(Status.PASSED));
+        var feature = TestFeatureParser.parse("path/test.feature",
+            """
+                    Feature: feature name
+                      Scenario: scenario name
+                        Given first step
+                        When second step
+                        Then third step
+                    """);
+        Runtime runtime = Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("first step"),
+                    new StubStepDefinition("second step"),
+                    new StubStepDefinition("third step")))
+                .build();
+        runtime.run();
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
-    private Runtime createRuntime() {
-        return Runtime.builder()
-                .withRuntimeOptions(
-                    new RuntimeOptionsBuilder()
-                            .build())
-                .withEventBus(bus)
-                .build();
-    }
-
-    private TestCaseFinished testCaseFinishedWithStatus(Status resultStatus) {
-        return new TestCaseFinished(ANY_INSTANT, mock(TestCase.class), new Result(resultStatus, ZERO, null));
-    }
-
     @Test
     void with_undefined_scenarios() {
-        Runtime runtime = createRuntime();
-        bus.send(testCaseFinishedWithStatus(Status.UNDEFINED));
+        var feature = TestFeatureParser.parse("path/test.feature",
+            """
+                    Feature: feature name
+                      Scenario: scenario name
+                        Given undefined step
+                    """);
+        Runtime runtime = Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withBackendSupplier(new StubBackendSupplier())
+                .build();
+        runtime.run();
+
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
     void with_pending_scenarios() {
-        Runtime runtime = createRuntime();
-        bus.send(testCaseFinishedWithStatus(Status.PENDING));
+        var feature = TestFeatureParser.parse("path/test.feature",
+            """
+                    Feature: feature name
+                      Scenario: scenario name
+                        Given a pending step
+                    """);
+        Runtime runtime = Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("a pending step", new StubPendingException())))
+                .build();
+        runtime.run();
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
     void with_skipped_scenarios() {
-        Runtime runtime = createRuntime();
-        bus.send(testCaseFinishedWithStatus(Status.SKIPPED));
+        var feature = TestFeatureParser.parse("path/test.feature",
+            """
+                    Feature: feature name
+                      Scenario: scenario name
+                        Given a skipped step
+                    """);
+        Runtime runtime = Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("a skipped step", new TestAbortedException())))
+                .build();
+        runtime.run();
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
     }
 
     @Test
     void with_failed_scenarios() {
-        Runtime runtime = createRuntime();
-        bus.send(testCaseFinishedWithStatus(Status.FAILED));
+        var feature = TestFeatureParser.parse("path/test.feature",
+            """
+                    Feature: feature name
+                      Scenario: scenario name
+                        Given a failed step
+                    """);
+        Runtime runtime = Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("a failed step", new AssertionFailedError())))
+                .build();
+        runtime.run();
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test
     void with_ambiguous_scenarios() {
-        Runtime runtime = createRuntime();
-        bus.send(testCaseFinishedWithStatus(Status.AMBIGUOUS));
+        var feature = TestFeatureParser.parse("path/test.feature",
+            """
+                    Feature: feature name
+                      Scenario: scenario name
+                        Given an ambiguous step
+                    """);
+        Runtime runtime = Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withBackendSupplier(new StubBackendSupplier(
+                    new StubStepDefinition("an (.*) step"),
+                    new StubStepDefinition("an ambiguous (.*)")))
+                .build();
+        runtime.run();
 
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
@@ -419,27 +462,27 @@ class RuntimeTest {
     }
 
     @Test
-    void should_fail_on_exception_invoking_after_all_hook() {
-        RuntimeException expectedException = new RuntimeException("This exception is expected");
-        CucumberBackendException backendException = new CucumberBackendException("failed", expectedException);
-        MockedStaticHookDefinition mockedStaticHookDefinition = new MockedStaticHookDefinition(() -> {
+    void with_failing_after_all_hook() {
+        var expectedException = new RuntimeException("This exception is expected");
+        var backendException = new CucumberBackendException("failed", expectedException);
+        var mockedStaticHookDefinition = new MockedStaticHookDefinition(() -> {
             throw backendException;
         });
 
-        BackendSupplier backendSupplier = new TestBackendSupplier() {
+        var backendSupplier = new TestBackendSupplier() {
             @Override
             public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
                 glue.addAfterAllHook(mockedStaticHookDefinition);
             }
         };
 
-        Executable testMethod = () -> Runtime.builder()
+        var runtime = Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier())
                 .withBackendSupplier(backendSupplier)
-                .build()
-                .run();
-        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
-        assertThat(actualThrown.getCause(), equalTo(backendException));
+                .build();
+        runtime.run();
+
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 
     @Test

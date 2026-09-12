@@ -1,29 +1,32 @@
 package io.cucumber.core.runtime;
 
 import io.cucumber.core.plugin.Options;
+import io.cucumber.messages.TestStepResultStatusComparator;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.TestRunHookFinished;
+import io.cucumber.messages.types.TestStepResult;
+import io.cucumber.messages.types.TestStepResultStatus;
 import io.cucumber.plugin.ConcurrentEventListener;
-import io.cucumber.plugin.event.EventHandler;
 import io.cucumber.plugin.event.EventPublisher;
-import io.cucumber.plugin.event.Result;
 import io.cucumber.plugin.event.Status;
-import io.cucumber.plugin.event.TestCaseFinished;
+import io.cucumber.query.Query;
+import io.cucumber.query.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
-import static java.util.Collections.max;
-import static java.util.Collections.min;
-import static java.util.Comparator.comparing;
+import static io.cucumber.messages.types.TestStepResultStatus.FAILED;
+import static io.cucumber.messages.types.TestStepResultStatus.PASSED;
+import static io.cucumber.messages.types.TestStepResultStatus.SKIPPED;
 
 public final class ExitStatus implements ConcurrentEventListener {
 
     private static final byte DEFAULT = 0x0;
     private static final byte ERRORS = 0x1;
 
-    private final List<Result> results = new ArrayList<>();
+    private final Repository repository = Repository.builder().build();
+    private final Query query = new Query(repository);
     private final Options options;
-
-    private final EventHandler<TestCaseFinished> testCaseFinishedHandler = event -> results.add(event.getResult());
 
     public ExitStatus(Options options) {
         this.options = options;
@@ -31,7 +34,7 @@ public final class ExitStatus implements ConcurrentEventListener {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestCaseFinished.class, testCaseFinishedHandler);
+        publisher.registerHandlerFor(Envelope.class, repository::update);
     }
 
     byte exitStatus() {
@@ -39,25 +42,51 @@ public final class ExitStatus implements ConcurrentEventListener {
     }
 
     boolean isSuccess() {
-        if (results.isEmpty()) {
-            return true;
-        }
-
         if (options.isWip()) {
-            Result leastSeverResult = min(results, comparing(Result::getStatus));
-            return !leastSeverResult.getStatus().is(Status.PASSED);
-        } else {
-            Result mostSevereResult = max(results, comparing(Result::getStatus));
-            return mostSevereResult.getStatus().isOk();
+            var leastSeverResult = getLeastSeverStatus();
+            return leastSeverResult != PASSED;
         }
+        var mostSevereResult = getMostSevereStatus();
+        return mostSevereResult == PASSED || mostSevereResult == SKIPPED;
+    }
+
+    private TestStepResultStatus getLeastSeverStatus() {
+        return query.findAllTestCaseStarted().stream()
+                .map(query::findMostSevereTestStepResultBy)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(TestStepResult::getStatus)
+                .min(new TestStepResultStatusComparator())
+                .orElse(FAILED);
+    }
+
+    private TestStepResultStatus getMostSevereStatus() {
+        var testRunHookFinishedStatusResults = query.findAllTestRunHookFinished().stream()
+                .map(TestRunHookFinished::getResult)
+                .map(TestStepResult::getStatus);
+
+        var testStepStatusResults = query.findAllTestCaseStarted().stream()
+                .map(query::findMostSevereTestStepResultBy)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(TestStepResult::getStatus);
+
+        return Stream.concat(testRunHookFinishedStatusResults, testStepStatusResults)
+                .max(new TestStepResultStatusComparator())
+                .orElse(PASSED);
     }
 
     Status getStatus() {
-        if (results.isEmpty()) {
-            return Status.PASSED;
-        }
-        Result mostSevereResult = max(results, comparing(Result::getStatus));
-        return mostSevereResult.getStatus();
+        var testStepResultStatus = getMostSevereStatus();
+        return switch (testStepResultStatus) {
+            case PASSED -> Status.PASSED;
+            case SKIPPED -> Status.SKIPPED;
+            case PENDING -> Status.PENDING;
+            case UNDEFINED -> Status.UNDEFINED;
+            case AMBIGUOUS -> Status.AMBIGUOUS;
+            case FAILED -> Status.FAILED;
+            default -> throw new IllegalStateException("Unexpected value: " + testStepResultStatus);
+        };
     }
 
 }

@@ -14,6 +14,7 @@ import io.cucumber.plugin.event.Status;
 import io.cucumber.plugin.event.TestCaseFinished;
 import io.cucumber.plugin.event.TestCaseStarted;
 import io.cucumber.plugin.event.TestStep;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.time.Duration;
@@ -38,15 +39,19 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
     private final List<HookTestStep> beforeHooks;
     private final List<HookTestStep> afterHooks;
     private final UUID id;
+    private final @Nullable UUID testRunStartedId;
 
     TestCase(
-            UUID id, List<PickleStepTestStep> testSteps,
+            UUID id,
+            @Nullable UUID testRunStartedId,
+            List<PickleStepTestStep> testSteps,
             List<HookTestStep> beforeHooks,
             List<HookTestStep> afterHooks,
             Pickle pickle,
             boolean dryRun
     ) {
         this.id = id;
+        this.testRunStartedId = testRunStartedId;
         this.testSteps = testSteps;
         this.beforeHooks = beforeHooks;
         this.afterHooks = afterHooks;
@@ -172,7 +177,7 @@ final class TestCase implements io.cucumber.plugin.event.TestCase {
                     .stream()
                     .map(this::createTestStep)
                     .collect(toList()),
-            null));
+            testRunStartedId != null ? testRunStartedId.toString() : null));
         bus.send(envelope);
     }
 
