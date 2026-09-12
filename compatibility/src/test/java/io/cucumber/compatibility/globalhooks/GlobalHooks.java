@@ -6,11 +6,11 @@ import io.cucumber.java.en.When;
 
 public final class GlobalHooks {
 
-    @BeforeAll
+    @BeforeAll(order = 1)
     public static void beforeAll1() {
     }
 
-    @BeforeAll
+    @BeforeAll(order = 2)
     public static void beforeAll2() {
     }
 
@@ -23,13 +23,14 @@ public final class GlobalHooks {
         throw new Exception("Exception in step");
     }
 
-    @AfterAll
+    @AfterAll(order = 2)
+    public static void afterAll2() {
+
+    }
+
+    @AfterAll(order = 1)
     public static void afterAll1() {
 
     }
 
-    @AfterAll
-    public static void afterAll2() {
-
-    }
 }
