@@ -26,7 +26,6 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static io.cucumber.cienvironment.DetectCiEnvironment.detectCiEnvironment;
-import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
 import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.messages.Convertor.toMessage;
 import static java.util.Collections.singletonList;
@@ -136,8 +135,11 @@ public final class CucumberExecutionContext {
     public void runTestCase(Consumer<Runner> execution) {
         Runner runner = getRunner();
         runner.setTestRunStartedId(testRunStartedId);
-        collector.executeAndThrow(() -> execution.accept(runner));
-        runner.setTestRunStartedId(null);
+        try {
+            collector.executeAndThrow(() -> execution.accept(runner));
+        } finally {
+            runner.setTestRunStartedId(null);
+        }
     }
 
     private Runner getRunner() {
@@ -145,20 +147,12 @@ public final class CucumberExecutionContext {
     }
 
     public void runFeatures(ThrowingRunnable executeFeatures) {
+        // TODO: Implement same logic as in Testcase
         startTestRun();
-        execute(() -> {
-            runBeforeAllHooks();
-            executeFeatures.run();
-        });
-        try {
-            execute(this::runAfterAllHooks);
-        } finally {
-            finishTestRun();
-        }
-        Throwable throwable = getThrowable();
-        if (throwable != null) {
-            throwAsUncheckedException(throwable);
-        }
+        execute(this::runBeforeAllHooks);
+        executeFeatures.run();
+        execute(this::runAfterAllHooks);
+        finishTestRun();
     }
 
     private void execute(ThrowingRunnable runnable) {

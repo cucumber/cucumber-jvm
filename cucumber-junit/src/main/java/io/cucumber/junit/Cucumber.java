@@ -1,6 +1,7 @@
 package io.cucumber.junit;
 
 import io.cucumber.core.eventbus.EventBus;
+import io.cucumber.core.exception.ExceptionUtils;
 import io.cucumber.core.feature.FeatureParser;
 import io.cucumber.core.filter.Filters;
 import io.cucumber.core.gherkin.Feature;
@@ -42,6 +43,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
 import static io.cucumber.core.runtime.SynchronizedEventBus.synchronize;
 import static io.cucumber.junit.FileNameCompatibleNames.uniqueSuffix;
 import static java.util.stream.Collectors.groupingBy;
@@ -232,6 +234,10 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
             context.runFeatures(next::evaluate);
+            Throwable throwable = context.getThrowable();
+            if (throwable != null) {
+                throwAsUncheckedException(throwable);
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.exception.UnrecoverableExceptions;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.logging.Logger;
@@ -24,6 +25,7 @@ import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -129,18 +131,27 @@ public final class Runner {
             Thread.currentThread().getName(),
             toMessage(start))));
 
-        Throwable throwable = null;
         try {
             hookDefinition.execute();
         } catch (CucumberBackendException e) {
-            throwable = new CucumberException("""
+            var throwable = new CucumberException("""
                     Could not invoke hook defined at '%s'.
                     It appears there was a problem with the hook definition."""
                     .formatted(hookDefinition.getLocation()),
                 e);
+            emitTestRunHookFinished(start, throwable, testRunHookStartedId);
+            throw throwable;
         } catch (CucumberInvocationTargetException e) {
-            throwable = removeFrameworkFrames(e);
+            emitTestRunHookFinished(start, removeFrameworkFrames(e), testRunHookStartedId);
+            throw e;
+        } catch (Throwable e) {
+            UnrecoverableExceptions.rethrowIfUnrecoverable(e);
+            emitTestRunHookFinished(start, e, testRunHookStartedId);
+            throw e;
         }
+    }
+
+    private void emitTestRunHookFinished(Instant start, @Nullable Throwable throwable, String testRunHookStartedId) {
         var finish = bus.getInstant();
         var result = new TestStepResult(
             toMessage(Duration.between(start, finish)),
