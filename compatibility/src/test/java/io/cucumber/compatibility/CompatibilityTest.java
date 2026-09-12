@@ -331,6 +331,18 @@ final class CompatibilityTest {
             expectedEnvelopes.remove("testCase");
         }
 
+        if ("global-hooks-beforeall-error".equals(testCase.getId())) {
+            // bug: Cucumber JVM executes hooks before emitting events for
+            // parsing features
+            expectedEnvelopes.remove("source");
+            expectedEnvelopes.remove("gherkinDocument");
+            expectedEnvelopes.remove("pickle");
+            // bug: Cucumber JVM executes hook executions before emitting events
+            // for hook and step definitions.
+            expectedEnvelopes.remove("hook");
+            expectedEnvelopes.remove("stepDefinition");
+        }
+
         expectedEnvelopes.forEach((messageType, expectedMessages) -> assertThat(
             actualEnvelopes,
             hasEntry(is(messageType),
@@ -358,9 +370,15 @@ final class CompatibilityTest {
                     .build()
                     .run();
         } catch (Exception e) {
+
+            if (!(
             // exception: Scenario with unknown parameter types fails by
             // throwing an exceptions
-            if (!"unknown-parameter-type".equals(testCase.getId())) {
+            "unknown-parameter-type".equals(testCase.getId())
+                    // exception: Errors in global hooks fail the test run by
+                    // throwing an exception
+                    || "global-hooks-beforeall-error".equals(testCase.getId())
+                    || "global-hooks-afterall-error".equals(testCase.getId()))) {
                 throw e;
             }
         }

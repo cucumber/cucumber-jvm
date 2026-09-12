@@ -6,6 +6,7 @@ import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.exception.UnrecoverableExceptions;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.logging.Logger;
@@ -24,6 +25,7 @@ import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
 import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -140,7 +142,17 @@ public final class Runner {
                 e);
         } catch (CucumberInvocationTargetException e) {
             throwable = removeFrameworkFrames(e);
+        } catch (Throwable e) {
+            UnrecoverableExceptions.rethrowIfUnrecoverable(e);
+            throwable = e;
         }
+        emitTestRunHookFinished(start, throwable, testRunHookStartedId);
+        if (throwable != null) {
+            throwAsUncheckedException(throwable);
+        }
+    }
+
+    private void emitTestRunHookFinished(Instant start, @Nullable Throwable throwable, String testRunHookStartedId) {
         var finish = bus.getInstant();
         var result = new TestStepResult(
             toMessage(Duration.between(start, finish)),

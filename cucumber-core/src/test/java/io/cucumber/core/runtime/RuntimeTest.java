@@ -11,6 +11,7 @@ import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.backend.TestCaseState;
 import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
 import io.cucumber.core.exception.CompositeCucumberException;
+import io.cucumber.core.exception.CucumberException;
 import io.cucumber.core.feature.TestFeatureParser;
 import io.cucumber.core.gherkin.Feature;
 import io.cucumber.core.gherkin.FeatureParserException;
@@ -480,8 +481,10 @@ class RuntimeTest {
                 .withFeatureSupplier(new StubFeatureSupplier())
                 .withBackendSupplier(backendSupplier)
                 .build();
-        runtime.run();
 
+        Executable testMethod = runtime::run;
+        CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
+        assertThat(actualThrown.getCause(), equalTo(backendException));
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
     }
 

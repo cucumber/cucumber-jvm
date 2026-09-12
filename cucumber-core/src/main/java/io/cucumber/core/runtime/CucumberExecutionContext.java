@@ -136,8 +136,11 @@ public final class CucumberExecutionContext {
     public void runTestCase(Consumer<Runner> execution) {
         Runner runner = getRunner();
         runner.setTestRunStartedId(testRunStartedId);
-        collector.executeAndThrow(() -> execution.accept(runner));
-        runner.setTestRunStartedId(null);
+        try {
+            collector.executeAndThrow(() -> execution.accept(runner));
+        } finally {
+            runner.setTestRunStartedId(null);
+        }
     }
 
     private Runner getRunner() {
