@@ -22,6 +22,7 @@ import org.jspecify.annotations.Nullable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import static io.cucumber.cienvironment.DetectCiEnvironment.detectCiEnvironment;
@@ -42,6 +43,7 @@ public final class CucumberExecutionContext {
     private final RunnerSupplier runnerSupplier;
     private final RethrowingThrowableCollector collector = new RethrowingThrowableCollector();
     private @Nullable Instant start;
+    private @Nullable UUID testRunStartedId;
 
     public CucumberExecutionContext(EventBus bus, ExitStatus exitStatus, RunnerSupplier runnerSupplier) {
         this.bus = bus;
@@ -81,18 +83,20 @@ public final class CucumberExecutionContext {
     private void emitTestRunStarted() {
         log.debug(() -> "Sending run test started event");
         start = bus.getInstant();
+        testRunStartedId = bus.generateId();
         bus.send(new TestRunStarted(start));
-        bus.send(Envelope.of(new io.cucumber.messages.types.TestRunStarted(toMessage(start), null)));
+        bus.send(
+            Envelope.of(new io.cucumber.messages.types.TestRunStarted(toMessage(start), testRunStartedId.toString())));
     }
 
     public void runBeforeAllHooks() {
         Runner runner = getRunner();
-        collector.executeAndThrow(runner::runBeforeAllHooks);
+        collector.executeAndThrow(() -> runner.runBeforeAllHooks(requireNonNull(testRunStartedId).toString()));
     }
 
     public void runAfterAllHooks() {
         Runner runner = getRunner();
-        collector.executeAndThrow(runner::runAfterAllHooks);
+        collector.executeAndThrow(() -> runner.runAfterAllHooks(requireNonNull(testRunStartedId).toString()));
     }
 
     public void finishTestRun() {
@@ -117,7 +121,8 @@ public final class CucumberExecutionContext {
             exception != null ? exception.getMessage() : null,
             exception == null && exitStatus.isSuccess(),
             toMessage(instant),
-            exception == null ? null : toMessage(exception), null);
+            exception == null ? null : toMessage(exception),
+            requireNonNull(testRunStartedId).toString());
         bus.send(Envelope.of(testRunFinished));
     }
 
@@ -130,7 +135,9 @@ public final class CucumberExecutionContext {
 
     public void runTestCase(Consumer<Runner> execution) {
         Runner runner = getRunner();
+        runner.setTestRunStartedId(testRunStartedId);
         collector.executeAndThrow(() -> execution.accept(runner));
+        runner.setTestRunStartedId(null);
     }
 
     private Runner getRunner() {
@@ -158,7 +165,7 @@ public final class CucumberExecutionContext {
         try {
             runnable.run();
         } catch (Throwable t) {
-            // Collected in CucumberExecutionContext
+            // Collected in CucumberExecutionContext.collector
             rethrowIfUnrecoverable(t);
         }
     }

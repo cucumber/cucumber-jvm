@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
+import static io.cucumber.core.backend.StaticHookDefinition.HookType.BEFORE_ALL;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,7 +34,7 @@ class JavaStaticHookDefinitionTest {
     @Test
     void can_create_with_no_argument() throws Throwable {
         Method method = JavaStaticHookDefinitionTest.class.getMethod("no_arguments");
-        JavaStaticHookDefinition definition = new JavaStaticHookDefinition(method, 0, lookup);
+        JavaStaticHookDefinition definition = new JavaStaticHookDefinition(BEFORE_ALL, method, 0, "", lookup);
         definition.execute();
         assertTrue(invoked);
     }
@@ -48,7 +49,7 @@ class JavaStaticHookDefinitionTest {
         Method method = JavaStaticHookDefinitionTest.class.getMethod("single_argument", Scenario.class);
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaStaticHookDefinition(method, 0, lookup));
+            () -> new JavaStaticHookDefinition(BEFORE_ALL, method, 0, "", lookup));
         assertThat(exception.getMessage(), startsWith("""
                 A method annotated with BeforeAll or AfterAll must have one of these signatures:
                  * public static void before_or_after_all()
@@ -66,7 +67,7 @@ class JavaStaticHookDefinitionTest {
         Method method = JavaStaticHookDefinitionTest.class.getMethod("string_return_type");
         InvalidMethodSignatureException exception = assertThrows(
             InvalidMethodSignatureException.class,
-            () -> new JavaStaticHookDefinition(method, 0, lookup));
+            () -> new JavaStaticHookDefinition(BEFORE_ALL, method, 0, "", lookup));
         assertThat(exception.getMessage(), startsWith("""
                 A method annotated with BeforeAll or AfterAll must have one of these signatures:
                  * public static void before_or_after_all()

@@ -36,6 +36,7 @@ class HookTestStepTest {
     private final HookDefinitionMatch definitionMatch = new HookDefinitionMatch(hookDefintion);
     private final TestCase testCase = new TestCase(
         UUID.randomUUID(),
+        UUID.randomUUID(),
         Collections.emptyList(),
         Collections.emptyList(),
         Collections.emptyList(),
