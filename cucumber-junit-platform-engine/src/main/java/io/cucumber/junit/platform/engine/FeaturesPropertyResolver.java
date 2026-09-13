@@ -22,9 +22,9 @@ import static org.junit.platform.engine.DiscoveryIssue.Severity.WARNING;
  * property.
  * <p>
  * The JUnit Platform provides various discovery selectors to select feature
- * files. Unfortunately, these do not yet receive support from IDEs, Maven or
- * Gradle. Resolving this property allows uses to target a single feature,
- * scenario or example from the commandline.
+ * files. Support for these selectors varies between IDEs and build tools.
+ * Resolving this property allows users to target a single feature, scenario or
+ * example from the command line when selectors are unavailable.
  * <p>
  * This class decorates the {@link DiscoverySelectorResolver}. When the features
  * property is provided it replaces the discovery request.
@@ -62,12 +62,15 @@ class FeaturesPropertyResolver {
             "Discovering tests using the " + FEATURES_PROPERTY_NAME + " property. Other discovery " +
                     "selectors are ignored!\n" +
                     "\n" +
-                    "This is a work around for the limited JUnit 6 support in Maven and Gradle. " +
-                    "Please request/upvote/sponsor/ect better support for JUnit 6 discovery selectors. " +
-                    "For details see: https://github.com/cucumber/cucumber-jvm/pull/2498\n" +
+                    "This property is a workaround for build tools that do not support JUnit Platform " +
+                    "discovery selectors.\n" +
                     "\n" +
-                    "If you are using the JUnit 6 Suite Engine, Platform Launcher API or Console Launcher you " +
-                    "should not use this property. Please consult the JUnit 6 documentation on test selection.");
+                    "When using Gradle, configure the testDefinitionDirs property and use --tests to " +
+                    "select a feature file. Use cucumber.filter.name or cucumber.filter.tags to select " +
+                    "scenarios within a feature.\n" +
+                    "\n" +
+                    "If you are using the JUnit 6 Suite Engine, Platform Launcher API or Console Launcher, " +
+                    "you should not use this property. Please consult the JUnit 6 documentation on test selection.");
     }
 
     private static class FeaturesPropertyDiscoveryRequest implements EngineDiscoveryRequest {
