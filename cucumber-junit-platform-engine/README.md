@@ -37,16 +37,37 @@ erDiagram
 
 In practice, integration is still limited so we discuss the most common workarounds below.
 
-### Maven Surefire, Gradle and SBT
+### Gradle, Maven Surefire and SBT
 
-Maven Surefire and Gradle do not yet support discovery of non-class based tests
-(see: [gradle/#4773](https://github.com/gradle/gradle/issues/4773),
-[maven-surefire/#2065](https://github.com/apache/maven-surefire/issues/2065), [stb-jupiter-interface/#142](https://github.com/sbt/sbt-jupiter-interface/issues/142)).
-As a workaround, you can either use:
- * the [JUnit Platform Suite Engine](https://docs.junit.org/current/advanced-topics/junit-platform-suite-engine.html);
- * the [JUnit Platform Console Launcher](https://docs.junit.org/current/running-tests/console-launcher.html) or;
- * the [Gradle Cucumber-Companion](https://github.com/gradle/cucumber-companion) plugins for Gradle and Maven.
- * the [Cucable](https://github.com/trivago/cucable-plugin) plugin for Maven.
+Gradle 9.4 and later support discovering non-class-based tests through
+the JUnit Platform. Configure the test task with the directory containing the
+Cucumber feature files:
+
+```kotlin
+tasks.withType<Test> {
+    useJUnitPlatform()
+    testDefinitionDirs.from("src/test/resources")
+}
+```
+
+Feature files can then be selected using Gradle's `--tests` option. The filter
+must contain `/` so Gradle treats it as a resource path rather than a class
+name:
+
+```shell
+./gradlew test --tests "*/example.feature"
+```
+
+Maven Surefire and SBT do not yet fully support discovery of non-class-based
+tests (see [maven-surefire/#2065](https://github.com/apache/maven-surefire/issues/2065)
+and [sbt-jupiter-interface/#142](https://github.com/sbt/sbt-jupiter-interface/issues/142)).
+
+For Maven, SBT, and Gradle versions before 9.4, you can use:
+
+* the [JUnit Platform Suite Engine](https://docs.junit.org/current/advanced-topics/junit-platform-suite-engine.html);
+* the [JUnit Platform Console Launcher](https://docs.junit.org/current/running-tests/console-launcher.html);
+* the [Gradle Cucumber-Companion](https://github.com/gradle/cucumber-companion) plugins for Gradle and Maven; or
+* the [Cucable](https://github.com/trivago/cucable-plugin) plugin for Maven.
 
 #### Use the JUnit Platform Suite Engine
 
@@ -218,9 +239,9 @@ tasks {
 
 ### Running a single scenario or feature from the CLI
 
-To select a single scenario or feature the `cucumber.features` property can be
-used. Because this property will cause Cucumber to ignore any other selectors
-from JUnit, it is prudent to execute only the Cucumber engine.
+Feature and scenario selection depends on the build tool. Maven can use the
+`cucumber.features` property as a workaround, while recent Gradle versions can
+use native resource-based test discovery.
 
 #### Maven
 
@@ -232,27 +253,50 @@ mvn test -Dsurefire.includeJUnit5Engines=cucumber -Dcucumber.plugin=pretty -Dcuc
 
 #### Gradle
 
-Define Cucumber properties before running the test to ensure that your `build.gradle`
-(or `build.gradle.kts`) correctly passes system properties to the test task.
+Gradle 9.4 and later can discover Cucumber feature files as non-class-based
+tests. Configure the test task with the feature directory:
 
-```groovy
-tasks.test {
-    systemProperty("cucumber.features", System.getProperty("cucumber.features"))
-    systemProperty("cucumber.filter.tags", System.getProperty("cucumber.filter.tags"))
-    systemProperty("cucumber.filter.name", System.getProperty("cucumber.filter.name"))
-    systemProperty("cucumber.plugin", System.getProperty("cucumber.plugin"))
+```kotlin
+tasks.withType<Test> {
+    useJUnitPlatform()
+    testDefinitionDirs.from("src/test/resources")
+
+    System.getProperty("cucumber.filter.tags")?.let {
+        systemProperty("cucumber.filter.tags", it)
+    }
+    System.getProperty("cucumber.filter.name")?.let {
+        systemProperty("cucumber.filter.name", it)
+    }
+    System.getProperty("cucumber.plugin")?.let {
+        systemProperty("cucumber.plugin", it)
+    }
 }
 ```
 
-Then to select the scenario on line 10 of the `example.feature` file use:
+Select a feature file using Gradle's `--tests` option:
 
 ```shell
-gradle test --rerun-tasks --info -Dcucumber.plugin=pretty -Dcucumber.features=path/to/example.feature:10
+./gradlew test --tests "*/example.feature"
 ```
 
-Note: Because both the Suite Engine and the Cucumber Engine are included, this
-will run tests twice. (If you know how to prevent this, please send a pull
-request).
+The filter must contain `/` so Gradle treats it as a resource path rather than
+a class name.
+
+To select a scenario by name, combine the feature filter with
+`cucumber.filter.name`:
+
+```shell
+./gradlew test --tests "*/example.feature" -Dcucumber.filter.name="a few cukes"
+```
+
+Scenarios can also be selected by tag:
+
+```shell
+./gradlew test --tests "*/example.feature" -Dcucumber.filter.tags="@smoke"
+```
+
+Gradle's resource filter selects feature files. Use Cucumber's name or tag
+filters when selecting scenarios within a feature.
 
 ## Suites with different configurations
 
