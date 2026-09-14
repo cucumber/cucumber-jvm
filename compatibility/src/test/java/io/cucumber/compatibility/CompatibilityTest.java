@@ -1,15 +1,11 @@
 package io.cucumber.compatibility;
 
-import io.cucumber.core.cli.CommandlineOptions;
-import io.cucumber.core.cli.Main;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.commons.io.ResourceFilter;
 import org.junit.platform.commons.support.ResourceSupport;
-import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
-import org.junit.platform.launcher.core.LauncherFactory;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ArrayNode;
@@ -35,9 +31,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_PROPERTY_NAME;
-import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
-import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Collections.emptyList;
@@ -49,12 +42,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInRelativeOrder.containsInRelativeOrder;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.isA;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
-import static org.junit.platform.launcher.EngineFilter.includeEngines;
 
 @SuppressWarnings("NullAway")
 @ParameterizedClass
-@MethodSource("ndjsonReportWriters")
+@MethodSource("io.cucumber.compatibility.NdjsonReportWriter#list")
 final class CompatibilityTest {
 
     private static final List<String> unsupportedTestCases = Arrays.asList(
@@ -379,10 +370,6 @@ final class CompatibilityTest {
                 containsInRelativeOrder(aComparableMessage(messageType, expectedMessages)))));
     }
 
-    static List<NdjsonReportWriter> ndjsonReportWriters() {
-        return List.of(new RuntimeNdjsonReportWriter(), new JunitPlatformNdjsonReportWriter());
-    }
-
     private static List<JsonNode> readAllMessages(InputStream output) throws IOException {
         List<JsonNode> expectedEnvelopes = new ArrayList<>();
 
@@ -442,72 +429,4 @@ final class CompatibilityTest {
                 .collect(Collectors.toList());
     }
 
-    interface NdjsonReportWriter {
-        String name();
-
-        void writeTo(TestCase testCase, Path target);
-    }
-
-    private static final class RuntimeNdjsonReportWriter implements NdjsonReportWriter {
-        @Override
-        public String name() {
-            return "cucumber-cli";
-        }
-
-        @Override
-        public void writeTo(TestCase testCase, Path target) {
-            try {
-                var order = "multiple-features-reversed".equals(testCase.getId()) ? "reverse" : "lexical";
-                Main.run(
-                    testCase.getFeatureWithLines().toString(), //
-                    CommandlineOptions.GLUE, testCase.getGluePackageName(), //
-                    CommandlineOptions.ORDER, order, //
-                    CommandlineOptions.PLUGIN, "message:" + target //
-                );
-            } catch (Exception e) {
-                if (!(
-                // exception: Scenario with unknown parameter types fails by
-                // throwing an exceptions
-                "unknown-parameter-type".equals(testCase.getId())
-                        // exception: Errors in global hooks fail the test run
-                        // by throwing an exception
-                        || "global-hooks-beforeall-error".equals(testCase.getId())
-                        || "global-hooks-afterall-error".equals(testCase.getId()))) {
-                    throw e;
-                }
-            }
-        }
-
-        @Override
-        public String toString() {
-            return name();
-        }
-    }
-
-    private static final class JunitPlatformNdjsonReportWriter implements NdjsonReportWriter {
-
-        @Override
-        public String name() {
-            return "cucunmber-junit-platform-engine";
-        }
-
-        @Override
-        public void writeTo(TestCase testCase, Path target) {
-            var order = "multiple-features-reversed".equals(testCase.getId()) ? "reverse" : "lexical";
-            try (var session = LauncherFactory.openSession()) {
-                session.getLauncher().execute(LauncherDiscoveryRequestBuilder.request() //
-                        .filters(includeEngines("cucumber")) //
-                        .configurationParameter(GLUE_PROPERTY_NAME, testCase.getGluePackageName()) //
-                        .configurationParameter(PLUGIN_PROPERTY_NAME, "pretty,summary,message:" + target) //
-                        .configurationParameter(EXECUTION_ORDER_PROPERTY_NAME, order) //
-                        .selectors(selectPackage(testCase.getFeaturePackageName())) //
-                        .build());
-            }
-        }
-
-        @Override
-        public String toString() {
-            return name();
-        }
-    }
 }
