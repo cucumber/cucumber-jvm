@@ -116,6 +116,7 @@ public final class TestNGCucumberRunner {
         return new CucumberPropertiesParser()
                 .parse(CucumberProperties.fromSystemProperties())
                 .enablePublishPlugin()
+                .enableThrowOnFailuresInStaticHooks()
                 .build(environmentOptions);
     }
 

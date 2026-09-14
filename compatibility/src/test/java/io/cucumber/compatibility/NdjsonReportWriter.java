@@ -40,14 +40,9 @@ interface NdjsonReportWriter {
                     CommandlineOptions.PLUGIN, "message:" + target //
                 );
             } catch (Exception e) {
-                if (!(
                 // exception: Scenario with unknown parameter types fails by
                 // throwing an exceptions
-                "unknown-parameter-type".equals(testCase.getId())
-                        // exception: Errors in global hooks fail the test run
-                        // by throwing an exception
-                        || "global-hooks-beforeall-error".equals(testCase.getId())
-                        || "global-hooks-afterall-error".equals(testCase.getId()))) {
+                if (!"unknown-parameter-type".equals(testCase.getId())) {
                     throw e;
                 }
             }

@@ -48,6 +48,7 @@ public final class RuntimeOptionsBuilder {
     private @Nullable Boolean parsedEnablePublishPlugin;
     private List<Pattern> glueIncludedClassNamePatterns = new ArrayList<>();
     private List<Pattern> glueExcludedClassNamePatterns = new ArrayList<>();
+    private @Nullable Boolean throwOnFailuresInStaticHooks;
 
     public RuntimeOptionsBuilder addRerun(Collection<FeatureWithLines> featureWithLines) {
         if (parsedRerunPaths == null) {
@@ -198,6 +199,10 @@ public final class RuntimeOptionsBuilder {
             runtimeOptions.setGlueExcludedClassNamePatterns(glueExcludedClassNamePatterns);
         }
 
+        if (throwOnFailuresInStaticHooks != null) {
+            runtimeOptions.setThrowOnFailuresInStaticHooks(throwOnFailuresInStaticHooks);
+        }
+
         return runtimeOptions;
     }
 
@@ -309,6 +314,11 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder enablePublishPlugin() {
         this.parsedEnablePublishPlugin = true;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder enableThrowOnFailuresInStaticHooks() {
+        this.throwOnFailuresInStaticHooks = true;
         return this;
     }
 

@@ -147,7 +147,7 @@ public final class Runner {
             throwable = e;
         }
         emitTestRunHookFinished(start, throwable, testRunHookStartedId);
-        if (throwable != null) {
+        if (throwable != null && runnerOptions.isThrowOnFailuresInStaticHooks()) {
             throwAsUncheckedException(throwable);
         }
     }

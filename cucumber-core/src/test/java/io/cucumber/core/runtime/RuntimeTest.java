@@ -478,6 +478,9 @@ class RuntimeTest {
         };
 
         var runtime = Runtime.builder()
+                .withRuntimeOptions(new RuntimeOptionsBuilder() //
+                        .enableThrowOnFailuresInStaticHooks() //
+                        .build()) //
                 .withFeatureSupplier(new StubFeatureSupplier())
                 .withBackendSupplier(backendSupplier)
                 .build();

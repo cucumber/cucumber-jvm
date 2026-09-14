@@ -20,4 +20,6 @@ public interface Options {
 
     GlueDiscoveryRequest getGlueDiscoveryRequest();
 
+    boolean isThrowOnFailuresInStaticHooks();
+
 }

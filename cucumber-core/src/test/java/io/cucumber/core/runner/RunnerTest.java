@@ -27,7 +27,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
@@ -227,8 +226,7 @@ class RunnerTest {
 
         String testRunStartedId = "test-run-id";
         Runner runner = runnerSupplier.get();
-        assertThrows(RuntimeException.class, () -> runner.runBeforeAllHooks(testRunStartedId));
-
+        runner.runBeforeAllHooks(testRunStartedId);
         InOrder inOrder = inOrder(beforeAllHook, failingBeforeAllHook);
         inOrder.verify(beforeAllHook).execute();
         inOrder.verify(failingBeforeAllHook).execute();
