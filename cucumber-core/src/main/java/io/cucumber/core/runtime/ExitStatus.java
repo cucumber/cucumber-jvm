@@ -51,7 +51,7 @@ public final class ExitStatus implements ConcurrentEventListener {
     }
 
     private TestStepResultStatus getLeastSeverStatus() {
-        return  getAllResultStatus()
+        return getAllResultStatus()
                 .min(new TestStepResultStatusComparator())
                 .orElse(FAILED);
     }
