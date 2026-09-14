@@ -151,7 +151,9 @@ public final class CucumberExecutionContext {
         startTestRun();
         execute(() -> {
             runBeforeAllHooks();
-            executeFeatures.run();
+            if (exitStatus.isSuccess()) {
+                executeFeatures.run();
+            }
         });
         try {
             execute(this::runAfterAllHooks);

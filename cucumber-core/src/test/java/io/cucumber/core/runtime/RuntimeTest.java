@@ -463,7 +463,7 @@ class RuntimeTest {
     }
 
     @Test
-    void with_failing_after_all_hook() {
+    void with_failing_after_all_hook_that_throws() {
         var expectedException = new RuntimeException("This exception is expected");
         var backendException = new CucumberBackendException("failed", expectedException);
         var mockedStaticHookDefinition = new MockedStaticHookDefinition(() -> {
@@ -489,6 +489,80 @@ class RuntimeTest {
         CucumberException actualThrown = assertThrows(CucumberException.class, testMethod);
         assertThat(actualThrown.getCause(), equalTo(backendException));
         assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
+    }
+
+    @Test
+    void does_execute_scenarios_with_failing_after_all_hook() {
+        var expectedException = new RuntimeException("This exception is expected");
+        var backendException = new CucumberBackendException("failed", expectedException);
+        var mockedStaticHookDefinition = new MockedStaticHookDefinition(() -> {
+            throw backendException;
+        });
+
+        var backendSupplier = new TestBackendSupplier() {
+            @Override
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
+                glue.addStepDefinition(new StubStepDefinition("first step"));
+                glue.addAfterAllHook(mockedStaticHookDefinition);
+            }
+        };
+        var formatterSpy = new FormatterSpy();
+        var feature = TestFeatureParser.parse("path/test.feature",
+            """
+                    Feature: feature name
+                      Scenario: scenario name
+                        Given first step
+                    """);
+        var runtime = Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withBackendSupplier(backendSupplier)
+                .withAdditionalPlugins(formatterSpy)
+                .build();
+        runtime.run();
+
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
+        assertThat(formatterSpy.toString(), equalTo("""
+                TestRun started
+                  TestCase started
+                    TestStep started
+                    TestStep finished
+                  TestCase finished
+                TestRun finished
+                """));
+    }
+
+    @Test
+    void does_not_execute_scenarios_with_failing_before_all_hook() {
+        var expectedException = new RuntimeException("This exception is expected");
+        var backendException = new CucumberBackendException("failed", expectedException);
+        var mockedStaticHookDefinition = new MockedStaticHookDefinition(() -> {
+            throw backendException;
+        });
+        var backendSupplier = new TestBackendSupplier() {
+            @Override
+            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
+                glue.addStepDefinition(new StubStepDefinition("first step"));
+                glue.addBeforeAllHook(mockedStaticHookDefinition);
+            }
+        };
+        var formatterSpy = new FormatterSpy();
+        var feature = TestFeatureParser.parse("path/test.feature",
+            """
+                    Feature: feature name
+                      Scenario: scenario name
+                        Given first step
+                    """);
+        Runtime runtime = Runtime.builder()
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withBackendSupplier(backendSupplier)
+                .withAdditionalPlugins(formatterSpy)
+                .build();
+        runtime.run();
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x1)));
+        assertThat(formatterSpy.toString(), equalTo("""
+                TestRun started
+                TestRun finished
+                """));
     }
 
     @Test
