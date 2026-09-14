@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [All] Set baseline to Java 17 ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
 - [TestNG] Provide scenarios during dry-run ([#3234](https://github.com/cucumber/cucumber-jvm/pull/3234))
 - [All] Adopt [JSpecify](https://jspecify.dev/) to declare nullability ([#3116](https://github.com/cucumber/cucumber-jvm/pull/3116))
+- [Core] Emit messages for `@BeforeAll` and `@AfterAll` hooks ([#3236](https://github.com/cucumber/cucumber-jvm/pull/3236))
 - [Core] Update skipped, pending and undefined colors ([cucumber/common#2302](https://github.com/cucumber/common/issues/2302))
 - [Core] Update dependency io.cucumber:ci-environment.version to v14.0.0
 - [Core] Update dependency io.cucumber:cucumber-expressions.version to v20.0.0
