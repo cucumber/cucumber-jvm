@@ -1,15 +1,15 @@
 package io.cucumber.compatibility;
 
-import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.order.PickleOrder;
-import io.cucumber.core.order.StandardPickleOrders;
-import io.cucumber.core.plugin.MessageFormatter;
-import io.cucumber.core.runtime.Runtime;
+import io.cucumber.core.cli.CommandlineOptions;
+import io.cucumber.core.cli.Main;
 import org.hamcrest.Matcher;
+import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.commons.io.ResourceFilter;
 import org.junit.platform.commons.support.ResourceSupport;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ArrayNode;
@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -34,8 +35,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static io.cucumber.junit.platform.engine.Constants.EXECUTION_ORDER_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
+import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.Files.newOutputStream;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -46,8 +49,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInRelativeOrder.containsInRelativeOrder;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.isA;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
+import static org.junit.platform.launcher.EngineFilter.includeEngines;
 
 @SuppressWarnings("NullAway")
+@ParameterizedClass
+@MethodSource("ndjsonReportWriters")
 final class CompatibilityTest {
 
     private static final List<String> unsupportedTestCases = Arrays.asList(
@@ -283,10 +290,21 @@ final class CompatibilityTest {
                 .collect(Collectors.toList());
     }
 
+    private final NdjsonReportWriter ndjsonReportWriter;
+
+    CompatibilityTest(NdjsonReportWriter ndjsonReportWriter) {
+        this.ndjsonReportWriter = ndjsonReportWriter;
+    }
+
     @ParameterizedTest
     @MethodSource("acceptance")
-    void test(TestCase testCase) throws IOException {
-        Path actualNdjson = writeNdjsonReport(testCase);
+    void test(TestCase testCase) throws Exception {
+        Path workingDirectory = Files
+                .createDirectories(Path.of("target", "messages", ndjsonReportWriter.name(), testCase.getId()));
+        Path expectedNdjson = workingDirectory.resolve("expected.ndjson");
+        Path actualNdjson = workingDirectory.resolve("actual.ndjson");
+        Files.copy(testCase.getExpectedFile(), expectedNdjson, REPLACE_EXISTING);
+        ndjsonReportWriter.writeTo(testCase, actualNdjson);
 
         List<JsonNode> expected = readAllMessages(testCase.getExpectedFile());
         List<JsonNode> actual = readAllMessages(Files.newInputStream(actualNdjson));
@@ -343,46 +361,26 @@ final class CompatibilityTest {
             expectedEnvelopes.remove("stepDefinition");
         }
 
+        if ("cucunmber-junit-platform-engine".equals(ndjsonReportWriter.name())
+                && "multiple-features-reversed".equals(testCase.getId())) {
+            // exception: cucunmber-junit-platform-engine orders execution by
+            // features and pickles, so source events are emitted in reverse
+            // order too.
+            Collections.reverse(expectedEnvelopes.get("source"));
+            Collections.reverse(expectedEnvelopes.get("gherkinDocument"));
+            // bug: pickle events are inconsistently ordered (descending by
+            // feature, but ascending by line)
+            expectedEnvelopes.remove("pickle");
+        }
+
         expectedEnvelopes.forEach((messageType, expectedMessages) -> assertThat(
             actualEnvelopes,
             hasEntry(is(messageType),
                 containsInRelativeOrder(aComparableMessage(messageType, expectedMessages)))));
     }
 
-    private static Path writeNdjsonReport(TestCase testCase) throws IOException {
-        Path parentDir = Files.createDirectories(Path.of("target", "messages", testCase.getId()));
-        Path actualNdjson = parentDir.resolve("actual.ndjson");
-        Path expectedNdjson = parentDir.resolve("expected.ndjson");
-        Files.copy(testCase.getExpectedFile(), expectedNdjson, REPLACE_EXISTING);
-
-        try {
-            PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
-            if ("multiple-features-reversed".equals(testCase.getId())) {
-                pickleOrder = StandardPickleOrders.reverseLexicalUriOrder();
-            }
-            Runtime.builder()
-                    .withRuntimeOptions(new RuntimeOptionsBuilder()
-                            .addGlue(testCase.getGlue())
-                            .setPickleOrder(pickleOrder)
-                            .addFeature(testCase.getFeatures()).build())
-                    .withAdditionalPlugins(
-                        new MessageFormatter(newOutputStream(actualNdjson)))
-                    .build()
-                    .run();
-        } catch (Exception e) {
-
-            if (!(
-            // exception: Scenario with unknown parameter types fails by
-            // throwing an exceptions
-            "unknown-parameter-type".equals(testCase.getId())
-                    // exception: Errors in global hooks fail the test run by
-                    // throwing an exception
-                    || "global-hooks-beforeall-error".equals(testCase.getId())
-                    || "global-hooks-afterall-error".equals(testCase.getId()))) {
-                throw e;
-            }
-        }
-        return actualNdjson;
+    static List<NdjsonReportWriter> ndjsonReportWriters() {
+        return List.of(new RuntimeNdjsonReportWriter(), new JunitPlatformNdjsonReportWriter());
     }
 
     private static List<JsonNode> readAllMessages(InputStream output) throws IOException {
@@ -444,4 +442,72 @@ final class CompatibilityTest {
                 .collect(Collectors.toList());
     }
 
+    interface NdjsonReportWriter {
+        String name();
+
+        void writeTo(TestCase testCase, Path target);
+    }
+
+    private static final class RuntimeNdjsonReportWriter implements NdjsonReportWriter {
+        @Override
+        public String name() {
+            return "cucumber-cli";
+        }
+
+        @Override
+        public void writeTo(TestCase testCase, Path target) {
+            try {
+                var order = "multiple-features-reversed".equals(testCase.getId()) ? "reverse" : "lexical";
+                Main.run(
+                    testCase.getFeatureWithLines().toString(), //
+                    CommandlineOptions.GLUE, testCase.getGluePackageName(), //
+                    CommandlineOptions.ORDER, order, //
+                    CommandlineOptions.PLUGIN, "message:" + target //
+                );
+            } catch (Exception e) {
+                if (!(
+                // exception: Scenario with unknown parameter types fails by
+                // throwing an exceptions
+                "unknown-parameter-type".equals(testCase.getId())
+                        // exception: Errors in global hooks fail the test run
+                        // by throwing an exception
+                        || "global-hooks-beforeall-error".equals(testCase.getId())
+                        || "global-hooks-afterall-error".equals(testCase.getId()))) {
+                    throw e;
+                }
+            }
+        }
+
+        @Override
+        public String toString() {
+            return name();
+        }
+    }
+
+    private static final class JunitPlatformNdjsonReportWriter implements NdjsonReportWriter {
+
+        @Override
+        public String name() {
+            return "cucunmber-junit-platform-engine";
+        }
+
+        @Override
+        public void writeTo(TestCase testCase, Path target) {
+            var order = "multiple-features-reversed".equals(testCase.getId()) ? "reverse" : "lexical";
+            try (var session = LauncherFactory.openSession()) {
+                session.getLauncher().execute(LauncherDiscoveryRequestBuilder.request() //
+                        .filters(includeEngines("cucumber")) //
+                        .configurationParameter(GLUE_PROPERTY_NAME, testCase.getGluePackageName()) //
+                        .configurationParameter(PLUGIN_PROPERTY_NAME, "pretty,summary,message:" + target) //
+                        .configurationParameter(EXECUTION_ORDER_PROPERTY_NAME, order) //
+                        .selectors(selectPackage(testCase.getFeaturePackageName())) //
+                        .build());
+            }
+        }
+
+        @Override
+        public String toString() {
+            return name();
+        }
+    }
 }

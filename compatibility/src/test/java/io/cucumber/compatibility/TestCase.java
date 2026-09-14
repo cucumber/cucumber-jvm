@@ -1,12 +1,10 @@
 package io.cucumber.compatibility;
 
 import io.cucumber.core.feature.FeatureWithLines;
-import io.cucumber.core.feature.GluePath;
 import org.junit.platform.commons.io.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 
 final class TestCase {
 
@@ -28,11 +26,15 @@ final class TestCase {
         return id;
     }
 
-    URI getGlue() {
-        return GluePath.parse(GLUE_PACKAGE + "." + id.replace("-", ""));
+    String getGluePackageName() {
+        return GLUE_PACKAGE + "." + id.replace("-", "");
     }
 
-    FeatureWithLines getFeatures() {
+    String getFeaturePackageName() {
+        return testCaseResourceName;
+    }
+
+    FeatureWithLines getFeatureWithLines() {
         return FeatureWithLines.parse("classpath:" + testCaseResourceName);
     }
 
