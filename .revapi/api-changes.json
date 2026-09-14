@@ -435,6 +435,12 @@
             "old": "method void io.cucumber.core.runner.Runner::runBeforeAllHooks()",
             "new": "method void io.cucumber.core.runner.Runner::runBeforeAllHooks(java.lang.String)",
             "justification": "Emit messages for @BeforeAll and @AfterAll hooks"
+          },
+          {
+            "ignore": true,
+            "code": "java.class.externalClassExposedInAPI",
+            "new": "enum io.cucumber.core.backend.StaticHookDefinition.HookType",
+            "justification": "Emit messages for @BeforeAll and @AfterAll hooks"
           }
         ]
       }
