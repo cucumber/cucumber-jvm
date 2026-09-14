@@ -51,16 +51,18 @@ public final class ExitStatus implements ConcurrentEventListener {
     }
 
     private TestStepResultStatus getLeastSeverStatus() {
-        return query.findAllTestCaseStarted().stream()
-                .map(query::findMostSevereTestStepResultBy)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(TestStepResult::getStatus)
+        return  getAllResultStatus()
                 .min(new TestStepResultStatusComparator())
                 .orElse(FAILED);
     }
 
     private TestStepResultStatus getMostSevereStatus() {
+        return getAllResultStatus()
+                .max(new TestStepResultStatusComparator())
+                .orElse(PASSED);
+    }
+
+    private Stream<TestStepResultStatus> getAllResultStatus() {
         var testRunHookFinishedStatusResults = query.findAllTestRunHookFinished().stream()
                 .map(TestRunHookFinished::getResult)
                 .map(TestStepResult::getStatus);
@@ -71,9 +73,7 @@ public final class ExitStatus implements ConcurrentEventListener {
                 .map(Optional::get)
                 .map(TestStepResult::getStatus);
 
-        return Stream.concat(testRunHookFinishedStatusResults, testStepStatusResults)
-                .max(new TestStepResultStatusComparator())
-                .orElse(PASSED);
+        return Stream.concat(testRunHookFinishedStatusResults, testStepStatusResults);
     }
 
     Status getStatus() {
