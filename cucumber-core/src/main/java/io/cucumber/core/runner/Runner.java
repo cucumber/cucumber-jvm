@@ -157,7 +157,6 @@ public final class Runner {
         var result = new TestStepResult(
             toMessage(Duration.between(start, finish)),
             throwable == null ? null : throwable.getMessage(),
-            // TODO: Skip hooks?
             throwable == null ? TestStepResultStatus.PASSED : TestStepResultStatus.FAILED,
             throwable == null ? null : toMessage(throwable));
         bus.send(Envelope.of(new TestRunHookFinished(testRunHookStartedId, result, toMessage(finish))));
