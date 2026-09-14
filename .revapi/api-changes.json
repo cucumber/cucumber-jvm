@@ -441,6 +441,13 @@
             "code": "java.class.externalClassExposedInAPI",
             "new": "enum io.cucumber.core.backend.StaticHookDefinition.HookType",
             "justification": "Emit messages for @BeforeAll and @AfterAll hooks"
+          },
+
+          {
+            "ignore": true,
+            "code": "java.method.addedToInterface",
+            "new": "method boolean io.cucumber.core.runner.Options::isThrowOnFailuresInStaticHooks()",
+            "justification": "Emit messages for @BeforeAll and @AfterAll hooks"
           }
         ]
       }
