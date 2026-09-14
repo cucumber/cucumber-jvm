@@ -421,6 +421,20 @@
             "old": "method java.lang.Object[][] io.cucumber.testng.AbstractTestNGCucumberTests::scenarios()",
             "new": "method java.lang.Object[][] io.cucumber.testng.AbstractTestNGCucumberTests::scenarios(org.testng.ITestContext)",
             "justification": "Support providing scenarios during dry-run"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.numberOfParametersChanged",
+            "old": "method void io.cucumber.core.runner.Runner::runAfterAllHooks()",
+            "new": "method void io.cucumber.core.runner.Runner::runAfterAllHooks(java.lang.String)",
+            "justification": "Emit messages for @BeforeAll and @AfterAll hooks"
+          },
+          {
+            "ignore": true,
+            "code": "java.method.numberOfParametersChanged",
+            "old": "method void io.cucumber.core.runner.Runner::runBeforeAllHooks()",
+            "new": "method void io.cucumber.core.runner.Runner::runBeforeAllHooks(java.lang.String)",
+            "justification": "Emit messages for @BeforeAll and @AfterAll hooks"
           }
         ]
       }
