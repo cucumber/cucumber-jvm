@@ -135,9 +135,11 @@ public final class CucumberExecutionContext {
 
     public void beforeFeature(Feature feature) {
         log.debug(() -> "Sending test source read event for " + feature.getUri());
-        bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-        bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), singletonList(feature)));
-        bus.sendAll(feature.getParseEvents());
+        collector.executeAndThrow(() -> {
+            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+            bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), singletonList(feature)));
+            bus.sendAll(feature.getParseEvents());
+        });
     }
 
     public void runTestCase(Consumer<Runner> execution) {
