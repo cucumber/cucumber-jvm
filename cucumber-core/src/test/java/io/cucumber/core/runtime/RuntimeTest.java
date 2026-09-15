@@ -6,6 +6,7 @@ import io.cucumber.core.backend.HookDefinition;
 import io.cucumber.core.backend.ParameterInfo;
 import io.cucumber.core.backend.ScenarioScoped;
 import io.cucumber.core.backend.StaticHookDefinition;
+import io.cucumber.core.backend.StubHookDefinition;
 import io.cucumber.core.backend.StubPendingException;
 import io.cucumber.core.backend.StubStepDefinition;
 import io.cucumber.core.backend.TestCaseState;
@@ -43,8 +44,10 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.Function;
 
 import static java.time.Duration.ZERO;
 import static java.time.Instant.EPOCH;
@@ -410,10 +413,8 @@ class RuntimeTest {
                     Given first step
                 """);
 
-        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestStepFinished.class,
-            (TestStepFinished event) -> {
-                throw new RuntimeException("This exception is expected");
-            });
+        var expectedException = new RuntimeException("This exception is expected");
+        var brokenEventListener = new BrokenEventListener(expectedException, Envelope::getTestStepFinished);
 
         Executable testMethod = () -> Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature1, feature2))
@@ -429,122 +430,98 @@ class RuntimeTest {
 
     @Test
     void should_fail_on_event_listener_exception_at_test_run_started() {
-        RuntimeException expectedException = new RuntimeException("This exception is expected");
-        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestRunStarted.class,
-            (TestRunStarted event) -> {
-                throw expectedException;
-            });
-
+        var expectedException = new RuntimeException("This exception is expected");
+        var brokenEventListener = new BrokenEventListener(expectedException, Envelope::getTestRunStarted);
         Executable testMethod = () -> Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier())
                 .withAdditionalPlugins(brokenEventListener)
                 .build()
                 .run();
-        RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
+        var actualThrown = assertThrows(RuntimeException.class, testMethod);
         assertThat(actualThrown, equalTo(expectedException));
     }
 
     @Test
     void should_fail_on_event_listener_exception_at_test_run_finished() {
-        RuntimeException expectedException = new RuntimeException("This exception is expected");
-        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(TestRunFinished.class,
-            (TestRunFinished event) -> {
-                throw expectedException;
-            });
+        var expectedException = new RuntimeException("This exception is expected");
+        var brokenEventListener = new BrokenEventListener(expectedException, Envelope::getTestRunFinished);
 
         Executable testMethod = () -> Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier())
                 .withAdditionalPlugins(brokenEventListener)
                 .build()
                 .run();
-        RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
+        var actualThrown = assertThrows(RuntimeException.class, testMethod);
         assertThat(actualThrown, equalTo(expectedException));
     }
 
     @Test
     void should_fail_on_event_listener_exception_at_after_all_hook() {
-        RuntimeException expectedException = new RuntimeException("This exception is expected");
-        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(Envelope.class,
-            (Envelope event) -> event.getTestRunHookFinished().ifPresent(testRunHookFinished -> {
-                throw expectedException;
-            }));
-
-        var mockedStaticHookDefinition = new MockedStaticHookDefinition(() -> {
-        });
-
-        var backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
-                glue.addAfterAllHook(mockedStaticHookDefinition);
-            }
-        };
+        var expectedException = new RuntimeException("This exception is expected");
+        var brokenEventListener = new BrokenEventListener(expectedException, Envelope::getTestRunHookFinished);
 
         Executable testMethod = () -> Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier())
-                .withBackendSupplier(backendSupplier)
+                .withBackendSupplier(new StubBackendSupplier(
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    singletonList(new MockedStaticHookDefinition())))
                 .withAdditionalPlugins(brokenEventListener)
                 .build()
                 .run();
-        RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
+        var actualThrown = assertThrows(RuntimeException.class, testMethod);
         assertThat(actualThrown, equalTo(expectedException));
     }
 
     @Test
     void should_fail_on_event_listener_exception_at_failing_after_all_hook() {
-        RuntimeException expectedListenerException = new RuntimeException("This exception is expected");
-        RuntimeException expectedHookException = new RuntimeException("This exception is expected");
-        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(Envelope.class,
-            (Envelope event) -> event.getTestRunHookFinished().ifPresent(testRunHookFinished -> {
-                throw expectedListenerException;
-            }));
-
-        var mockedStaticHookDefinition = new MockedStaticHookDefinition(() -> {
-            throw expectedHookException;
-        });
-
-        var backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
-                glue.addAfterAllHook(mockedStaticHookDefinition);
-            }
-        };
+        var expectedListenerException = new RuntimeException("This exception is expected");
+        var expectedHookException = new RuntimeException("This exception is expected");
+        var brokenEventListener = new BrokenEventListener(expectedListenerException, Envelope::getTestRunHookFinished);
 
         Executable testMethod = () -> Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier())
-                .withBackendSupplier(backendSupplier)
+                .withBackendSupplier(new StubBackendSupplier(
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    singletonList(new MockedStaticHookDefinition(() -> {
+                        throw expectedHookException;
+                    }))))
                 .withAdditionalPlugins(brokenEventListener)
                 .build()
                 .run();
-        RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
+        var actualThrown = assertThrows(RuntimeException.class, testMethod);
         assertThat(actualThrown, equalTo(expectedListenerException));
         assertThat(actualThrown.getSuppressed()[0], equalTo(expectedHookException));
     }
 
     @Test
     void should_fail_on_event_listener_exception_at_failing_before_all_hook() {
-        RuntimeException expectedException = new RuntimeException("This exception is expected");
-        ConcurrentEventListener brokenEventListener = publisher -> publisher.registerHandlerFor(Envelope.class,
-            (Envelope event) -> event.getTestRunHookFinished().ifPresent(testRunHookFinished -> {
-                throw expectedException;
-            }));
-
-        var mockedStaticHookDefinition = new MockedStaticHookDefinition(() -> {
-        });
-
-        var backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
-                glue.addBeforeAllHook(mockedStaticHookDefinition);
-            }
-        };
+        var expectedException = new RuntimeException("This exception is expected");
+        var brokenEventListener = new BrokenEventListener(expectedException, Envelope::getTestRunHookFinished);
 
         Executable testMethod = () -> Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier())
-                .withBackendSupplier(backendSupplier)
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new MockedStaticHookDefinition()),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList()))
                 .withAdditionalPlugins(brokenEventListener)
                 .build()
                 .run();
-        RuntimeException actualThrown = assertThrows(RuntimeException.class, testMethod);
+        var actualThrown = assertThrows(RuntimeException.class, testMethod);
         assertThat(actualThrown, equalTo(expectedException));
     }
 
@@ -552,17 +529,6 @@ class RuntimeTest {
     void does_execute_scenarios_with_failing_after_all_hook() {
         var expectedException = new RuntimeException("This exception is expected");
         var backendException = new CucumberBackendException("failed", expectedException);
-        var mockedStaticHookDefinition = new MockedStaticHookDefinition(() -> {
-            throw backendException;
-        });
-
-        var backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
-                glue.addStepDefinition(new StubStepDefinition("first step"));
-                glue.addAfterAllHook(mockedStaticHookDefinition);
-            }
-        };
         var formatterSpy = new FormatterSpy();
         var feature = TestFeatureParser.parse("path/test.feature",
             """
@@ -572,7 +538,16 @@ class RuntimeTest {
                     """);
         var runtime = Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withBackendSupplier(backendSupplier)
+                .withBackendSupplier(new StubBackendSupplier(
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList(),
+                    emptyList(),
+                    singletonList(new MockedStaticHookDefinition(() -> {
+                        throw backendException;
+                    }))))
                 .withAdditionalPlugins(formatterSpy)
                 .build();
         runtime.run();
@@ -592,16 +567,6 @@ class RuntimeTest {
     void does_not_execute_scenarios_with_failing_before_all_hook() {
         var expectedException = new RuntimeException("This exception is expected");
         var backendException = new CucumberBackendException("failed", expectedException);
-        var mockedStaticHookDefinition = new MockedStaticHookDefinition(() -> {
-            throw backendException;
-        });
-        var backendSupplier = new TestBackendSupplier() {
-            @Override
-            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
-                glue.addStepDefinition(new StubStepDefinition("first step"));
-                glue.addBeforeAllHook(mockedStaticHookDefinition);
-            }
-        };
         var formatterSpy = new FormatterSpy();
         var feature = TestFeatureParser.parse("path/test.feature",
             """
@@ -611,7 +576,18 @@ class RuntimeTest {
                     """);
         Runtime runtime = Runtime.builder()
                 .withFeatureSupplier(new StubFeatureSupplier(feature))
-                .withBackendSupplier(backendSupplier)
+                .withBackendSupplier(new StubBackendSupplier(
+                    singletonList(new MockedStaticHookDefinition(() -> {
+                        throw backendException;
+                    })),
+                    emptyList(),
+                    emptyList(),
+                    singletonList(new StubStepDefinition("first step")),
+                    emptyList(),
+                    emptyList(),
+                    emptyList()
+
+                ))
                 .withAdditionalPlugins(formatterSpy)
                 .build();
         runtime.run();
@@ -803,6 +779,12 @@ class RuntimeTest {
 
         private final Runnable runnable;
 
+        private MockedStaticHookDefinition() {
+            this(() -> {
+                /* no-op */
+            });
+        }
+
         private MockedStaticHookDefinition(Runnable runnable) {
             this.runnable = runnable;
         }
@@ -849,4 +831,22 @@ class RuntimeTest {
 
     }
 
+    static final class BrokenEventListener implements ConcurrentEventListener {
+        private final RuntimeException exception;
+        private final Function<Envelope, Optional<?>> throwExceptionIf;
+
+        BrokenEventListener(RuntimeException exception, Function<Envelope, Optional<?>> thrownIfPresent) {
+            this.exception = exception;
+            this.throwExceptionIf = thrownIfPresent;
+        }
+
+        @Override
+        public void setEventPublisher(EventPublisher publisher) {
+            publisher.registerHandlerFor(Envelope.class, event -> {
+                if (throwExceptionIf.apply(event).isPresent()) {
+                    throw exception;
+                }
+            });
+        }
+    }
 }
