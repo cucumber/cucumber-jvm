@@ -27,7 +27,6 @@ import java.util.function.Consumer;
 
 import static io.cucumber.cienvironment.DetectCiEnvironment.detectCiEnvironment;
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
-import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.messages.Convertor.toMessage;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
@@ -91,12 +90,20 @@ public final class CucumberExecutionContext {
 
     public void runBeforeAllHooks() {
         Runner runner = getRunner();
-        collector.executeAndThrow(() -> runner.runBeforeAllHooks(requireNonNull(testRunStartedId).toString()));
+        var hookException = collector
+                .executeAndThrow(() -> runner.runBeforeAllHooks(requireNonNull(testRunStartedId).toString()));
+        if (hookException != null) {
+            throw throwAsUncheckedException(hookException);
+        }
     }
 
     public void runAfterAllHooks() {
         Runner runner = getRunner();
-        collector.executeAndThrow(() -> runner.runAfterAllHooks(requireNonNull(testRunStartedId).toString()));
+        var hookException = collector
+                .executeAndThrow(() -> runner.runAfterAllHooks(requireNonNull(testRunStartedId).toString()));
+        if (hookException != null) {
+            throw throwAsUncheckedException(hookException);
+        }
     }
 
     public void finishTestRun() {
@@ -145,39 +152,6 @@ public final class CucumberExecutionContext {
 
     private Runner getRunner() {
         return collector.executeAndThrow(runnerSupplier::get);
-    }
-
-    public void runFeatures(ThrowingRunnable executeFeatures) {
-        startTestRun();
-        execute(() -> {
-            runBeforeAllHooks();
-            if (exitStatus.isSuccess()) {
-                executeFeatures.run();
-            }
-        });
-        try {
-            execute(this::runAfterAllHooks);
-        } finally {
-            finishTestRun();
-        }
-        Throwable throwable = getThrowable();
-        if (throwable != null) {
-            throwAsUncheckedException(throwable);
-        }
-    }
-
-    private void execute(ThrowingRunnable runnable) {
-        try {
-            runnable.run();
-        } catch (Throwable t) {
-            // Collected in CucumberExecutionContext.collector
-            rethrowIfUnrecoverable(t);
-        }
-    }
-
-    @FunctionalInterface
-    public interface ThrowingRunnable {
-        void run() throws Throwable;
     }
 
 }

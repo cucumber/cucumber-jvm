@@ -72,7 +72,6 @@ public final class RuntimeOptions implements
     private boolean enablePublishPlugin;
     private List<Pattern> glueIncludedClassNamePatterns = emptyList();
     private List<Pattern> glueExcludedClassNamePatterns = emptyList();
-    private boolean throwOnFailuresInStaticHooks = false;
 
     private RuntimeOptions() {
 
@@ -208,11 +207,6 @@ public final class RuntimeOptions implements
                 .build();
     }
 
-    @Override
-    public boolean isThrowOnFailuresInStaticHooks() {
-        return throwOnFailuresInStaticHooks;
-    }
-
     private List<? extends GlueDiscoverySelector> createGlueDiscoverySelectors() {
         var uriSelectors = glue.stream().map(GlueDiscoverySelector::selectUri);
         var classSelectors = glueClasses.stream().map(GlueDiscoverySelector::selectClass);
@@ -343,7 +337,4 @@ public final class RuntimeOptions implements
         this.glueExcludedClassNamePatterns = glueExcludedClassNamePatterns;
     }
 
-    void setThrowOnFailuresInStaticHooks(boolean throwOnFailuresInStaticHooks) {
-        this.throwOnFailuresInStaticHooks = throwOnFailuresInStaticHooks;
-    }
 }

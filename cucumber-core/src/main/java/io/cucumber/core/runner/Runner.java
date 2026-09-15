@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
@@ -99,28 +100,49 @@ public final class Runner {
         return new Locale.Builder().setLanguage(language).build();
     }
 
-    public void runBeforeAllHooks(String testRunStartedId) {
-        executeTestRunHooks(testRunStartedId, glue.getBeforeAllHooks());
+    public @Nullable Throwable runBeforeAllHooks(String testRunStartedId) {
+        return executeTestRunHooks(testRunStartedId, glue.getBeforeAllHooks());
     }
 
-    public void runAfterAllHooks(String testRunStartedId) {
-        executeTestRunHooks(testRunStartedId, glue.getAfterAllHooks());
+    public @Nullable Throwable runAfterAllHooks(String testRunStartedId) {
+        return executeTestRunHooks(testRunStartedId, glue.getAfterAllHooks());
     }
 
-    private void executeTestRunHooks(String testRunStartedId, List<CoreStaticHookDefinition> afterAllHooks) {
-        ThrowableCollector throwableCollector = new ThrowableCollector();
+    private @Nullable Throwable executeTestRunHooks(
+            String testRunStartedId, List<CoreStaticHookDefinition> afterAllHooks
+    ) {
+        // Separate exceptions thrown in the execution of hooks from any
+        // other exceptions that might have happened.
+        //
+        // Cucumber is used by the CLI that reports using messages and other
+        // runners such as JUnit 4, JUnit Platform and TestNG that report
+        // using exceptions.
+        //
+        // The CLI reports problems with hooks through TestRunHook events and
+        // other problems through a TestRunEvent. The others report all
+        // problems through exceptions.
+        //
+        // This poses a problem because this means that the CLI can't tell the
+        // difference if we throw both here. Instead, we return the exceptions
+        // thrown by execution of hooks and throw the others. This lets callers
+        // decide how to handle them.
+        var inTestRunHookThrowableCollector = new ThrowableCollector();
+        var executionOfTestRunHookThrowableCollector = new ThrowableCollector();
         for (CoreStaticHookDefinition staticHookDefinition : afterAllHooks) {
-            throwableCollector.execute(() -> executeTestRunHook(testRunStartedId, staticHookDefinition));
+            executionOfTestRunHookThrowableCollector
+                    .execute(() -> executeTestRunHook(testRunStartedId, staticHookDefinition)
+                            .ifPresent(inTestRunHookThrowableCollector::add));
         }
-        Throwable throwable = throwableCollector.getThrowable();
+        Throwable throwable = executionOfTestRunHookThrowableCollector.getThrowable();
         if (throwable != null) {
-            throwAsUncheckedException(throwable);
+            throw throwAsUncheckedException(throwable);
         }
+        return inTestRunHookThrowableCollector.getThrowable();
     }
 
-    private void executeTestRunHook(String testRunStartedId, CoreStaticHookDefinition hookDefinition) {
+    private Optional<Throwable> executeTestRunHook(String testRunStartedId, CoreStaticHookDefinition hookDefinition) {
         if (runnerOptions.isDryRun()) {
-            return;
+            return Optional.empty();
         }
         var start = bus.getInstant();
         var testRunHookStartedId = bus.generateId().toString();
@@ -130,26 +152,35 @@ public final class Runner {
             hookDefinition.getId().toString(),
             Thread.currentThread().getName(),
             toMessage(start))));
+        Throwable throwable = executeTestRunHook(hookDefinition);
+        var collector = new ThrowableCollector();
+        collector.execute(() -> emitTestRunHookFinished(start, throwable, testRunHookStartedId));
+        var eventBusThrowable = collector.getThrowable();
+        if (eventBusThrowable != null) {
+            if (throwable != null) {
+                eventBusThrowable.addSuppressed(throwable);
+            }
+            throw throwAsUncheckedException(eventBusThrowable);
+        }
+        return Optional.ofNullable(throwable);
+    }
 
-        Throwable throwable = null;
+    private static @Nullable Throwable executeTestRunHook(CoreStaticHookDefinition hookDefinition) {
         try {
             hookDefinition.execute();
         } catch (CucumberBackendException e) {
-            throwable = new CucumberException("""
+            return new CucumberException("""
                     Could not invoke hook defined at '%s'.
                     It appears there was a problem with the hook definition."""
                     .formatted(hookDefinition.getLocation()),
                 e);
         } catch (CucumberInvocationTargetException e) {
-            throwable = removeFrameworkFrames(e);
+            return removeFrameworkFrames(e);
         } catch (Throwable e) {
             UnrecoverableExceptions.rethrowIfUnrecoverable(e);
-            throwable = e;
+            return e;
         }
-        emitTestRunHookFinished(start, throwable, testRunHookStartedId);
-        if (throwable != null && runnerOptions.isThrowOnFailuresInStaticHooks()) {
-            throwAsUncheckedException(throwable);
-        }
+        return null;
     }
 
     private void emitTestRunHookFinished(Instant start, @Nullable Throwable throwable, String testRunHookStartedId) {

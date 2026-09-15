@@ -226,11 +226,6 @@ class CucumberConfiguration implements
                 .build();
     }
 
-    @Override
-    public boolean isThrowOnFailuresInStaticHooks() {
-        return true;
-    }
-
     private Optional<GlueClassNameFilter> includedClassNamePattern() {
         return configurationParameters
                 .get(GLUE_INCLUDED_CLASS_NAME_PATTERN_PROPERTY_NAME,

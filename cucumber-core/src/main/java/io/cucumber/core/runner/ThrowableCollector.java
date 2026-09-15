@@ -27,7 +27,7 @@ final class ThrowableCollector {
         }
     }
 
-    private void add(Throwable throwable) {
+    void add(Throwable throwable) {
         if (this.throwable == null) {
             this.throwable = throwable;
         } else if (isTestAbortedException(this.throwable) && !isTestAbortedException(throwable)) {

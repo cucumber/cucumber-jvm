@@ -31,6 +31,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
+import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.core.runtime.SynchronizedEventBus.synchronize;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -78,7 +80,29 @@ public final class Runtime {
     public void run() {
         // Parse the features early. Don't proceed when there are lexer errors
         List<Feature> features = featureSupplier.get();
-        context.runFeatures(() -> runFeatures(features));
+        context.startTestRun();
+        try {
+            context.runBeforeAllHooks();
+            runFeatures(features);
+        } catch (Throwable e) {
+            // We don't care about hook failures
+            // They're included in the exit status and events
+            // Other failures will be included in the test run finished event
+            rethrowIfUnrecoverable(e);
+        }
+        try {
+            context.runAfterAllHooks();
+        } catch (Throwable e) {
+            // We don't care about hook failures
+            // They're included in the exit status and events
+            // Other failures will be included in the test run finished event
+            rethrowIfUnrecoverable(e);
+        }
+        context.finishTestRun();
+        var throwable = context.getThrowable();
+        if (throwable != null) {
+            throw throwAsUncheckedException(throwable);
+        }
     }
 
     private void runFeatures(List<Feature> features) {
