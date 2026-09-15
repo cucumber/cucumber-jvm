@@ -22,11 +22,11 @@ import org.jspecify.annotations.Nullable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import static io.cucumber.cienvironment.DetectCiEnvironment.detectCiEnvironment;
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
-import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.messages.Convertor.toMessage;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
@@ -42,6 +42,7 @@ public final class CucumberExecutionContext {
     private final RunnerSupplier runnerSupplier;
     private final RethrowingThrowableCollector collector = new RethrowingThrowableCollector();
     private @Nullable Instant start;
+    private @Nullable UUID testRunStartedId;
 
     public CucumberExecutionContext(EventBus bus, ExitStatus exitStatus, RunnerSupplier runnerSupplier) {
         this.bus = bus;
@@ -81,18 +82,28 @@ public final class CucumberExecutionContext {
     private void emitTestRunStarted() {
         log.debug(() -> "Sending run test started event");
         start = bus.getInstant();
+        testRunStartedId = bus.generateId();
         bus.send(new TestRunStarted(start));
-        bus.send(Envelope.of(new io.cucumber.messages.types.TestRunStarted(toMessage(start), null)));
+        bus.send(
+            Envelope.of(new io.cucumber.messages.types.TestRunStarted(toMessage(start), testRunStartedId.toString())));
     }
 
     public void runBeforeAllHooks() {
         Runner runner = getRunner();
-        collector.executeAndThrow(runner::runBeforeAllHooks);
+        var hookException = collector
+                .executeAndThrow(() -> runner.runBeforeAllHooks(requireNonNull(testRunStartedId).toString()));
+        if (hookException != null) {
+            throw throwAsUncheckedException(hookException);
+        }
     }
 
     public void runAfterAllHooks() {
         Runner runner = getRunner();
-        collector.executeAndThrow(runner::runAfterAllHooks);
+        var hookException = collector
+                .executeAndThrow(() -> runner.runAfterAllHooks(requireNonNull(testRunStartedId).toString()));
+        if (hookException != null) {
+            throw throwAsUncheckedException(hookException);
+        }
     }
 
     public void finishTestRun() {
@@ -117,55 +128,32 @@ public final class CucumberExecutionContext {
             exception != null ? exception.getMessage() : null,
             exception == null && exitStatus.isSuccess(),
             toMessage(instant),
-            exception == null ? null : toMessage(exception), null);
+            exception == null ? null : toMessage(exception),
+            requireNonNull(testRunStartedId).toString());
         bus.send(Envelope.of(testRunFinished));
     }
 
     public void beforeFeature(Feature feature) {
         log.debug(() -> "Sending test source read event for " + feature.getUri());
-        bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
-        bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), singletonList(feature)));
-        bus.sendAll(feature.getParseEvents());
+        collector.executeAndThrow(() -> {
+            bus.send(new TestSourceRead(bus.getInstant(), feature.getUri(), feature.getSource()));
+            bus.send(new TestSourceParsed(bus.getInstant(), feature.getUri(), singletonList(feature)));
+            bus.sendAll(feature.getParseEvents());
+        });
     }
 
     public void runTestCase(Consumer<Runner> execution) {
         Runner runner = getRunner();
-        collector.executeAndThrow(() -> execution.accept(runner));
+        runner.setTestRunStartedId(testRunStartedId);
+        try {
+            collector.executeAndThrow(() -> execution.accept(runner));
+        } finally {
+            runner.setTestRunStartedId(null);
+        }
     }
 
     private Runner getRunner() {
         return collector.executeAndThrow(runnerSupplier::get);
-    }
-
-    public void runFeatures(ThrowingRunnable executeFeatures) {
-        startTestRun();
-        execute(() -> {
-            runBeforeAllHooks();
-            executeFeatures.run();
-        });
-        try {
-            execute(this::runAfterAllHooks);
-        } finally {
-            finishTestRun();
-        }
-        Throwable throwable = getThrowable();
-        if (throwable != null) {
-            throwAsUncheckedException(throwable);
-        }
-    }
-
-    private void execute(ThrowingRunnable runnable) {
-        try {
-            runnable.run();
-        } catch (Throwable t) {
-            // Collected in CucumberExecutionContext
-            rethrowIfUnrecoverable(t);
-        }
-    }
-
-    @FunctionalInterface
-    public interface ThrowingRunnable {
-        void run() throws Throwable;
     }
 
 }

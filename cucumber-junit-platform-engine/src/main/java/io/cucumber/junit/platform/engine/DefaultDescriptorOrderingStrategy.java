@@ -19,18 +19,18 @@ enum DefaultDescriptorOrderingStrategy implements DescriptorOrderingStrategy {
     LEXICAL {
         @Override
         public UnaryOperator<List<CucumberTestDescriptor>> create(ConfigurationParameters configuration) {
-            return pickles -> {
-                pickles.sort(lexical);
-                return pickles;
+            return testDescriptors -> {
+                testDescriptors.sort(lexical);
+                return testDescriptors;
             };
         }
     },
     REVERSE {
         @Override
         public UnaryOperator<List<CucumberTestDescriptor>> create(ConfigurationParameters configuration) {
-            return pickles -> {
-                pickles.sort(lexical.reversed());
-                return pickles;
+            return testDescriptors -> {
+                testDescriptors.sort(lexical.reversed());
+                return testDescriptors;
             };
         }
     },

@@ -10,6 +10,8 @@ import static io.cucumber.core.backend.HookDefinition.HookType.AFTER;
 import static io.cucumber.core.backend.HookDefinition.HookType.AFTER_STEP;
 import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE;
 import static io.cucumber.core.backend.HookDefinition.HookType.BEFORE_STEP;
+import static io.cucumber.core.backend.StaticHookDefinition.HookType.AFTER_ALL;
+import static io.cucumber.core.backend.StaticHookDefinition.HookType.BEFORE_ALL;
 import static io.cucumber.java.Invoker.invoke;
 import static java.util.Objects.requireNonNull;
 
@@ -35,7 +37,8 @@ final class GlueAdaptor {
                 new JavaHookDefinition(BEFORE, method, tagExpression, before.order(), before.name(), lookup));
         } else if (annotationType.equals(BeforeAll.class)) {
             BeforeAll beforeAll = (BeforeAll) annotation;
-            glue.addBeforeAllHook(new JavaStaticHookDefinition(method, beforeAll.order(), lookup));
+            glue.addBeforeAllHook(
+                new JavaStaticHookDefinition(BEFORE_ALL, method, beforeAll.order(), beforeAll.name(), lookup));
         } else if (annotationType.equals(After.class)) {
             After after = (After) annotation;
             String tagExpression = after.value();
@@ -43,7 +46,8 @@ final class GlueAdaptor {
                 new JavaHookDefinition(AFTER, method, tagExpression, after.order(), after.name(), lookup));
         } else if (annotationType.equals(AfterAll.class)) {
             AfterAll afterAll = (AfterAll) annotation;
-            glue.addAfterAllHook(new JavaStaticHookDefinition(method, afterAll.order(), lookup));
+            glue.addAfterAllHook(
+                new JavaStaticHookDefinition(AFTER_ALL, method, afterAll.order(), afterAll.name(), lookup));
         } else if (annotationType.equals(BeforeStep.class)) {
             BeforeStep beforeStep = (BeforeStep) annotation;
             String tagExpression = beforeStep.value();

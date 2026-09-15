@@ -31,8 +31,13 @@ public final class Main {
     }
 
     public static void main(String... argv) {
-        byte exitStatus = run(argv, Thread.currentThread().getContextClassLoader());
-        System.exit(exitStatus);
+        try {
+            byte exitStatus = run(argv, Thread.currentThread().getContextClassLoader());
+            System.exit(exitStatus);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            System.exit(0x1);
+        }
     }
 
     /**

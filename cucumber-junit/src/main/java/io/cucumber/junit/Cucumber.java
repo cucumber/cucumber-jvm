@@ -25,6 +25,7 @@ import io.cucumber.core.runtime.ThreadLocalRunnerSupplier;
 import io.cucumber.core.runtime.TimeServiceEventBus;
 import io.cucumber.core.runtime.UuidGeneratorServiceLoader;
 import org.apiguardian.api.API;
+import org.jspecify.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -42,6 +43,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static io.cucumber.core.exception.UnrecoverableExceptions.rethrowIfUnrecoverable;
 import static io.cucumber.core.runtime.SynchronizedEventBus.synchronize;
 import static io.cucumber.junit.FileNameCompatibleNames.uniqueSuffix;
 import static java.util.stream.Collectors.groupingBy;
@@ -225,13 +227,60 @@ public final class Cucumber extends ParentRunner<ParentRunner<?>> {
         }
 
         @Override
-        public void evaluate() {
+        public void evaluate() throws Throwable {
             if (multiThreadingAssumed) {
                 plugins.setSerialEventBusOnEventListenerPlugins(bus);
             } else {
                 plugins.setEventBusOnEventListenerPlugins(bus);
             }
-            context.runFeatures(next::evaluate);
+            var collector = new ThrowableCollector();
+            collector.execute(() -> {
+                context.startTestRun();
+                collector.execute(() -> {
+                    context.runBeforeAllHooks();
+                    next.evaluate();
+                });
+                collector.execute(context::runAfterAllHooks);
+                context.finishTestRun();
+                var throwable = context.getThrowable();
+                if (throwable != null) {
+                    throw throwable;
+                }
+            });
+            var throwable = collector.getThrowable();
+            if (throwable != null) {
+                throw throwable;
+            }
+        }
+    }
+
+    static final class ThrowableCollector {
+        private @Nullable Throwable throwable;
+
+        void execute(ThrowingRunnable runnable) {
+            try {
+                runnable.run();
+            } catch (Throwable t) {
+                rethrowIfUnrecoverable(t);
+                add(t);
+            }
+        }
+
+        void add(Throwable throwable) {
+            if (this.throwable == null) {
+                this.throwable = throwable;
+            } else if (!this.throwable.equals(throwable)) {
+                this.throwable.addSuppressed(throwable);
+            }
+        }
+
+        @Nullable
+        Throwable getThrowable() {
+            return throwable;
+        }
+
+        interface ThrowingRunnable {
+            void run() throws Throwable;
         }
     }
 

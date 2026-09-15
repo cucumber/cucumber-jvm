@@ -14,7 +14,7 @@ public final class UnrecoverableExceptions {
 
     public static void rethrowIfUnrecoverable(Throwable exception) {
         if (exception instanceof OutOfMemoryError) {
-            ExceptionUtils.throwAsUncheckedException(exception);
+            throw ExceptionUtils.throwAsUncheckedException(exception);
         }
     }
 }

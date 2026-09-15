@@ -60,8 +60,8 @@ final class CachingGlue implements Glue {
             .comparingInt(CoreHookDefinition::getOrder)
             .thenComparing(ScenarioScoped.class::isInstance);
 
-    private static final Comparator<StaticHookDefinition> STATIC_HOOK_ORDER_ASCENDING = Comparator
-            .comparingInt(StaticHookDefinition::getOrder);
+    private static final Comparator<CoreStaticHookDefinition> STATIC_HOOK_ORDER_ASCENDING = Comparator
+            .comparingInt(CoreStaticHookDefinition::getOrder);
 
     private final List<ParameterTypeDefinition> parameterTypeDefinitions = new ArrayList<>();
     private final List<DataTableTypeDefinition> dataTableTypeDefinitions = new ArrayList<>();
@@ -70,13 +70,13 @@ final class CachingGlue implements Glue {
     private final List<DefaultDataTableCellTransformerDefinition> defaultDataTableCellTransformers = new ArrayList<>();
     private final List<DocStringTypeDefinition> docStringTypeDefinitions = new ArrayList<>();
 
-    private final List<StaticHookDefinition> beforeAllHooks = new ArrayList<>();
+    private final List<CoreStaticHookDefinition> beforeAllHooks = new ArrayList<>();
     private final List<CoreHookDefinition> beforeHooks = new ArrayList<>();
     private final List<CoreHookDefinition> beforeStepHooks = new ArrayList<>();
     private final List<StepDefinition> stepDefinitions = new ArrayList<>();
     private final List<CoreHookDefinition> afterStepHooks = new ArrayList<>();
     private final List<CoreHookDefinition> afterHooks = new ArrayList<>();
-    private final List<StaticHookDefinition> afterAllHooks = new ArrayList<>();
+    private final List<CoreStaticHookDefinition> afterAllHooks = new ArrayList<>();
 
     /*
      * Storing the pattern that matches the step text allows us to cache the
@@ -101,13 +101,13 @@ final class CachingGlue implements Glue {
 
     @Override
     public void addBeforeAllHook(StaticHookDefinition beforeAllHook) {
-        beforeAllHooks.add(beforeAllHook);
+        beforeAllHooks.add(CoreStaticHookDefinition.create(beforeAllHook, bus::generateId));
         beforeAllHooks.sort(STATIC_HOOK_ORDER_ASCENDING);
     }
 
     @Override
     public void addAfterAllHook(StaticHookDefinition afterAllHook) {
-        afterAllHooks.add(afterAllHook);
+        afterAllHooks.add(CoreStaticHookDefinition.create(afterAllHook, bus::generateId));
         afterAllHooks.sort(STATIC_HOOK_ORDER_ASCENDING);
     }
 
@@ -188,7 +188,7 @@ final class CachingGlue implements Glue {
         docStringTypeDefinitions.add(docStringType);
     }
 
-    List<StaticHookDefinition> getBeforeAllHooks() {
+    List<CoreStaticHookDefinition> getBeforeAllHooks() {
         return new ArrayList<>(beforeAllHooks);
     }
 
@@ -212,8 +212,8 @@ final class CachingGlue implements Glue {
         return hooks;
     }
 
-    List<StaticHookDefinition> getAfterAllHooks() {
-        ArrayList<StaticHookDefinition> hooks = new ArrayList<>(afterAllHooks);
+    List<CoreStaticHookDefinition> getAfterAllHooks() {
+        ArrayList<CoreStaticHookDefinition> hooks = new ArrayList<>(afterAllHooks);
         Collections.reverse(hooks);
         return hooks;
     }
@@ -318,8 +318,10 @@ final class CachingGlue implements Glue {
 
         // TODO: Redefine hooks for each scenario, similar to how we're doing
         // for CoreStepDefinition
+        beforeAllHooks.forEach(this::emitHook);
         beforeHooks.forEach(this::emitHook);
         beforeStepHooks.forEach(this::emitHook);
+        afterAllHooks.forEach(this::emitHook);
 
         stepDefinitions.forEach(stepDefinition -> {
             StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
@@ -365,6 +367,23 @@ final class CachingGlue implements Glue {
                         case AFTER -> HookType.AFTER_TEST_CASE;
                         case BEFORE_STEP -> HookType.BEFORE_TEST_STEP;
                         case AFTER_STEP -> HookType.AFTER_TEST_STEP;
+                    })
+                    .orElse(null));
+        bus.send(Envelope.of(messagesHook));
+    }
+
+    private void emitHook(CoreStaticHookDefinition coreHook) {
+        Hook messagesHook = new Hook(
+            coreHook.getId().toString(),
+            coreHook.getName().orElse(null),
+            coreHook.getDefinitionLocation()
+                    .map(this::createSourceReference)
+                    .orElseGet(this::emptySourceReference),
+            null,
+            coreHook.getHookType()
+                    .map(hookType -> switch (hookType) {
+                        case BEFORE_ALL -> HookType.BEFORE_TEST_RUN;
+                        case AFTER_ALL -> HookType.AFTER_TEST_RUN;
                     })
                     .orElse(null));
         bus.send(Envelope.of(messagesHook));

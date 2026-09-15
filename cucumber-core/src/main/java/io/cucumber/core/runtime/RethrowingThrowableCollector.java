@@ -23,23 +23,21 @@ final class RethrowingThrowableCollector {
         try {
             runnable.run();
         } catch (TestCaseFailed e) {
-            throwAsUncheckedException(e.getCause());
+            throw throwAsUncheckedException(e.getCause());
         } catch (Throwable t) {
             UnrecoverableExceptions.rethrowIfUnrecoverable(t);
             add(t);
-            throwAsUncheckedException(t);
+            throw throwAsUncheckedException(t);
         }
     }
 
-    <T> T executeAndThrow(Supplier<T> supplier) {
+    <T extends @Nullable Object> T executeAndThrow(Supplier<T> supplier) {
         try {
             return supplier.get();
         } catch (Throwable t) {
             rethrowIfUnrecoverable(t);
             thrown.add(t);
-            throwAsUncheckedException(t);
-            // Doesn't happen.
-            throw new IllegalStateException();
+            throw throwAsUncheckedException(t);
         }
     }
 

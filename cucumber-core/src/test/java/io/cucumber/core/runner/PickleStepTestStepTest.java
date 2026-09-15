@@ -58,7 +58,8 @@ class PickleStepTestStepTest {
                  Given I have 4 cukes in my belly
             """);
     private final Pickle pickle = feature.getPickles().get(0);
-    private final TestCase testCase = new TestCase(UUID.randomUUID(), Collections.emptyList(), Collections.emptyList(),
+    private final TestCase testCase = new TestCase(UUID.randomUUID(), UUID.randomUUID(), Collections.emptyList(),
+        Collections.emptyList(),
         Collections.emptyList(), pickle, false);
     private final EventBus bus = mock(EventBus.class);
     private final UUID testExecutionId = UUID.randomUUID();
