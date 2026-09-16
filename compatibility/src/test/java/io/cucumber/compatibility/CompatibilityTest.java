@@ -1,11 +1,7 @@
 package io.cucumber.compatibility;
 
-import io.cucumber.core.options.RuntimeOptionsBuilder;
-import io.cucumber.core.order.PickleOrder;
-import io.cucumber.core.order.StandardPickleOrders;
-import io.cucumber.core.plugin.MessageFormatter;
-import io.cucumber.core.runtime.Runtime;
 import org.hamcrest.Matcher;
+import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.commons.io.ResourceFilter;
@@ -26,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -35,7 +32,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.Files.newOutputStream;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -48,6 +44,8 @@ import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.Is.isA;
 
 @SuppressWarnings("NullAway")
+@ParameterizedClass
+@MethodSource("io.cucumber.compatibility.NdjsonReportWriter#list")
 final class CompatibilityTest {
 
     private static final List<String> unsupportedTestCases = Arrays.asList(
@@ -62,11 +60,8 @@ final class CompatibilityTest {
         "retry",
         "retry-ambiguous",
         "retry-pending",
-        // exception: Cucumber JVM does not support messages for global hooks
-        "global-hooks",
-        "global-hooks-afterall-error",
+        // exception: Cucumber JVM does not support attachments for global hooks
         "global-hooks-attachments",
-        "global-hooks-beforeall-error",
         // exception: Cucumber JVM can't fail test runs intentionally
         "test-run-exception",
         // exception: Cucumber JVM does not continue after any failed step
@@ -82,6 +77,7 @@ final class CompatibilityTest {
         Map<String, Map<Pattern, Matcher<?>>> exceptions = new LinkedHashMap<>();
 
         Map<Pattern, Matcher<?>> attachment = new LinkedHashMap<>();
+        // exception: ids are not predictable
         attachment.put(Pattern.compile("/testCaseStartedId"), isA(StringNode.class));
         attachment.put(Pattern.compile("/testStepId"), isA(StringNode.class));
         // exception: timestamps and durations are not predictable
@@ -147,12 +143,22 @@ final class CompatibilityTest {
         exceptions.put("stepDefinition", stepDefinition);
 
         Map<Pattern, Matcher<?>> testRunStarted = new LinkedHashMap<>();
-        // exception: not yet implemented
-        testRunStarted.put(Pattern.compile("/id"), isA(MissingNode.class));
+        // exception: ids are not predictable
+        testRunStarted.put(Pattern.compile("/id"), isA(StringNode.class));
         // exception: timestamps and durations are not predictable
         testRunStarted.put(Pattern.compile("/timestamp/seconds"), isA(NumericNode.class));
         testRunStarted.put(Pattern.compile("/timestamp/nanos"), isA(NumericNode.class));
         exceptions.put("testRunStarted", testRunStarted);
+
+        Map<Pattern, Matcher<?>> testRunHookStarted = new LinkedHashMap<>();
+        // exception: ids are not predictable
+        testRunHookStarted.put(Pattern.compile("/id"), isA(StringNode.class));
+        testRunHookStarted.put(Pattern.compile("/testRunStartedId"), isA(StringNode.class));
+        testRunHookStarted.put(Pattern.compile("/hookId"), isA(StringNode.class));
+        // exception: timestamps and durations are not predictable
+        testRunHookStarted.put(Pattern.compile("/timestamp/seconds"), isA(NumericNode.class));
+        testRunHookStarted.put(Pattern.compile("/timestamp/nanos"), isA(NumericNode.class));
+        exceptions.put("testRunHookStarted", testRunHookStarted);
 
         Map<Pattern, Matcher<?>> testCase = new LinkedHashMap<>();
         // exception: ids are not predictable
@@ -162,8 +168,9 @@ final class CompatibilityTest {
         testCase.put(Pattern.compile("/testSteps/.*/pickleStepId"), isA(StringNode.class));
         testCase.put(Pattern.compile("/testSteps/.*/stepDefinitionIds/.*"), isA(StringNode.class));
         testCase.put(Pattern.compile("/testSteps/.*/hookId"), isA(StringNode.class));
-        // exception: not yet implemented
-        testCase.put(Pattern.compile("/testRunStartedId"), isA(MissingNode.class));
+
+        // exception: ids are not predictable
+        testCase.put(Pattern.compile("/testRunStartedId"), isA(StringNode.class));
         exceptions.put("testCase", testCase);
 
         Map<Pattern, Matcher<?>> testCaseStarted = new LinkedHashMap<>();
@@ -191,15 +198,14 @@ final class CompatibilityTest {
         // exception: timestamps and durations are not predictable
         testStepFinished.put(Pattern.compile("/testStepResult/duration/seconds"), isA(IntNode.class));
         testStepFinished.put(Pattern.compile("/testStepResult/duration/nanos"), isA(IntNode.class));
+        testStepFinished.put(Pattern.compile("/timestamp/seconds"), isA(IntNode.class));
+        testStepFinished.put(Pattern.compile("/timestamp/nanos"), isA(IntNode.class));
         // exception: error messages are platform specific
         testStepFinished.put(Pattern.compile("/testStepResult/message"), isA(StringNode.class));
         // exception: exceptions are platform specific
         testStepFinished.put(Pattern.compile("/testStepResult/exception/type"), isA(StringNode.class));
         testStepFinished.put(Pattern.compile("/testStepResult/exception/message"), isA(StringNode.class));
         testStepFinished.put(Pattern.compile("/testStepResult/exception/stackTrace"), isA(StringNode.class));
-        // exception: timestamps and durations are not predictable
-        testStepFinished.put(Pattern.compile("/timestamp/seconds"), isA(IntNode.class));
-        testStepFinished.put(Pattern.compile("/timestamp/nanos"), isA(IntNode.class));
         exceptions.put("testStepFinished", testStepFinished);
 
         Map<Pattern, Matcher<?>> testCaseFinished = new LinkedHashMap<>();
@@ -210,9 +216,25 @@ final class CompatibilityTest {
         testCaseFinished.put(Pattern.compile("/timestamp/nanos"), isA(IntNode.class));
         exceptions.put("testCaseFinished", testCaseFinished);
 
+        Map<Pattern, Matcher<?>> testRunHookFinished = new LinkedHashMap<>();
+        // exception: ids are not predictable
+        testRunHookFinished.put(Pattern.compile("/testRunHookStartedId"), isA(StringNode.class));
+        // exception: timestamps and durations are not predictable
+        testRunHookFinished.put(Pattern.compile("/timestamp/seconds"), isA(NumericNode.class));
+        testRunHookFinished.put(Pattern.compile("/timestamp/nanos"), isA(NumericNode.class));
+        testRunHookFinished.put(Pattern.compile("/result/duration/seconds"), isA(IntNode.class));
+        testRunHookFinished.put(Pattern.compile("/result/duration/nanos"), isA(IntNode.class));
+        // exception: error messages are platform specific
+        testRunHookFinished.put(Pattern.compile("/result/message"), isA(StringNode.class));
+        // exception: exceptions are platform specific
+        testRunHookFinished.put(Pattern.compile("/result/exception/type"), isA(StringNode.class));
+        testRunHookFinished.put(Pattern.compile("/result/exception/message"), isA(StringNode.class));
+        testRunHookFinished.put(Pattern.compile("/result/exception/stackTrace"), isA(StringNode.class));
+        exceptions.put("testRunHookFinished", testRunHookFinished);
+
         Map<Pattern, Matcher<?>> testRunFinished = new LinkedHashMap<>();
-        // exception: not yet implemented
-        testRunFinished.put(Pattern.compile("/testRunStartedId"), isA(MissingNode.class));
+        // exception: ids are not predictable
+        testRunFinished.put(Pattern.compile("/testRunStartedId"), isA(StringNode.class));
         // exception: timestamps and durations are not predictable
         testRunFinished.put(Pattern.compile("/timestamp/seconds"), isA(IntNode.class));
         testRunFinished.put(Pattern.compile("/timestamp/nanos"), isA(IntNode.class));
@@ -259,10 +281,21 @@ final class CompatibilityTest {
                 .collect(Collectors.toList());
     }
 
+    private final NdjsonReportWriter ndjsonReportWriter;
+
+    CompatibilityTest(NdjsonReportWriter ndjsonReportWriter) {
+        this.ndjsonReportWriter = ndjsonReportWriter;
+    }
+
     @ParameterizedTest
     @MethodSource("acceptance")
-    void test(TestCase testCase) throws IOException {
-        Path actualNdjson = writeNdjsonReport(testCase);
+    void test(TestCase testCase) throws Exception {
+        Path workingDirectory = Files
+                .createDirectories(Path.of("target", "messages", ndjsonReportWriter.name(), testCase.getId()));
+        Path expectedNdjson = workingDirectory.resolve("expected.ndjson");
+        Path actualNdjson = workingDirectory.resolve("actual.ndjson");
+        Files.copy(testCase.getExpectedFile(), expectedNdjson, REPLACE_EXISTING);
+        ndjsonReportWriter.writeTo(testCase, actualNdjson);
 
         List<JsonNode> expected = readAllMessages(testCase.getExpectedFile());
         List<JsonNode> actual = readAllMessages(Files.newInputStream(actualNdjson));
@@ -307,40 +340,34 @@ final class CompatibilityTest {
             expectedEnvelopes.remove("testCase");
         }
 
+        if ("global-hooks-beforeall-error".equals(testCase.getId())) {
+            // bug: Cucumber JVM executes hooks before emitting events for
+            // parsing features
+            expectedEnvelopes.remove("source");
+            expectedEnvelopes.remove("gherkinDocument");
+            expectedEnvelopes.remove("pickle");
+            // bug: Cucumber JVM executes hook executions before emitting events
+            // for hook and step definitions.
+            expectedEnvelopes.remove("hook");
+            expectedEnvelopes.remove("stepDefinition");
+        }
+
+        if ("cucunmber-junit-platform-engine".equals(ndjsonReportWriter.name())
+                && "multiple-features-reversed".equals(testCase.getId())) {
+            // exception: cucunmber-junit-platform-engine orders execution by
+            // features and pickles, so source events are emitted in reverse
+            // order too.
+            Collections.reverse(expectedEnvelopes.get("source"));
+            Collections.reverse(expectedEnvelopes.get("gherkinDocument"));
+            // bug: pickle events are inconsistently ordered (descending by
+            // feature, but ascending by line)
+            expectedEnvelopes.remove("pickle");
+        }
+
         expectedEnvelopes.forEach((messageType, expectedMessages) -> assertThat(
             actualEnvelopes,
             hasEntry(is(messageType),
                 containsInRelativeOrder(aComparableMessage(messageType, expectedMessages)))));
-    }
-
-    private static Path writeNdjsonReport(TestCase testCase) throws IOException {
-        Path parentDir = Files.createDirectories(Path.of("target", "messages", testCase.getId()));
-        Path actualNdjson = parentDir.resolve("actual.ndjson");
-        Path expectedNdjson = parentDir.resolve("expected.ndjson");
-        Files.copy(testCase.getExpectedFile(), expectedNdjson, REPLACE_EXISTING);
-
-        try {
-            PickleOrder pickleOrder = StandardPickleOrders.lexicalUriOrder();
-            if ("multiple-features-reversed".equals(testCase.getId())) {
-                pickleOrder = StandardPickleOrders.reverseLexicalUriOrder();
-            }
-            Runtime.builder()
-                    .withRuntimeOptions(new RuntimeOptionsBuilder()
-                            .addGlue(testCase.getGlue())
-                            .setPickleOrder(pickleOrder)
-                            .addFeature(testCase.getFeatures()).build())
-                    .withAdditionalPlugins(
-                        new MessageFormatter(newOutputStream(actualNdjson)))
-                    .build()
-                    .run();
-        } catch (Exception e) {
-            // exception: Scenario with unknown parameter types fails by
-            // throwing an exceptions
-            if (!"unknown-parameter-type".equals(testCase.getId())) {
-                throw e;
-            }
-        }
-        return actualNdjson;
     }
 
     private static List<JsonNode> readAllMessages(InputStream output) throws IOException {

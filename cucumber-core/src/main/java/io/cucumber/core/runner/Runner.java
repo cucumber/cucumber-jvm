@@ -4,9 +4,9 @@ import io.cucumber.core.backend.Backend;
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.CucumberInvocationTargetException;
 import io.cucumber.core.backend.ObjectFactory;
-import io.cucumber.core.backend.StaticHookDefinition;
 import io.cucumber.core.eventbus.EventBus;
 import io.cucumber.core.exception.CucumberException;
+import io.cucumber.core.exception.UnrecoverableExceptions;
 import io.cucumber.core.gherkin.Pickle;
 import io.cucumber.core.gherkin.Step;
 import io.cucumber.core.logging.Logger;
@@ -15,18 +15,28 @@ import io.cucumber.core.snippets.SnippetGenerator;
 import io.cucumber.core.stepexpression.StepTypeRegistry;
 import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.Snippet;
+import io.cucumber.messages.types.TestRunHookFinished;
+import io.cucumber.messages.types.TestRunHookStarted;
+import io.cucumber.messages.types.TestStepResult;
+import io.cucumber.messages.types.TestStepResultStatus;
 import io.cucumber.plugin.event.HookType;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent;
 import io.cucumber.plugin.event.SnippetsSuggestedEvent.Suggestion;
+import org.jspecify.annotations.Nullable;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 import static io.cucumber.core.exception.ExceptionUtils.throwAsUncheckedException;
 import static io.cucumber.core.runner.StackManipulation.removeFrameworkFrames;
+import static io.cucumber.messages.Convertor.toMessage;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -40,6 +50,7 @@ public final class Runner {
     private final Options runnerOptions;
     private final ObjectFactory objectFactory;
     private final List<SnippetGenerator> snippetGenerators = new ArrayList<>(1);
+    private @Nullable UUID testRunStartedId;
 
     public Runner(
             EventBus bus, Collection<? extends Backend> backends, ObjectFactory objectFactory, Options runnerOptions
@@ -59,6 +70,10 @@ public final class Runner {
 
     public EventBus getBus() {
         return bus;
+    }
+
+    public void setTestRunStartedId(@Nullable UUID testRunStartedId) {
+        this.testRunStartedId = testRunStartedId;
     }
 
     public void runPickle(Pickle pickle) {
@@ -85,42 +100,97 @@ public final class Runner {
         return new Locale.Builder().setLanguage(language).build();
     }
 
-    public void runBeforeAllHooks() {
-        executeHooks(glue.getBeforeAllHooks());
+    public @Nullable Throwable runBeforeAllHooks(String testRunStartedId) {
+        return executeTestRunHooks(testRunStartedId, glue.getBeforeAllHooks());
     }
 
-    public void runAfterAllHooks() {
-        executeHooks(glue.getAfterAllHooks());
+    public @Nullable Throwable runAfterAllHooks(String testRunStartedId) {
+        return executeTestRunHooks(testRunStartedId, glue.getAfterAllHooks());
     }
 
-    private void executeHooks(List<StaticHookDefinition> afterAllHooks) {
-        ThrowableCollector throwableCollector = new ThrowableCollector();
-        for (StaticHookDefinition staticHookDefinition : afterAllHooks) {
-            throwableCollector.execute(() -> executeHook(staticHookDefinition));
+    private @Nullable Throwable executeTestRunHooks(
+            String testRunStartedId, List<CoreStaticHookDefinition> afterAllHooks
+    ) {
+        // Separate exceptions thrown in the execution of hooks from any
+        // other exceptions that might have happened.
+        //
+        // Cucumber is used by the CLI that reports using messages and other
+        // runners such as JUnit 4, JUnit Platform and TestNG that report
+        // using exceptions.
+        //
+        // The CLI reports problems with hooks through TestRunHook events and
+        // other problems through a TestRunEvent. The others report all
+        // problems through exceptions.
+        //
+        // This poses a problem because this means that the CLI can't tell the
+        // difference if we throw both here. Instead, we return the exceptions
+        // thrown by execution of hooks and throw the others. This lets callers
+        // decide how to handle them.
+        var inTestRunHookThrowableCollector = new ThrowableCollector();
+        var executionOfTestRunHookThrowableCollector = new ThrowableCollector();
+        for (CoreStaticHookDefinition staticHookDefinition : afterAllHooks) {
+            executionOfTestRunHookThrowableCollector
+                    .execute(() -> executeTestRunHook(testRunStartedId, staticHookDefinition)
+                            .ifPresent(inTestRunHookThrowableCollector::add));
         }
-        Throwable throwable = throwableCollector.getThrowable();
+        Throwable throwable = executionOfTestRunHookThrowableCollector.getThrowable();
         if (throwable != null) {
-            throwAsUncheckedException(throwable);
+            throw throwAsUncheckedException(throwable);
         }
+        return inTestRunHookThrowableCollector.getThrowable();
     }
 
-    private void executeHook(StaticHookDefinition hookDefinition) {
+    private Optional<Throwable> executeTestRunHook(String testRunStartedId, CoreStaticHookDefinition hookDefinition) {
         if (runnerOptions.isDryRun()) {
-            return;
+            return Optional.empty();
         }
+        var start = bus.getInstant();
+        var testRunHookStartedId = bus.generateId().toString();
+        bus.send(Envelope.of(new TestRunHookStarted(
+            testRunHookStartedId,
+            testRunStartedId,
+            hookDefinition.getId().toString(),
+            Thread.currentThread().getName(),
+            toMessage(start))));
+        Throwable throwable = executeTestRunHook(hookDefinition);
+        var collector = new ThrowableCollector();
+        collector.execute(() -> emitTestRunHookFinished(start, throwable, testRunHookStartedId));
+        var eventBusThrowable = collector.getThrowable();
+        if (eventBusThrowable != null) {
+            if (throwable != null) {
+                eventBusThrowable.addSuppressed(throwable);
+            }
+            throw throwAsUncheckedException(eventBusThrowable);
+        }
+        return Optional.ofNullable(throwable);
+    }
+
+    private static @Nullable Throwable executeTestRunHook(CoreStaticHookDefinition hookDefinition) {
         try {
             hookDefinition.execute();
         } catch (CucumberBackendException e) {
-            CucumberException exception = new CucumberException("""
+            return new CucumberException("""
                     Could not invoke hook defined at '%s'.
                     It appears there was a problem with the hook definition."""
                     .formatted(hookDefinition.getLocation()),
                 e);
-            throwAsUncheckedException(exception);
         } catch (CucumberInvocationTargetException e) {
-            Throwable throwable = removeFrameworkFrames(e);
-            throwAsUncheckedException(throwable);
+            return removeFrameworkFrames(e);
+        } catch (Throwable e) {
+            UnrecoverableExceptions.rethrowIfUnrecoverable(e);
+            return e;
         }
+        return null;
+    }
+
+    private void emitTestRunHookFinished(Instant start, @Nullable Throwable throwable, String testRunHookStartedId) {
+        var finish = bus.getInstant();
+        var result = new TestStepResult(
+            toMessage(Duration.between(start, finish)),
+            throwable == null ? null : throwable.getMessage(),
+            throwable == null ? TestStepResultStatus.PASSED : TestStepResultStatus.FAILED,
+            throwable == null ? null : toMessage(throwable));
+        bus.send(Envelope.of(new TestRunHookFinished(testRunHookStartedId, result, toMessage(finish))));
     }
 
     private List<SnippetGenerator> createSnippetGeneratorsForPickle(
@@ -142,14 +212,15 @@ public final class Runner {
 
     private TestCase createTestCaseForPickle(Pickle pickle) {
         if (pickle.getSteps().isEmpty()) {
-            return new TestCase(bus.generateId(), emptyList(), emptyList(), emptyList(), pickle,
+            return new TestCase(bus.generateId(), testRunStartedId, emptyList(), emptyList(), emptyList(), pickle,
                 runnerOptions.isDryRun());
         }
 
         List<PickleStepTestStep> testSteps = createTestStepsForPickleSteps(pickle);
         List<HookTestStep> beforeHooks = createTestStepsForBeforeHooks(pickle.getTags());
         List<HookTestStep> afterHooks = createTestStepsForAfterHooks(pickle.getTags());
-        return new TestCase(bus.generateId(), testSteps, beforeHooks, afterHooks, pickle, runnerOptions.isDryRun());
+        return new TestCase(bus.generateId(), testRunStartedId, testSteps, beforeHooks, afterHooks, pickle,
+            runnerOptions.isDryRun());
     }
 
     private void disposeBackendWorlds() {

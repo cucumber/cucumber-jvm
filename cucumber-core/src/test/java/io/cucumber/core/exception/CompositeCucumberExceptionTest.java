@@ -8,6 +8,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsArrayWithSize.arrayWithSize;
+import static org.hamcrest.collection.IsArrayWithSize.emptyArray;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.nullValue;
@@ -22,6 +23,7 @@ class CompositeCucumberExceptionTest {
         assertAll(
             () -> assertThat(expectedThrown.getMessage(),
                 is(equalTo("There were 0 exceptions. The details are in the stacktrace below."))),
+            () -> assertThat(expectedThrown.getStackTrace(), is(emptyArray())),
             () -> assertThat(expectedThrown.getCause(), is(nullValue())),
             () -> assertThat(expectedThrown.getSuppressed(), is(arrayWithSize(0))));
     }
@@ -33,6 +35,7 @@ class CompositeCucumberExceptionTest {
         assertAll(
             () -> assertThat(expectedThrown.getMessage(),
                 is(equalTo("There were 1 exceptions. The details are in the stacktrace below."))),
+            () -> assertThat(expectedThrown.getStackTrace(), is(emptyArray())),
             () -> assertThat(expectedThrown.getCause(), is(nullValue())),
             () -> assertThat(expectedThrown.getSuppressed(), is(arrayWithSize(1))));
     }
@@ -44,6 +47,7 @@ class CompositeCucumberExceptionTest {
         assertAll(
             () -> assertThat(expectedThrown.getMessage(),
                 is(equalTo("There were 2 exceptions. The details are in the stacktrace below."))),
+            () -> assertThat(expectedThrown.getStackTrace(), is(emptyArray())),
             () -> assertThat(expectedThrown.getCause(), is(nullValue())),
             () -> assertThat(expectedThrown.getSuppressed(), is(arrayWithSize(2))));
     }

@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public final class StubBackendSupplier implements BackendSupplier {
+public final class StubBackendSupplier implements BackendSupplier, Backend {
 
     private final List<StaticHookDefinition> beforeAll;
     private final List<HookDefinition> before;
@@ -65,24 +65,24 @@ public final class StubBackendSupplier implements BackendSupplier {
     }
 
     @Override
-    public Collection<? extends Backend> get() {
-        return Collections.singletonList(new Backend() {
-            @Override
-            public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
-                beforeAll.forEach(glue::addBeforeAllHook);
-                before.forEach(glue::addBeforeHook);
-                beforeStep.forEach(glue::addBeforeStepHook);
-                steps.forEach(glue::addStepDefinition);
-                afterStep.forEach(glue::addAfterStepHook);
-                after.forEach(glue::addAfterHook);
-                afterAll.forEach(glue::addAfterAllHook);
-            }
+    public void loadGlue(Glue glue, GlueDiscoveryRequest request) {
+        beforeAll.forEach(glue::addBeforeAllHook);
+        before.forEach(glue::addBeforeHook);
+        beforeStep.forEach(glue::addBeforeStepHook);
+        steps.forEach(glue::addStepDefinition);
+        afterStep.forEach(glue::addAfterStepHook);
+        after.forEach(glue::addAfterHook);
+        afterAll.forEach(glue::addAfterAllHook);
+    }
 
-            @Override
-            public Snippet getSnippet() {
-                return new TestSnippet();
-            }
-        });
+    @Override
+    public Snippet getSnippet() {
+        return new TestSnippet();
+    }
+
+    @Override
+    public Collection<? extends Backend> get() {
+        return Collections.singletonList(this);
     }
 
 }

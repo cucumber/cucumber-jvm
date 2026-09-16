@@ -5,16 +5,22 @@ import io.cucumber.core.backend.StaticHookDefinition;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Optional;
 
 import static java.lang.reflect.Modifier.isStatic;
+import static java.util.Objects.requireNonNull;
 
 final class JavaStaticHookDefinition extends AbstractGlueDefinition implements StaticHookDefinition {
 
+    private final HookType hookType;
     private final int order;
+    private final String name;
 
-    JavaStaticHookDefinition(Method method, int order, Lookup lookup) {
+    JavaStaticHookDefinition(HookType hookType, Method method, int order, String name, Lookup lookup) {
         super(requireValidMethod(method), lookup);
+        this.hookType = requireNonNull(hookType);
         this.order = order;
+        this.name = requireNonNull(name, "name may not be null");
     }
 
     private static Method requireValidMethod(Method method) {
@@ -51,5 +57,15 @@ final class JavaStaticHookDefinition extends AbstractGlueDefinition implements S
     @Override
     public int getOrder() {
         return order;
+    }
+
+    @Override
+    public Optional<String> getName() {
+        return name.isEmpty() ? Optional.empty() : Optional.of(name);
+    }
+
+    @Override
+    public Optional<HookType> getHookType() {
+        return Optional.of(hookType);
     }
 }

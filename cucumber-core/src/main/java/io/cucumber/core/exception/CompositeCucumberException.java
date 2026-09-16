@@ -7,6 +7,7 @@ public final class CompositeCucumberException extends CucumberException {
     public CompositeCucumberException(List<Throwable> causes) {
         super("There were %d exceptions. The details are in the stacktrace below.".formatted(causes.size()));
         causes.forEach(this::addSuppressed);
+        setStackTrace(new StackTraceElement[0]);
     }
 
 }

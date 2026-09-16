@@ -10,13 +10,13 @@ public final class ExceptionUtils {
     private ExceptionUtils() {
     }
 
-    public static void throwAsUncheckedException(Throwable throwable) {
+    public static RuntimeException throwAsUncheckedException(Throwable throwable) {
         requireNonNull(throwable, "throwable may not be null");
-        throwAs(throwable);
+        return throwAs(throwable);
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T extends Throwable> void throwAs(Throwable t) throws T {
+    @SuppressWarnings({ "unchecked", "TypeParameterUnusedInFormals" })
+    private static <T extends Throwable> T throwAs(Throwable t) throws T {
         throw (T) t;
     }
 
