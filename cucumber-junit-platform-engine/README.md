@@ -1,7 +1,7 @@
 Cucumber JUnit Platform Engine
 ==============================
 
-Use the JUnit (5) Platform to execute Cucumber scenarios.
+Use the JUnit (6) Platform to execute Cucumber scenarios.
 
 Add the `cucumber-junit-platform-engine` dependency to your `pom.xml` and use
 the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:
@@ -27,7 +27,7 @@ like this:
 ```mermaid
 erDiagram
     "IDE" ||--|{ "JUnit Platform" : "requests discovery and execution"
-    "Maven or Gradle" ||--|{ "JUnit Platform" : "requests discovery and execution"
+    "Maven, Gradle, or SBT" ||--|{ "JUnit Platform" : "requests discovery and execution"
     "Console Launcher" ||--|{ "JUnit Platform" : "requests discovery and execution"
     "JUnit Platform" ||--|{ "Cucumber Test Engine": "forwards request"
     "JUnit Platform" ||--|{ "Jupiter Test Engine": "forwards request"
@@ -35,17 +35,60 @@ erDiagram
     "Jupiter Test Engine" ||--|{ "Test Classes": "discovers and executes"
 ```
 
-In practice, integration is still limited so we discuss the most common workarounds below.
+In practice, integration is still limited so we discuss the solutions and issues
+per platform below.
 
-### Maven Surefire, Gradle and SBT
+### Running Cucumber with Gradle 
 
-Maven Surefire and Gradle do not yet support discovery of non-class based tests
-(see: [gradle/#4773](https://github.com/gradle/gradle/issues/4773),
+Gradle [supports the discovery of resource based tests](https://docs.gradle.org/current/userguide/java_testing.html#sec:non-class-based-testing).
+A minimal setup might look like:
+
+```kotlin
+tasks.named<Test>("test") {
+    useJUnitPlatform()
+    testDefinitionDirs.from("src/test/features")
+}
+```
+
+#### IDEA Workarounds
+
+When running features through IDEA, the Cucumber CLI is used. The CLI looks for
+configuration properties in `cucumber.properties` while JUnit looks for
+`junit-platform.properties`. To avoid duplication you can use Gradle read the 
+`cucumber.properties` and pass these to the JUnit Platform through system
+properties.
+
+
+```kotlin
+tasks.named<Test>("test") {
+    useJUnitPlatform {
+        System.getProperty("cucumber.features")?.let { includeEngines("cucumber") }
+    }
+
+    // Tell Cucumber where to find the feature files.
+    testDefinitionDirs.from("src/test/features")
+
+    // Use properties from cucumber.properties for consistent behavior between
+    // Gradle and the CLI (used by IDEA).
+    systemProperties("src/test/resources/cucumber.properties")
+}
+
+fun Test.systemProperties(path: String) {
+    with(file(path).inputStream()) {
+        val props = Properties();
+        props.load(this)
+        props.stringPropertyNames().forEach { systemProperty(it, props.getProperty(it)) }
+    }
+}
+```
+
+### Running Cucumber with Maven Surefire or SBT
+
+Maven Surefire and SBT do not yet support discovery of resource based tests
 [maven-surefire/#2065](https://github.com/apache/maven-surefire/issues/2065), [stb-jupiter-interface/#142](https://github.com/sbt/sbt-jupiter-interface/issues/142)).
 As a workaround, you can either use:
  * the [JUnit Platform Suite Engine](https://docs.junit.org/current/advanced-topics/junit-platform-suite-engine.html);
  * the [JUnit Platform Console Launcher](https://docs.junit.org/current/running-tests/console-launcher.html) or;
- * the [Gradle Cucumber-Companion](https://github.com/gradle/cucumber-companion) plugins for Gradle and Maven.
  * the [Cucable](https://github.com/trivago/cucable-plugin) plugin for Maven.
 
 #### Use the JUnit Platform Suite Engine
@@ -54,9 +97,9 @@ The JUnit Platform Suite Engine can be used to run Cucumber. See
 [Suites with different configurations](#suites-with-different-configurations)
 for a brief how to.
 
-##### Maven and Gradle workarounds
+##### Maven Surefire workarounds
 
-Because Surefire and Gradle reports provide the results in a `<Class Name> - <Method Name>`
+Because Surefire provide the results in a `<Class Name> - <Method Name>`
 format, only scenario names or example numbers are reported. This
 can make for hard to read reports. 
 
@@ -97,13 +140,6 @@ For `3.5.4` and above use:
     </configuration>
 </plugin>
 ```            
-
-```kotlin
-tasks.test {
-    useJUnitPlatform()
-    systemProperty("cucumber.junit-platform.naming-strategy", "long")
-}
-```
 
 ##### IDEA workarounds
 
@@ -191,30 +227,6 @@ Add the following to your `pom.xml`:
 </plugins>
 </build>
 ```
-##### Use the Gradle JavaExec task  ####
-
-Add the following to your `build.gradle.kts`:
-
-```kotlin
-tasks {
-
-	val consoleLauncherTest by registering(JavaExec::class) {
-		dependsOn(testClasses)
-		val reportsDir = file("$buildDir/test-results")
-		outputs.dir(reportsDir)
-		classpath = sourceSets["test"].runtimeClasspath
-		main = "org.junit.platform.console.ConsoleLauncher"
-		args("--scan-classpath")
-		args("--include-engine", "cucumber")
-		args("--reports-dir", reportsDir)
-	}
-
-	test {
-		dependsOn(consoleLauncherTest)
-		exclude("**/*")
-	}
-}
-```
 
 ### Running a single scenario or feature from the CLI
 
@@ -232,15 +244,23 @@ mvn test -Dsurefire.includeJUnit5Engines=cucumber -Dcucumber.plugin=pretty -Dcuc
 
 #### Gradle
 
-Define Cucumber properties before running the test to ensure that your `build.gradle`
-(or `build.gradle.kts`) correctly passes system properties to the test task.
+First update `build.gradle.kts` to pass system properties to the test task.
 
-```groovy
-tasks.test {
-    systemProperty("cucumber.features", System.getProperty("cucumber.features"))
-    systemProperty("cucumber.filter.tags", System.getProperty("cucumber.filter.tags"))
-    systemProperty("cucumber.filter.name", System.getProperty("cucumber.filter.name"))
-    systemProperty("cucumber.plugin", System.getProperty("cucumber.plugin"))
+```kotlin
+tasks.named<Test>("test") {
+    useJUnitPlatform {
+        // When running an individual scenario, assume we only want to run 
+        // Cucumber
+        System.getProperty("cucumber.features")?.let { includeEngines("cucumber") }
+    }
+
+    testDefinitionDirs.from("src/test/features")
+
+    // Pass selected system properties to Cucumber
+    System.getProperty("cucumber.features")?.let { systemProperty("cucumber.features", it) }
+    System.getProperty("cucumber.filter.tags")?.let { systemProperty("cucumber.filter.tags", it) }
+    System.getProperty("cucumber.filter.name")?.let { systemProperty("cucumber.filter.name", it) }
+    System.getProperty("cucumber.plugin")?.let { systemProperty("cucumber.plugin", it) }
 }
 ```
 
@@ -250,9 +270,6 @@ Then to select the scenario on line 10 of the `example.feature` file use:
 gradle test --rerun-tasks --info -Dcucumber.plugin=pretty -Dcucumber.features=path/to/example.feature:10
 ```
 
-Note: Because both the Suite Engine and the Cucumber Engine are included, this
-will run tests twice. (If you know how to prevent this, please send a pull
-request).
 
 ## Suites with different configurations
 
