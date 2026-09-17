@@ -154,12 +154,32 @@ public class StepDefinitions {
 }
 ```
 
-Notes:
 
- 1. When used in combination with Junit 6, Maven Surefire, and/or Failsafe use 
+Notes:
+ 1. When used in combination with JUnit 6, Maven Surefire, and/or Failsafe use 
     version `3.0.0-M5` or later.
- 2. When used in combination with Junit 6 and IntelliJ IDEA, failures in before
-    all and after all hooks do not fail a test run.
+ 2. For Kotlin this means that you have to declare these hooks as package level functions. 
+    A method in a companion object annotated with `@JvmStatic` does not work.
+    ```kotlin
+    package io.cucumber.example;
+    
+    import io.cucumber.java.AfterAll
+    import io.cucumber.java.BeforeAll
+    
+    @BeforeAll
+    fun beforeAll() {
+        throw RuntimeException()
+    }
+    
+    @AfterAll
+    fun afterAll() {
+        throw RuntimeException()
+    }
+    
+    class StepDefinitions {
+    
+    }
+    ```
 
 ### Before / After
 
