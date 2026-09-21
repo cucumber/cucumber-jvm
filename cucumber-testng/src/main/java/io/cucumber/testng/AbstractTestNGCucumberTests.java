@@ -14,9 +14,19 @@ import org.testng.xml.XmlTest;
  * <p>
  * Runs each cucumber scenario found in the features as separated test.
  *
- * @see TestNGCucumberRunner
+ * @see        TestNGCucumberRunner
+ * @deprecated Since v3.6.0 Maven Surefire uses the JUnit Platform to run
+ *             TestNG. Cucumber support the JUnit Platform directly. Since
+ *             v9.4.0 Gradle supports resource based test on the JUnit Platform.
+ *             This leaves little reason to support a dedicated TestNG runner.
+ *             <p>
+ *             Please switch to <a href=
+ *             "https://github.com/cucumber/cucumber-jvm/tree/main/cucumber-junit-platform-engine">cucumber-junit-platform-engine</a>.
+ *             If there are missing features that prevent you from upgrading
+ *             please create an issue.
  */
-@API(status = API.Status.STABLE)
+@Deprecated
+@API(status = API.Status.DEPRECATED)
 public abstract class AbstractTestNGCucumberTests {
 
     private @Nullable TestNGCucumberRunner testNGCucumberRunner;

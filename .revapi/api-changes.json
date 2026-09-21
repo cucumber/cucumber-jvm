@@ -494,6 +494,39 @@
             "code": "java.method.removed",
             "old": "method void io.cucumber.core.runtime.CucumberExecutionContext::runFeatures(io.cucumber.core.runtime.CucumberExecutionContext.ThrowingRunnable)",
             "justification": "Emit messages for @BeforeAll and @AfterAll hooks"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "class io.cucumber.testng.AbstractTestNGCucumberTests",
+            "new": "class io.cucumber.testng.AbstractTestNGCucumberTests",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.STABLE",
+            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
+            "justification": "cucumber-testng is deprecated"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "@interface io.cucumber.testng.CucumberOptions",
+            "new": "@interface io.cucumber.testng.CucumberOptions",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.STABLE",
+            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
+            "justification": "cucumber-testng is deprecated"
+          },
+          {
+            "ignore": true,
+            "code": "java.annotation.attributeValueChanged",
+            "old": "class io.cucumber.testng.TestNGCucumberRunner",
+            "new": "class io.cucumber.testng.TestNGCucumberRunner",
+            "annotationType": "org.apiguardian.api.API",
+            "attribute": "status",
+            "oldValue": "org.apiguardian.api.API.Status.STABLE",
+            "newValue": "org.apiguardian.api.API.Status.DEPRECATED",
+            "justification": "cucumber-testng is deprecated"
           }
         ]
       }

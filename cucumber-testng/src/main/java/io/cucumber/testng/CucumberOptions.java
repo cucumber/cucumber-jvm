@@ -10,10 +10,21 @@ import java.lang.annotation.Target;
 
 /**
  * Configure Cucumbers options.
+ *
+ * @deprecated Since v3.6.0 Maven Surefire uses the JUnit Platform to run
+ *             TestNG. Cucumber support the JUnit Platform directly. Since
+ *             v9.4.0 Gradle supports resource based test on the JUnit Platform.
+ *             This leaves little reason to support a dedicated TestNG runner.
+ *             <p>
+ *             Please switch to <a href=
+ *             "https://github.com/cucumber/cucumber-jvm/tree/main/cucumber-junit-platform-engine">cucumber-junit-platform-engine</a>.
+ *             If there are missing features that prevent you from upgrading
+ *             please create an issue.
  */
+@Deprecated
+@API(status = API.Status.DEPRECATED)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@API(status = API.Status.STABLE)
 public @interface CucumberOptions {
 
     /**
