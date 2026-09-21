@@ -1,5 +1,9 @@
 Cucumber TestNG 
-==============
+===============
+
+> [!IMPORTANT]
+> **cucumber-testng is deprecated.**  
+> Please use the [Cucumber JUnit Platform Engine](../cucumber-junit-platform-engine)
 
 Use TestNG to execute Cucumber scenarios. To use add the `cucumber-testng` dependency to your `pom.xml`
 and use the [`cucumber-bom`](../cucumber-bom/README.md) for dependency management:

@@ -51,6 +51,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [All] Classes not designed for extension are now final. See [api-changes.json](./.revapi/api-changes.json) for details.
 - [All] Utility classes are no longer instantiatable. See [api-changes.json](./.revapi/api-changes.json) for details.
 
+### Deprecated
+- [JUnit] Deprecate `cucumber-testng` in favour of `cucumber-junit-platform-engine` ([#3245](https://github.com/cucumber/cucumber-jvm/pull/3245) M.P. Korstanje)
  
 ### Removed
 - [OpenEJB] Removed `cucumber-openejb` in favor of `cucumber-jakarta-openejb` ([#3189](https://github.com/cucumber/cucumber-jvm/pull/3189))

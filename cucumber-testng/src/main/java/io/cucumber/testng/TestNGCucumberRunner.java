@@ -46,8 +46,19 @@ import static io.cucumber.testng.TestCaseResultObserver.observe;
  * <li>Properties from {@value Constants#CUCUMBER_PROPERTIES_FILE_NAME}</li>
  * </ol>
  * For available properties see {@link Constants}.
+ *
+ * @deprecated Since v3.6.0 Maven Surefire uses the JUnit Platform to run
+ *             TestNG. Cucumber support the JUnit Platform directly. Since
+ *             v9.4.0 Gradle supports resource based test on the JUnit Platform.
+ *             This leaves little reason to support a dedicated TestNG runner.
+ *             <p>
+ *             Please switch to <a href=
+ *             "https://github.com/cucumber/cucumber-jvm/tree/main/cucumber-junit-platform-engine">cucumber-junit-platform-engine</a>.
+ *             If there are missing features that prevent you from upgrading
+ *             please create an issue.
  */
-@API(status = API.Status.STABLE)
+@Deprecated
+@API(status = API.Status.DEPRECATED)
 public final class TestNGCucumberRunner {
 
     private final Predicate<Pickle> filters;
