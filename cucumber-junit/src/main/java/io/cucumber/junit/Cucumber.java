@@ -92,7 +92,7 @@ import static java.util.stream.Collectors.toList;
  *             the {@code cucumber-junit-platform-engine}.
  */
 // @formatter:on
-@Deprecated
+@Deprecated(forRemoval = true)
 @API(status = API.Status.STABLE)
 public final class Cucumber extends ParentRunner<ParentRunner<?>> {
 

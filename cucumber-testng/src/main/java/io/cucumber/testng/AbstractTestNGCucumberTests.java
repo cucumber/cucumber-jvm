@@ -25,7 +25,8 @@ import org.testng.xml.XmlTest;
  *             If there are missing features that prevent you from upgrading
  *             please create an issue.
  */
-@Deprecated
+@SuppressWarnings({ "deprecation", "removal" })
+@Deprecated(forRemoval = true)
 @API(status = API.Status.DEPRECATED)
 public abstract class AbstractTestNGCucumberTests {
 

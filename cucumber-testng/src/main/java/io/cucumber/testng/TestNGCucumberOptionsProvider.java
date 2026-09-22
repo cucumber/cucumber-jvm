@@ -10,6 +10,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 
+@SuppressWarnings({ "deprecation", "removal" })
 final class TestNGCucumberOptionsProvider implements CucumberOptionsAnnotationParser.OptionsProvider {
 
     private static final Logger log = LoggerFactory.getLogger(TestNGCucumberOptionsProvider.class);

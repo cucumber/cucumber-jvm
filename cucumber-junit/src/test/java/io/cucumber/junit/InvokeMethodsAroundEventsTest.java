@@ -23,7 +23,7 @@ import static io.cucumber.junit.StubBackendProviderService.callbacks;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({ "deprecation", "removal" })
 final class InvokeMethodsAroundEventsTest {
 
     private static final List<String> events = new ArrayList<>();

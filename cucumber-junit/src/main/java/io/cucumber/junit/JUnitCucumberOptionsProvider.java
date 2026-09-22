@@ -14,7 +14,7 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
 
     private static final Logger log = LoggerFactory.getLogger(JUnitCucumberOptionsProvider.class);
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "deprecation", "removal" })
     @Override
     public CucumberOptionsAnnotationParser.@Nullable CucumberOptions getOptions(Class<?> clazz) {
         CucumberOptions annotation = clazz.getAnnotation(CucumberOptions.class);
@@ -35,7 +35,7 @@ final class JUnitCucumberOptionsProvider implements CucumberOptionsAnnotationPar
         }
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "deprecation", "removal" })
     private static class JunitCucumberOptions implements CucumberOptionsAnnotationParser.CucumberOptions {
 
         private final CucumberOptions annotation;

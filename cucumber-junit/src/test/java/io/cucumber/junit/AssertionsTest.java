@@ -36,7 +36,7 @@ final class AssertionsTest {
 
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "deprecation", "removal" })
     @RunWith(Cucumber.class)
     static final class WithCucumberMethod {
 
