@@ -2,7 +2,7 @@ package io.cucumber.junit;
 
 import java.util.Map;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({ "deprecation", "removal" })
 final class JUnitOptionsParser {
 
     JUnitOptionsBuilder parse(Map<String, String> properties) {

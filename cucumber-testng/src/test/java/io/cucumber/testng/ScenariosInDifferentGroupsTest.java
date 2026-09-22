@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
+@SuppressWarnings({ "deprecation", "removal" })
 @CucumberOptions(
         features = "classpath:io/cucumber/testng/scenarios-with-tags.feature",
         plugin = "timeline:target/timeline")

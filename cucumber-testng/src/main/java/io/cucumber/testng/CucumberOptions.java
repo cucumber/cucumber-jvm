@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
  *             If there are missing features that prevent you from upgrading
  *             please create an issue.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 @API(status = API.Status.DEPRECATED)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

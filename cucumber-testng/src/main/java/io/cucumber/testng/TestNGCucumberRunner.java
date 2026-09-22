@@ -57,7 +57,7 @@ import static io.cucumber.testng.TestCaseResultObserver.observe;
  *             If there are missing features that prevent you from upgrading
  *             please create an issue.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 @API(status = API.Status.DEPRECATED)
 public final class TestNGCucumberRunner {
 

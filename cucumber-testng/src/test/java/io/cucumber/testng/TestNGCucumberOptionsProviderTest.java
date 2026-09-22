@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SuppressWarnings({ "deprecation", "removal" })
 final class TestNGCucumberOptionsProviderTest {
 
     private final TestNGCucumberOptionsProvider optionsProvider = new TestNGCucumberOptionsProvider();
