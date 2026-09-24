@@ -40,14 +40,16 @@ public final class StepExpression {
                 .map(expressionArguments -> {
                     var stepArguments = step.getArguments();
                     int stepArgumentSize = stepArguments.size();
-                    var arguments = new ArrayList<Argument>(expressionArguments.size() + stepArgumentSize);
+                    var expressionArgumentSize = expressionArguments.size();
+                    var arguments = new ArrayList<Argument>(expressionArgumentSize + stepArgumentSize);
                     expressionArguments.stream()
                             .map(ExpressionArgument::new)
                             .forEach(arguments::add);
 
                     for (int i = 0; i < stepArgumentSize; i++) {
-                        io.cucumber.core.gherkin.Argument stepArgument = stepArguments.get(i);
-                        Argument argument = createArgument(i, stepArgument);
+                        var stepArgument = stepArguments.get(i);
+                        int stepArgumentIndex = expressionArgumentSize + i;
+                        var argument = createArgument(stepArgumentIndex, stepArgument);
                         arguments.add(argument);
                     }
                     return arguments;
