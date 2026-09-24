@@ -3,7 +3,6 @@ package io.cucumber.jakarta.openejb;
 import io.cucumber.core.backend.CucumberBackendException;
 import io.cucumber.core.backend.ObjectFactory;
 import jakarta.ejb.embeddable.EJBContainer;
-import org.apache.openejb.OpenEjbContainer;
 import org.apiguardian.api.API;
 import org.jspecify.annotations.Nullable;
 
@@ -36,7 +35,8 @@ public final class OpenEJBObjectFactory implements ObjectFactory {
         }
 
         Properties properties = new Properties();
-        properties.setProperty(OpenEjbContainer.Provider.OPENEJB_ADDITIONNAL_CALLERS_KEY, callers.toString());
+        // From OpenEjbContainer.Provider.OPENEJB_ADDITIONNAL_CALLERS_KEY
+        properties.setProperty("openejb.additionnal.callers", callers.toString());
         container = EJBContainer.createEJBContainer(properties);
     }
 
