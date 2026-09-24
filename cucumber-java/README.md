@@ -36,7 +36,7 @@ import io.cucumber.java.en.When;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CalculatorStepDefinitions {
+class CalculatorStepDefinitions {
     private RpnCalculator calc;
 
     @Given("a calculator I just turned on")
@@ -76,7 +76,7 @@ package com.example.app;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 
-public class StepDefinitions {
+class StepDefinitions {
     
     @Given("a datatable:")
     void a_data_table(DataTable table){
@@ -110,7 +110,7 @@ package com.example.app;
 import io.cucumber.docstring.DocString;
 import io.cucumber.java.en.Given;
 
-public class StepDefinitions {
+class StepDefinitions {
     
     @Given("a docstring:")
     void a_data_table(DocString docString){
@@ -140,15 +140,15 @@ package io.cucumber.example;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.BeforeAll;
 
-public class StepDefinitions {
+class StepDefinitions {
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         // Runs before all scenarios
     }
 
     @AfterAll
-    public static void afterAll() {
+    static void afterAll() {
         // Runs after all scenarios
     }
 }
@@ -194,15 +194,15 @@ package io.cucumber.example;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 
-public class StepDefinitions {
+class StepDefinitions {
 
     @Before("not @zukini")
-    public void before() {
+    void before() {
         // Runs before each scenario *not* tagged with @zukini
     }
 
     @After
-    public void after() {
+    void after() {
         // Runs after each scenario
     }
 }
@@ -216,10 +216,10 @@ package io.cucumber.example;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 
-public class StepDefinitions {
+class StepDefinitions {
 
     @Before
-    public void before(Scenario scenario) {
+    void before(Scenario scenario) {
         System.out.println("About to run: " + scenario.getName());
         System.out.println("Scenario is in file: " + scenario.getUri());
         System.out.println("Scenario is in line: " + scenario.getLine());
@@ -242,15 +242,15 @@ import io.cucumber.java.AfterStep;
 import io.cucumber.java.BeforeStep;
 import io.cucumber.java.Scenario;
 
-public class StepDefinitions {
+class StepDefinitions {
 
     @BeforeStep("not @zukini")
-    public void before(Scenario scenario) {
+    void before(Scenario scenario) {
         // Runs before each step in scenarios *not* tagged with @zukini
     }
 
     @AfterStep
-    public void after(Scenario scenario) {
+    void after(Scenario scenario) {
         // Runs after each step
     }
 }
@@ -266,16 +266,16 @@ import io.cucumber.java.BeforeStep;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.Step;
 
-public class StepDefinitions {
+class StepDefinitions {
 
     @BeforeStep
-    public void beforeStep(Scenario scenario, Step step) {
+    void beforeStep(Scenario scenario, Step step) {
         System.out.println("About to run: " + step.getKeyword() + step.getText());
         System.out.println("Step is on line: " + step.getLine());
     }
 
     @AfterStep
-    public void afterStep(Scenario scenario, Step step) {
+    void afterStep(Scenario scenario, Step step) {
         System.out.println("Finished: " + step.getText());
     }
 }
@@ -297,16 +297,16 @@ import io.cucumber.java.Scenario;
 
 import java.nio.file.Files;
 
-public class StepDefinitions {
+class StepDefinitions {
 
     @After
-    public void logDetails(Scenario scenario) {
+    void logDetails(Scenario scenario) {
         String details = /* Get details from somewhere */;  
         scenario.log("Scenario completed with " + details);
     }
 
     @After
-    public void attachScreenshot(Scenario scenario) {
+    void attachScreenshot(Scenario scenario) {
         // Only attach screenshots for failed scenarios to avoid bloating
         // the report size
         if (scenario.isFailed()) {
@@ -316,7 +316,7 @@ public class StepDefinitions {
     }
 
     @After
-    public void attachPdf(Scenario scenario) {
+    void attachPdf(Scenario scenario) {
         Path path = /* Get a path to a pdf file from somewhere */;
         byte[] data = Files.readAllBytes(path);
         scenario.attach(data, "application/pdf", path.getFileName());
@@ -343,7 +343,7 @@ import io.cucumber.java.en.Given;
 
 import java.time.LocalDate;
 
-public class StepDefinitions {
+class StepDefinitions {
 
     @ParameterType("([0-9]{4})-([0-9]{2})-([0-9]{2})")
     LocalDate iso8601Date(String year, String month, String day) {
@@ -380,7 +380,7 @@ import io.cucumber.java.DataTableType;
 import java.util.List;
 import java.util.Map;
 
-public class StepDefinitions {
+class StepDefinitions {
 
     @DataTableType
     Author authorEntryTransformer(Map<String, String> entry) {
@@ -426,7 +426,7 @@ import io.cucumber.java.DefaultParameterTransformer;
 
 import java.lang.reflect.Type;
 
-public class DataTableStepDefinitions {
+class DataTableStepDefinitions {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -456,7 +456,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-public class TransformerDefinitions {
+class TransformerDefinitions {
 
     private DateTimeFormatter formatter;
 
@@ -516,7 +516,7 @@ import io.cucumber.java.en.Given;
 import java.util.Map;
 import java.util.List;
 
-public class DataTableStepDefinitions {
+class DataTableStepDefinitions {
 
     @DataTableType(replaceWithEmptyString = "[blank]")
     Author convert(Map<String, String> entry){
@@ -553,7 +553,7 @@ import io.cucumber.java.en.Given;
 import java.util.Map;
 import java.util.List;
 
-public class DataTableStepDefinitions {
+class DataTableStepDefinitions {
 
     @DataTableType(replaceWithEmptyString = "[blank]")
     String listOfStringListsType(String cell) {
@@ -592,7 +592,7 @@ import io.cucumber.java.Transpose;
 import java.util.Map;
 import java.util.List;
 
-public class DataTableStepDefinitions {
+class DataTableStepDefinitions {
 
     @DataTableType
     User convert(Map<String, String> entry){
@@ -653,7 +653,7 @@ import io.cucumber.java.en.Then;
 import java.io.IOException;
 import java.util.List;
 
-public class StepDefinitions {
+class StepDefinitions {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
