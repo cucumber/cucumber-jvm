@@ -116,11 +116,48 @@ public class StepExpressionFactoryTest {
 
     @Test
     void creates_a_step_expression() {
-        StepDefinition stepDefinition = new StubStepDefinition("Given a stepWithTable");
+        StepDefinition stepDefinition = new StubStepDefinition("Given a step");
         StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
-        assertThat(expression.getSource(), is("Given a stepWithTable"));
+        assertThat(expression.getSource(), is("Given a step"));
         assertThat(expression.getExpressionType(), is(CucumberExpression.class));
-        assertThat(expression.match(step("Given a stepWithTable")), is(emptyList()));
+        assertThat(expression.match(step("Given a step")), is(emptyList()));
+    }
+
+    @Test
+    void parameter_type() {
+        StepDefinition stepDefinition = new StubStepDefinition("Given a {word}");
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        assertThat(expression.getSource(), is("Given a {word}"));
+        assertThat(expression.getExpressionType(), is(CucumberExpression.class));
+        var match = expression.match(step("Given a step"));
+        var word = (String) match.get(0).getValue();
+        assertThat(word, is(equalTo("step")));
+    }
+
+    @Test
+    void parameter_type_with_docstring() {
+        StepDefinition stepDefinition = new StubStepDefinition("Given a {word}", String.class, DocString.class);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        assertThat(expression.getSource(), is("Given a {word}"));
+        assertThat(expression.getExpressionType(), is(CucumberExpression.class));
+        var match = expression.match(stepWithDocString("Given a step", content, null));
+        var word = (String) match.get(0).getValue();
+        assertThat(word, is(equalTo("step")));
+        var docString = (DocString) match.get(1).getValue();
+        assertThat(docString.getContent(), is(equalTo(content)));
+    }
+
+    @Test
+    void parameter_type_with_datatable() {
+        StepDefinition stepDefinition = new StubStepDefinition("Given a {word}", String.class, DataTable.class);
+        StepExpression expression = stepExpressionFactory.createExpression(stepDefinition);
+        assertThat(expression.getSource(), is("Given a {word}"));
+        assertThat(expression.getExpressionType(), is(CucumberExpression.class));
+        var match = expression.match(stepWithTable("Given a step", table));
+        var word = (String) match.get(0).getValue();
+        assertThat(word, is(equalTo("step")));
+        var dataTable = (DataTable) match.get(1).getValue();
+        assertThat(dataTable, is(equalTo(dataTable)));
     }
 
     @Test
