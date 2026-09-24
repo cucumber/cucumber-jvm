@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [8.0.0] - 2026-09-24
 ### Added
 - [Java] Add optional names to `@Before`, `@After`, `@BeforeStep` and `@AfterStep` hooks and emit hook names in messages ([#2917](https://github.com/cucumber/cucumber-jvm/issues/2917), [#3173](https://github.com/cucumber/cucumber-jvm/pull/3173))
 - [Java] Declare step definitions with minimal ceremony ([#3200](https://github.com/cucumber/cucumber-jvm/issues/3200))
@@ -20,12 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Support registering individual glue classes via `cucumber.glue.classes` property or the `--glue-classes` CLI option ([#3120](https://github.com/cucumber/cucumber-jvm/pull/3120)).
 - [Core] Support class filtering before class loading via the `{included,excluded}-class-name-pattern` property and the `--glue-{included,excluded}-class-name-pattern`  CLI option. ([#3120](https://github.com/cucumber/cucumber-jvm/pull/3120)).
 - [Core] Emit messages for `@BeforeAll` and `@AfterAll` hooks ([#3236](https://github.com/cucumber/cucumber-jvm/pull/3236))
-
-### Fixed
-- [Core] Report the source location of both definitions when a parameter type is registered twice with the same name ([#3144](https://github.com/cucumber/cucumber-jvm/issues/3144))
-- [JUnit Platform Engine] Accept partial matches with `cucumber.filter.name` and align the behavior with JUnit 4 and CLI ([#3174](https://github.com/cucumber/cucumber-jvm/pull/3174))
-- [JUnit Platform Engine] Don't require global read lock ([#3103](https://github.com/cucumber/cucumber-jvm/pull/3103))
-- [Core] Don't swallow exceptions thrown by `Plugin` ([#3236](https://github.com/cucumber/cucumber-jvm/pull/3236))
 
 ### Changed
 - [Core] Jackson is now an opt-in dependency ([#3206](https://github.com/cucumber/cucumber-jvm/pull/3206))
@@ -41,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:junit-xml-formatter.version to v0.15.0
 - [Core] Update dependency io.cucumber:messages.version to v34.2.1
 - [Core] Update dependency io.cucumber:messages-ndjson.version to v0.5.2
-- [Core] Update dependency io.cucumber:pretty-formatter.version to v4.0.2 
+- [Core] Update dependency io.cucumber:pretty-formatter.version to v4.0.2
 - [Core] Update dependency io.cucumber:query.version to v16.1.1
 - [Core] Update dependency io.cucumber:tag-expressions.version to v10.0.1
 - [Core] Update dependency io.cucumber:teamcity-formatter.version to v0.3.0
@@ -54,10 +50,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 - [JUnit] Deprecate `cucumber-testng` for removal in favor of `cucumber-junit-platform-engine` ([#3245](https://github.com/cucumber/cucumber-jvm/pull/3245))
 - [JUnit] Deprecate `cucumber-junit` for removal in favor of `cucumber-junit-platform-engine`
- 
+
+### Fixed
+- [Core] Report the source location of both definitions when a parameter type is registered twice with the same name ([#3144](https://github.com/cucumber/cucumber-jvm/issues/3144))
+- [JUnit Platform Engine] Accept partial matches with `cucumber.filter.name` and align the behavior with JUnit 4 and CLI ([#3174](https://github.com/cucumber/cucumber-jvm/pull/3174))
+- [JUnit Platform Engine] Don't require global read lock ([#3103](https://github.com/cucumber/cucumber-jvm/pull/3103))
+- [Core] Don't swallow exceptions thrown by `Plugin` ([#3236](https://github.com/cucumber/cucumber-jvm/pull/3236))
+
 ### Removed
 - [OpenEJB] Removed `cucumber-openejb` in favor of `cucumber-jakarta-openejb` ([#3189](https://github.com/cucumber/cucumber-jvm/pull/3189))
 - [OpenEJB] Removed `cucumber-cdi2` in favor of `cucumber-jakarta-cdi` ([#3192](https://github.com/cucumber/cucumber-jvm/pull/3192))
 - [OpenEJB] Removed `cucumber-deltaspike` without replacement ([#3193](https://github.com/cucumber/cucumber-jvm/pull/3193))
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.9...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.0...HEAD
+[8.0.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.9...v8.0.0
