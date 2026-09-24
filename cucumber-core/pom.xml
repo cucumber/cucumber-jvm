@@ -22,7 +22,7 @@
         <xmlunit.version>2.14.0</xmlunit.version>
         <hamcrest.version>3.0</hamcrest.version>
         <hamcrest-json.version>0.2</hamcrest-json.version>
-        <mockito.version>5.23.0</mockito.version>
+        <mockito.version>5.24.0</mockito.version>
         <vertx.version>5.2.0</vertx.version>
         <reactive-streams.version>1.0.4</reactive-streams.version>
     </properties>
