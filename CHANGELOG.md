@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [8.0.1] - 2026-09-24
 ### Fixed
 - [Core] Fix step argument index offset ([#3248](https://github.com/cucumber/cucumber-jvm/issues/3248))
 
@@ -64,5 +66,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [OpenEJB] Removed `cucumber-cdi2` in favor of `cucumber-jakarta-cdi` ([#3192](https://github.com/cucumber/cucumber-jvm/pull/3192))
 - [OpenEJB] Removed `cucumber-deltaspike` without replacement ([#3193](https://github.com/cucumber/cucumber-jvm/pull/3193))
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.0...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.1...HEAD
+[8.0.1]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.0...v8.0.1
 [8.0.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.9...v8.0.0
