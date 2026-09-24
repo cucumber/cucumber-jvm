@@ -107,11 +107,6 @@
             <!-- Modules in cucumber-jvm -->
             <dependency>
                 <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-cdi2</artifactId>
-                <version>8.0.0-M1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-core</artifactId>
                 <version>8.0.0</version>
             </dependency>
@@ -124,11 +119,6 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>datatable-matchers</artifactId>
                 <version>8.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-deltaspike</artifactId>
-                <version>8.0.0-M1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
@@ -174,11 +164,6 @@
                 <groupId>io.cucumber</groupId>
                 <artifactId>cucumber-junit-platform-engine</artifactId>
                 <version>8.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-openejb</artifactId>
-                <version>8.0.0-M1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.cucumber</groupId>
