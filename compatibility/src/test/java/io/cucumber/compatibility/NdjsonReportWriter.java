@@ -37,6 +37,7 @@ interface NdjsonReportWriter {
                     testCase.getFeatureWithLines().toString(), //
                     CommandlineOptions.GLUE, testCase.getGluePackageName(), //
                     CommandlineOptions.ORDER, order, //
+                    CommandlineOptions.PLUGIN, "pretty", //
                     CommandlineOptions.PLUGIN, "message:" + target //
                 );
             } catch (Exception e) {

@@ -49,7 +49,7 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>compatibility-kit</artifactId>
-            <version>30.0.0</version>
+            <version>31.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
