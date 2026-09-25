@@ -60,12 +60,12 @@ final class Invoker {
         }
     }
 
+    @SuppressWarnings("deprecation") // isAccessible is deprecated in Java 9, but canAccess not available on Android
     private static @Nullable Object doInvoke(
             @Nullable Located located, @Nullable Object target, Method targetMethod, @Nullable Object[] args
     ) {
-        boolean accessible = targetMethod.canAccess(target);
         try {
-            if (!accessible) {
+            if (!targetMethod.isAccessible()) {
                 targetMethod.setAccessible(true);
             }
             return targetMethod.invoke(target, args);
@@ -79,10 +79,6 @@ final class Invoker {
                 throw new CucumberBackendException("Failed to invoke " + targetMethod, e);
             }
             throw new CucumberInvocationTargetException(located, e);
-        } finally {
-            if (!accessible) {
-                targetMethod.setAccessible(false);
-            }
         }
     }
 
