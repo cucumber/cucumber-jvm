@@ -8,20 +8,20 @@
         <relativePath/>
     </parent>
     <artifactId>cucumber-jvm</artifactId>
-    <version>8.0.2-SNAPSHOT</version>
+    <version>8.0.2</version>
     <packaging>pom</packaging>
     <name>Cucumber-JVM</name>
     <description>Cucumber for the JVM</description>
     <url>https://cucumber.io/</url>
 
     <properties>
-        <project.build.outputTimestamp>1790265651</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1790349045</project.build.outputTimestamp>
     </properties>
     <scm>
         <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
         <url>git://github.com/cucumber/cucumber-jvm.git</url>
-        <tag>HEAD</tag>
+        <tag>v8.0.2</tag>
     </scm>
 
     <modules>
