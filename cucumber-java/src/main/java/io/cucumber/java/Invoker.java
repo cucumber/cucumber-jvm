@@ -60,7 +60,8 @@ final class Invoker {
         }
     }
 
-    @SuppressWarnings("deprecation") // isAccessible is deprecated in Java 9, but canAccess not available on Android
+    @SuppressWarnings("deprecation") // isAccessible is deprecated in Java 9,
+                                     // but canAccess not available on Android
     private static @Nullable Object doInvoke(
             @Nullable Located located, @Nullable Object target, Method targetMethod, @Nullable Object[] args
     ) {
