@@ -10,9 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- [BOM] Updated dependencies to converge
+
 ### Changed
 - [Core] Update dependency io.cucumber:pretty-formatter.version to v4.1.0
 - [Core] Update dependency io.cucumber:html-formatter.version to v24.2.0
+- [Core] Update dependency io.cucumber:cucumber-json-formatter.version to v0.4.2
+- [Core] Update dependency io.cucumber:teamcity-formatter.version to v0.3.1
+- [Core] Update dependency io.cucumber:usage-formatter.version to v0.2.1
 
 ## [8.0.2] - 2026-09-25
 ### Fixed
