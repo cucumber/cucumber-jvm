@@ -10,15 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- [BOM] Updated dependencies to converge
 
+## [8.0.3] - 2026-09-28
 ### Changed
 - [Core] Update dependency io.cucumber:pretty-formatter.version to v4.1.0
 - [Core] Update dependency io.cucumber:html-formatter.version to v24.2.0
 - [Core] Update dependency io.cucumber:cucumber-json-formatter.version to v0.4.2
 - [Core] Update dependency io.cucumber:teamcity-formatter.version to v0.3.1
 - [Core] Update dependency io.cucumber:usage-formatter.version to v0.2.1
+
+### Fixed
+- [BOM] Updated dependencies to converge
 
 ## [8.0.2] - 2026-09-25
 ### Fixed
@@ -79,8 +81,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [OpenEJB] Removed `cucumber-cdi2` in favor of `cucumber-jakarta-cdi` ([#3192](https://github.com/cucumber/cucumber-jvm/pull/3192))
 - [OpenEJB] Removed `cucumber-deltaspike` without replacement ([#3193](https://github.com/cucumber/cucumber-jvm/pull/3193))
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.2...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.3...HEAD
+[8.0.3]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.2...v8.0.3
 [8.0.2]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.1...v8.0.2
 [8.0.1]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.0...v8.0.1
 [8.0.0]: https://github.com/cucumber/cucumber-jvm/compare/v7.34.9...v8.0.0
-/compare/v7.34.9...v8.0.0
