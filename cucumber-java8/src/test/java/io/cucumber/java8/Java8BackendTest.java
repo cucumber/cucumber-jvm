@@ -3,6 +3,7 @@ package io.cucumber.java8;
 import io.cucumber.core.backend.Glue;
 import io.cucumber.core.backend.ObjectFactory;
 import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
+import io.cucumber.java8.steps.Configuration;
 import io.cucumber.java8.steps.Steps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectClass;
 import static io.cucumber.core.backend.discovery.GlueDiscoverySelector.selectUri;
 import static java.lang.Thread.currentThread;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -47,6 +49,18 @@ class Java8BackendTest {
                 .build();
         backend.loadGlue(glue, request);
         verify(factory).addClass(Steps.class);
+    }
+
+    @Test
+    void ignores_non_step_definitions() {
+        var request = GlueDiscoveryRequest.builder() //
+                .selectors( //
+                        selectClass(Steps.class.getName()), //
+                        selectClass(Configuration.class.getName())) //
+                .build();
+        backend.loadGlue(glue, request);
+        verify(factory).addClass(Steps.class);
+        verify(factory, never()).addClass(Configuration.class);
     }
 
     @Test
