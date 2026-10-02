@@ -17,11 +17,11 @@ public final class ClassFilter {
         return new ClassFilter(namePredicate, classPredicate);
     }
 
-    boolean match(String name) {
+    public boolean match(String name) {
         return namePredicate.test(name);
     }
 
-    boolean match(Class<?> type) {
+    public boolean match(Class<?> type) {
         return classPredicate.test(type);
     }
 
