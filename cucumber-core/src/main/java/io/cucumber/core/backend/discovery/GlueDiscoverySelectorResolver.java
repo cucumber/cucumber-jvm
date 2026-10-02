@@ -6,6 +6,7 @@ import io.cucumber.core.resource.ClasspathSupport;
 import org.apiguardian.api.API;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -28,9 +29,8 @@ public final class GlueDiscoverySelectorResolver {
 
     public Stream<Class<?>> resolve(GlueDiscoveryRequest request) {
         var classNameFilters = request.getFiltersByType(GlueClassNameFilter.class);
-        var classNamePredicate = classNameFilters.stream()
-                .map(filter -> (Predicate<String>) filter::apply)
-                .reduce(className -> true, Predicate::and);
+        var classNamePredicate = createClassNamePredicate(classNameFilters);
+        var classFilter = ClassFilter.of(classNamePredicate, classPredicate);
 
         var classesInPackage = request.getSelectorsByType(UriGlueDiscoverySelector.class) //
                 .stream() //
@@ -38,16 +38,22 @@ public final class GlueDiscoverySelectorResolver {
                 .toList().stream() //
                 .filter(gluePath -> CLASSPATH_SCHEME.equals(gluePath.getScheme()))
                 .map(ClasspathSupport::packageName)
-                .map(packageName -> classFinder.scanForClassesInPackage(packageName,
-                    ClassFilter.of(classNamePredicate, classPredicate)))
+                .map(packageName -> classFinder.scanForClassesInPackage(packageName, classFilter))
                 .flatMap(Collection::stream);
 
         var explicitClasses = request.getSelectorsByType(ClassGlueDiscoverySelector.class)
                 .stream()
                 .map(ClassGlueDiscoverySelector::name)
-                .map(classFinder::loadClass);
+                .map(classFinder::loadClass)
+                .filter(classPredicate);
 
         return Stream.concat(classesInPackage, explicitClasses).distinct();
+    }
+
+    private static Predicate<String> createClassNamePredicate(List<GlueClassNameFilter> classNameFilters) {
+        return classNameFilters.stream()
+                .map(filter -> (Predicate<String>) filter::apply)
+                .reduce(className -> true, Predicate::and);
     }
 
 }
