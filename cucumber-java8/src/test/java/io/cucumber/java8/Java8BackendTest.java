@@ -55,8 +55,8 @@ class Java8BackendTest {
     void ignores_non_step_definitions() {
         var request = GlueDiscoveryRequest.builder() //
                 .selectors( //
-                        selectClass(Steps.class.getName()), //
-                        selectClass(Configuration.class.getName())) //
+                    selectClass(Steps.class.getName()), //
+                    selectClass(Configuration.class.getName())) //
                 .build();
         backend.loadGlue(glue, request);
         verify(factory).addClass(Steps.class);
