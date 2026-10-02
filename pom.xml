@@ -18,9 +18,9 @@
         <project.build.outputTimestamp>1790959566</project.build.outputTimestamp>
     </properties>
     <scm>
-        <connection>scm:git:git://github.com/cucumber/cucumber-jvm.git</connection>
+        <connection>scm:git:https://github.com/cucumber/cucumber-jvm.git</connection>
         <developerConnection>scm:git:git@github.com:cucumber/cucumber-jvm.git</developerConnection>
-        <url>git://github.com/cucumber/cucumber-jvm.git</url>
+        <url>https://github.com/cucumber/cucumber-jvm.git</url>
         <tag>HEAD</tag>
     </scm>
 
