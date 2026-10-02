@@ -45,7 +45,7 @@ public final class GlueDiscoverySelectorResolver {
                 .stream()
                 .map(ClassGlueDiscoverySelector::name)
                 .map(classFinder::loadClass)
-                .filter(classFilter::match);
+                .filter(classPredicate);
 
         return Stream.concat(classesInPackage, explicitClasses).distinct();
     }
