@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [8.0.4] - 2026-10-02
 ### Fixed
 - [Core] Apply class predicate from backends to glue-classes ([#3253](https://github.com/cucumber/cucumber-jvm/issues/3253))
 
@@ -83,7 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [OpenEJB] Removed `cucumber-cdi2` in favor of `cucumber-jakarta-cdi` ([#3192](https://github.com/cucumber/cucumber-jvm/pull/3192))
 - [OpenEJB] Removed `cucumber-deltaspike` without replacement ([#3193](https://github.com/cucumber/cucumber-jvm/pull/3193))
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.3...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.4...HEAD
+[8.0.4]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.3...v8.0.4
 [8.0.3]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.2...v8.0.3
 [8.0.2]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.1...v8.0.2
 [8.0.1]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.0...v8.0.1
