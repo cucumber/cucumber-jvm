@@ -210,6 +210,37 @@ class RuntimeTest {
     }
 
     @Test
+    void should_fail_if_no_features_are_found_with_fail_if_no_tests() {
+        Runtime runtime = Runtime.builder()
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setFailIfNoTests(true).build())
+                .build();
+
+        runtime.run();
+
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x2)));
+    }
+
+    @Test
+    void should_pass_if_scenarios_are_run_with_fail_if_no_tests() {
+        var feature = TestFeatureParser.parse("path/test.feature",
+            """
+                    Feature: feature name
+                      Scenario: scenario name
+                        Given first step
+                    """);
+
+        Runtime runtime = Runtime.builder()
+                .withRuntimeOptions(new RuntimeOptionsBuilder().setFailIfNoTests(true).build())
+                .withFeatureSupplier(new StubFeatureSupplier(feature))
+                .withBackendSupplier(new StubBackendSupplier(new StubStepDefinition("first step")))
+                .build();
+
+        runtime.run();
+
+        assertThat(runtime.exitStatus(), is(equalTo((byte) 0x0)));
+    }
+
+    @Test
     void should_make_scenario_name_available_to_hooks() {
         final Feature feature = TestFeatureParser.parse("path/test.feature",
             """

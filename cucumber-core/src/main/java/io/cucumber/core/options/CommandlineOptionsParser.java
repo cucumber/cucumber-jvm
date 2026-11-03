@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import static io.cucumber.core.cli.CommandlineOptions.COUNT;
 import static io.cucumber.core.cli.CommandlineOptions.DRY_RUN;
 import static io.cucumber.core.cli.CommandlineOptions.DRY_RUN_SHORT;
+import static io.cucumber.core.cli.CommandlineOptions.FAIL_IF_NO_TESTS;
 import static io.cucumber.core.cli.CommandlineOptions.GLUE;
 import static io.cucumber.core.cli.CommandlineOptions.GLUE_CLASS;
 import static io.cucumber.core.cli.CommandlineOptions.GLUE_EXCLUDED_CLASS_NAME_PATTERN;
@@ -178,6 +179,8 @@ public final class CommandlineOptionsParser {
                 parsedOptions.addNameFilter(pattern);
             } else if (arg.equals(WIP) || arg.equals(WIP_SHORT)) {
                 parsedOptions.setWip(true);
+            } else if (arg.equals(FAIL_IF_NO_TESTS)) {
+                parsedOptions.setFailIfNoTests(true);
             } else if (arg.equals(ORDER)) {
                 parsedOptions.setPickleOrder(PickleOrderParser.parse(removeArgFor(arg, args)));
             } else if (arg.equals(COUNT)) {

@@ -207,7 +207,7 @@ public final class Runtime {
 
         private ExitStatus createPluginsAndExitStatus(EventBus eventBus) {
             Plugins plugins = createPlugins();
-            ExitStatus exitStatus = new ExitStatus(runtimeOptions);
+            ExitStatus exitStatus = new ExitStatus(runtimeOptions, runtimeOptions.isFailIfNoTests());
             plugins.addPlugin(exitStatus);
 
             if (runtimeOptions.isMultiThreaded()) {

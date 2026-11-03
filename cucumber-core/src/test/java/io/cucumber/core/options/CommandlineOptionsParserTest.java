@@ -358,6 +358,22 @@ class CommandlineOptionsParserTest {
     }
 
     @Test
+    void assigns_fail_if_no_tests() {
+        RuntimeOptions options = parser
+                .parse("--fail-if-no-tests")
+                .build();
+        assertThat(options.isFailIfNoTests(), is(true));
+    }
+
+    @Test
+    void default_fail_if_no_tests() {
+        RuntimeOptions options = parser
+                .parse()
+                .build();
+        assertThat(options.isFailIfNoTests(), is(false));
+    }
+
+    @Test
     void name_without_spaces_is_preserved() {
         RuntimeOptions options = parser
                 .parse("--name", "someName")

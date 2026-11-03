@@ -46,7 +46,8 @@ public final class Main {
      * @param  argv runtime options. See details in the
      *              {@code cucumber.api.cli.Usage.txt} resource.
      * @return      0 if execution was successful, 1 if it was not (test
-     *              failures)
+     *              failures), 2 if no tests started and
+     *              {@code --fail-if-no-tests} was specified
      */
     public static byte run(String... argv) {
         return run(argv, Thread.currentThread().getContextClassLoader());
@@ -59,7 +60,8 @@ public final class Main {
      *                     {@code cucumber.api.cli.Usage.txt} resource.
      * @param  classLoader classloader used to load the runtime
      * @return             0 if execution was successful, 1 if it was not (test
-     *                     failures)
+     *                     failures), 2 if no tests started and
+     *                     {@code --fail-if-no-tests} was specified
      */
     public static byte run(String[] argv, ClassLoader classLoader) {
         RuntimeOptions propertiesFileOptions = new CucumberPropertiesParser()
