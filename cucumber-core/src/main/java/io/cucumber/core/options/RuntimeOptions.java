@@ -53,6 +53,7 @@ public final class RuntimeOptions implements
     private boolean dryRun;
     private boolean monochrome = false;
     private boolean wip = false;
+    private boolean failIfNoTests = false;
     private boolean glueHint = true;
     private Duration glueHintThreshold = Duration.ofMillis(100);
     private SnippetType snippetType = SnippetType.UNDERSCORE;
@@ -150,6 +151,14 @@ public final class RuntimeOptions implements
 
     void setWip(boolean wip) {
         this.wip = wip;
+    }
+
+    public boolean isFailIfNoTests() {
+        return failIfNoTests;
+    }
+
+    void setFailIfNoTests(boolean failIfNoTests) {
+        this.failIfNoTests = failIfNoTests;
     }
 
     void setMonochrome(boolean monochrome) {

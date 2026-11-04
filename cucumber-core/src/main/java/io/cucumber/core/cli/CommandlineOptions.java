@@ -69,6 +69,8 @@ public final class CommandlineOptions {
     public static final String WIP = "--wip";
     public static final String WIP_SHORT = "-w";
 
+    public static final String FAIL_IF_NO_TESTS = "--fail-if-no-tests";
+
     public static final String ORDER = "--order";
 
     public static final String COUNT = "--count";

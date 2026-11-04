@@ -33,6 +33,7 @@ public final class RuntimeOptionsBuilder {
     private @Nullable Boolean parsedMonochrome = null;
     private @Nullable SnippetType parsedSnippetType = null;
     private @Nullable Boolean parsedWip = null;
+    private @Nullable Boolean parsedFailIfNoTests = null;
     private @Nullable Boolean parsedGlueHint = null;
     private @Nullable Duration parsedGlueHintThreshold = null;
     private @Nullable PickleOrder parsedPickleOrder = null;
@@ -115,6 +116,10 @@ public final class RuntimeOptionsBuilder {
 
         if (this.parsedWip != null) {
             runtimeOptions.setWip(this.parsedWip);
+        }
+
+        if (this.parsedFailIfNoTests != null) {
+            runtimeOptions.setFailIfNoTests(this.parsedFailIfNoTests);
         }
 
         if (this.parsedGlueHint != null) {
@@ -247,6 +252,11 @@ public final class RuntimeOptionsBuilder {
 
     public RuntimeOptionsBuilder setWip(boolean wip) {
         this.parsedWip = wip;
+        return this;
+    }
+
+    public RuntimeOptionsBuilder setFailIfNoTests(boolean failIfNoTests) {
+        this.parsedFailIfNoTests = failIfNoTests;
         return this;
     }
 

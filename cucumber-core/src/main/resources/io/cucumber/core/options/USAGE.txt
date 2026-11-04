@@ -66,6 +66,9 @@ Options:
   -w, --wip                                Fail if there are any passing
                                            scenarios.
 
+      --fail-if-no-tests                   Exit with code 2 if no scenarios
+                                           start. Defaults to false.
+
 
       --order                              Run the scenarios in a different
                                            order. The options are 'reverse' and

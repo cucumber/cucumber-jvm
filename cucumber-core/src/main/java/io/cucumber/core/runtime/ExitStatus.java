@@ -23,13 +23,20 @@ public final class ExitStatus implements ConcurrentEventListener {
 
     private static final byte DEFAULT = 0x0;
     private static final byte ERRORS = 0x1;
+    private static final byte NO_TESTS = 0x2;
 
     private final Repository repository = Repository.builder().build();
     private final Query query = new Query(repository);
     private final Options options;
+    private final boolean failIfNoTests;
 
     public ExitStatus(Options options) {
+        this(options, false);
+    }
+
+    ExitStatus(Options options, boolean failIfNoTests) {
         this.options = options;
+        this.failIfNoTests = failIfNoTests;
     }
 
     @Override
@@ -38,6 +45,9 @@ public final class ExitStatus implements ConcurrentEventListener {
     }
 
     byte exitStatus() {
+        if (failIfNoTests && query.findAllTestCaseStarted().isEmpty()) {
+            return NO_TESTS;
+        }
         return isSuccess() ? DEFAULT : ERRORS;
     }
 

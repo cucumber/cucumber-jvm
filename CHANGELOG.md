@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- [Core] Add `--fail-if-no-tests` to exit with status 2 when no scenarios were run ([#2684](https://github.com/cucumber/cucumber-jvm/issues/2684), [#3259](https://github.com/cucumber/cucumber-jvm/pull/3259))
 
 ## [8.0.4] - 2026-10-02
 ### Fixed
