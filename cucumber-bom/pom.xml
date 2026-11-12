@@ -20,7 +20,7 @@
         <gherkin.version>42.0.1</gherkin.version>
         <html-formatter.version>24.2.0</html-formatter.version>
         <junit-xml-formatter.version>0.15.0</junit-xml-formatter.version>
-        <messages.version>34.2.1</messages.version>
+        <messages.version>35.0.0</messages.version>
         <messages-ndjson.version>0.5.2</messages-ndjson.version>
         <pretty-formatter.version>4.1.0</pretty-formatter.version>
         <query.version>16.2.0</query.version>
