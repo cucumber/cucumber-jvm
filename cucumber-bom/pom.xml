@@ -15,7 +15,7 @@
     <properties>
         <project.rootdir>..</project.rootdir>
         <ci-environment.version>15.0.0</ci-environment.version>
-        <cucumber-expressions.version>20.1.0</cucumber-expressions.version>
+        <cucumber-expressions.version>20.2.0</cucumber-expressions.version>
         <cucumber-json-formatter.version>0.4.2</cucumber-json-formatter.version>
         <gherkin.version>42.0.1</gherkin.version>
         <html-formatter.version>24.2.0</html-formatter.version>
