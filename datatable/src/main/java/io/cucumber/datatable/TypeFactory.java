@@ -153,7 +153,7 @@ final class TypeFactory {
 
         @Override
         public int hashCode() {
-            return Objects.hash(original);
+            return Objects.hashCode(original);
         }
 
         @Override
