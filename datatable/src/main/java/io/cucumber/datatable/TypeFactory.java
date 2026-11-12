@@ -200,9 +200,7 @@ final class TypeFactory {
 
         @Override
         public int hashCode() {
-            int result = Objects.hash(rawClass);
-            result = 31 * result + Arrays.hashCode(elementTypes);
-            return result;
+            return Objects.hash(rawClass, Arrays.hashCode(elementTypes));
         }
 
         @Override
