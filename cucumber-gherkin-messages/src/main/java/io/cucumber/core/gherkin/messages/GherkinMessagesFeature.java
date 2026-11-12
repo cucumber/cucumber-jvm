@@ -117,7 +117,7 @@ final class GherkinMessagesFeature implements Feature {
 
     @Override
     public int hashCode() {
-        return Objects.hash(uri);
+        return Objects.hashCode(uri);
     }
 
     @Override
