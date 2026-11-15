@@ -10,11 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- [Spring] Minimize required dependencies ([#3265](https://github.com/cucumber/cucumber-jvm/issues/3265))
-- [Java] Exclude anonymous classes from glue loading advice ([#3266](https://github.com/cucumber/cucumber-jvm/issues/3266))
-- [Kotlin] Avoid `java.lang.IncompatibleClassChangeError` with Kotest ([#3255](https://github.com/cucumber/cucumber-jvm/issues/3255))
 
+## [8.1.0] - 2026-11-15
 ### Added
 - [Core] Add `--fail-if-no-tests` to exit with status 2 when no scenarios were run ([#2684](https://github.com/cucumber/cucumber-jvm/issues/2684), [#3259](https://github.com/cucumber/cucumber-jvm/pull/3259))
 - Add OSGI into to manifest of relevant modules ([#3264](https://github.com/cucumber/cucumber-jvm/issues/3264))
@@ -34,6 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Update dependency io.cucumber:teamcity-formatter.version to v0.5.0
 - [Core] Update dependency io.cucumber:testng-xml-formatter.version to v0.11.0
 - [Core] Update dependency io.cucumber:usage-formatter.version to v0.4.0
+
+### Fixed
+- [Spring] Minimize required dependencies ([#3265](https://github.com/cucumber/cucumber-jvm/issues/3265))
+- [Java] Exclude anonymous classes from glue loading advice ([#3266](https://github.com/cucumber/cucumber-jvm/issues/3266))
+- [Kotlin] Avoid `java.lang.IncompatibleClassChangeError` with Kotest ([#3255](https://github.com/cucumber/cucumber-jvm/issues/3255))
 
 ## [8.0.4] - 2026-10-02
 ### Fixed
@@ -109,7 +111,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [OpenEJB] Removed `cucumber-cdi2` in favor of `cucumber-jakarta-cdi` ([#3192](https://github.com/cucumber/cucumber-jvm/pull/3192))
 - [OpenEJB] Removed `cucumber-deltaspike` without replacement ([#3193](https://github.com/cucumber/cucumber-jvm/pull/3193))
 
-[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.4...HEAD
+[Unreleased]: https://github.com/cucumber/cucumber-jvm/compare/v8.1.0...HEAD
+[8.1.0]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.4...v8.1.0
 [8.0.4]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.3...v8.0.4
 [8.0.3]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.2...v8.0.3
 [8.0.2]: https://github.com/cucumber/cucumber-jvm/compare/v8.0.1...v8.0.2
