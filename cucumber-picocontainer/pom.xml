@@ -169,6 +169,14 @@
                         <goals>
                             <goal>verify</goal>
                         </goals>
+                        <configuration>
+                            <ignored>
+                                <ignore>Import-Package: org.picocontainer</ignore>
+                                <ignore>Import-Package: org.picocontainer.behaviors</ignore>
+                                <ignore>Import-Package: org.picocontainer.injectors</ignore>
+                                <ignore>Import-Package: org.picocontainer.lifecycle</ignore>
+                            </ignored>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
