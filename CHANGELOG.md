@@ -17,6 +17,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Core] Add `--fail-if-no-tests` to exit with status 2 when no scenarios were run ([#2684](https://github.com/cucumber/cucumber-jvm/issues/2684), [#3259](https://github.com/cucumber/cucumber-jvm/pull/3259))
 - Add OSGI into to manifest of relevant modules ([#3264](https://github.com/cucumber/cucumber-jvm/issues/3264))
 
+### Changed
+- [Core] Update dependency io.cucumber:ci-environment.version to v15.1.0
+- [Core] Update dependency io.cucumber:cucumber-expressions.version to v20.2.0
+- [Core] Update dependency io.cucumber:cucumber-json-formatter.version to v0.5.0
+- [Core] Update dependency io.cucumber:gherkin.version to v43.0.1
+- [Core] Update dependency io.cucumber:html-formatter.version to v24.4.0
+- [Core] Update dependency io.cucumber:junit-xml-formatter.version to v0.17.0
+- [Core] Update dependency io.cucumber:messages.version to v35.0.0
+- [Core] Update dependency io.cucumber:messages-ndjson.version to v0.6.0
+- [Core] Update dependency io.cucumber:pretty-formatter.version to v4.3.0
+- [Core] Update dependency io.cucumber:query.version to v16.4.0
+- [Core] Update dependency io.cucumber:tag-expressions.version to v11.2.0
+- [Core] Update dependency io.cucumber:teamcity-formatter.version to v0.5.0
+- [Core] Update dependency io.cucumber:testng-xml-formatter.version to v0.11.0
+- [Core] Update dependency io.cucumber:usage-formatter.version to v0.4.0
+
 ## [8.0.4] - 2026-10-02
 ### Fixed
 - [Core] Apply class predicate from backends to glue-classes ([#3253](https://github.com/cucumber/cucumber-jvm/issues/3253))
