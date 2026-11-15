@@ -12,6 +12,7 @@
     <name>Cucumber-JVM: TestNG</name>
 
     <properties>
+        <osgi.bundle-symbolic-name>${project.Automatic-Module-Name}</osgi.bundle-symbolic-name>
         <project.Automatic-Module-Name>io.cucumber.testng</project.Automatic-Module-Name>
         <project.rootdir>..</project.rootdir>
         <assertj.version>3.27.7</assertj.version>
@@ -133,6 +134,32 @@
                     <!-- See: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3-->
                     <argLine>-javaagent:${org.mockito:mockito-core:jar}</argLine>
                 </configuration>
+            </plugin>
+
+            <!-- Generate, add and verify OSGI data -->
+            <plugin>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-wrap-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
