@@ -1,10 +1,13 @@
 package io.cucumber.java;
 
 import io.cucumber.core.backend.discovery.GlueDiscoveryRequest;
+import io.cucumber.core.backend.discovery.GlueDiscoverySelectorResolver;
 import io.cucumber.core.logging.LogRecordListener;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.core.options.RuntimeOptions;
 import io.cucumber.core.options.RuntimeOptionsBuilder;
+import io.cucumber.core.resource.ClassLoaders;
+import io.cucumber.core.resource.ClasspathScanner;
 import io.cucumber.core.resource.ClasspathSupport;
 import io.cucumber.java.steps.Steps;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +40,7 @@ class GlueLoadingAdvisorTest {
 
         try (var advisor = new GlueLoadingAdvisor(request, clock)) {
             // When loading a lot of classes
-            advisor.addGlueClass(GlueLoadingAdvisor.class);
+            advisor.addGlueClass(PublicClass.class);
             clock.tick(Duration.ofSeconds(1));
         }
         // Then we log some hint message to improve the situation
@@ -46,6 +49,40 @@ class GlueLoadingAdvisorTest {
                 Scanning the glue packages took 1000 ms for 1 classes, but only 0 of them contained Cucumber classes.
                 You could gain about 1000 ms by more precisely specifying the glue package.
                 """);
+    }
+
+    @Test
+    void logs_loadGlue_hints_does_not_include_anonymous_classes() {
+        var request = GlueDiscoveryRequest.builder()
+                .selectors(selectUri("classpath:io/cucumber/java/anonymous"))
+                .options(RuntimeOptions.defaultOptions())
+                .build();
+
+        var resolver = new GlueDiscoverySelectorResolver( //
+            new ClasspathScanner(ClassLoaders::getDefaultClassLoader), //
+            anyClass -> true //
+        );
+
+        try (var advisor = new GlueLoadingAdvisor(request, clock)) {
+            // The resolver finds the anonymous class in the
+            // AnonymousClassHolder
+            resolver.resolve(request).forEach(advisor::addGlueClass);
+            clock.tick(Duration.ofSeconds(1));
+        }
+        // Then we log some hint message to improve the situation
+        String message = listener.getLogRecords().get(0).getMessage();
+        assertThat(message).isEqualTo(
+            """
+                    Scanning the glue packages took 1000 ms for 2 classes, but only 0 of them contained Cucumber classes.
+                    You could gain about 500 ms by more precisely specifying the glue package.
+
+                    Some advice in order of decreasing efficiency:
+                    1) remove the classes that do not contain cucumber step/hooks/injectors, e.g.:
+                    io.cucumber.java.anonymous.AnonymousClassHolder
+
+                    2) for classes that contain steps/hooks/injectors, remove non-public classes from the glue package, e.g.:
+                    io.cucumber.java.anonymous.AnonymousClassHolder
+                    """);
     }
 
     @Test
@@ -59,7 +96,7 @@ class GlueLoadingAdvisorTest {
             // When loading a lot of classes
             advisor.addGlueClass(Steps.class);
             advisor.addContainerClass(Steps.class);
-            advisor.addGlueClass(PublicStaticInnerClass.class);
+            advisor.addGlueClass(PublicClass.PublicStaticInnerClass.class);
             clock.tick(Duration.ofSeconds(1));
         }
 
@@ -72,7 +109,7 @@ class GlueLoadingAdvisorTest {
 
                     Some advice in order of decreasing efficiency:
                     1) for classes that contain steps/hooks/injectors, change public static inner classes to private (or remove them from the glue package), e.g.:
-                    io.cucumber.java.GlueLoadingAdvisorTest$PublicStaticInnerClass
+                    io.cucumber.java.PublicClass$PublicStaticInnerClass
                     """);
     }
 
@@ -87,7 +124,7 @@ class GlueLoadingAdvisorTest {
             // When loading a lot of classes
             advisor.addGlueClass(Steps.class);
             advisor.addContainerClass(Steps.class);
-            advisor.addGlueClass(NonPublicStaticInnerClass.class);
+            advisor.addGlueClass(PublicClass.NonPublicStaticInnerClass.class);
             clock.tick(Duration.ofSeconds(1));
         }
 
@@ -100,7 +137,7 @@ class GlueLoadingAdvisorTest {
 
                     Some advice in order of decreasing efficiency:
                     1) for classes that contain steps/hooks/injectors, remove non-public classes from the glue package, e.g.:
-                    io.cucumber.java.GlueLoadingAdvisorTest$NonPublicStaticInnerClass
+                    io.cucumber.java.PublicClass$NonPublicStaticInnerClass
                     """);
     }
 
@@ -113,7 +150,7 @@ class GlueLoadingAdvisorTest {
 
         try (var advisor = new GlueLoadingAdvisor(request, clock)) {
             // When loading a lot of classes
-            advisor.addGlueClass(GlueLoadingAdvisor.class);
+            advisor.addGlueClass(PackagePrivateClass.class);
             advisor.addGlueClass(Steps.class);
             advisor.addContainerClass(Steps.class);
             clock.tick(Duration.ofSeconds(1));
@@ -128,10 +165,10 @@ class GlueLoadingAdvisorTest {
 
                     Some advice in order of decreasing efficiency:
                     1) remove the classes that do not contain cucumber step/hooks/injectors, e.g.:
-                    io.cucumber.java.GlueLoadingAdvisor
+                    io.cucumber.java.PackagePrivateClass
 
                     2) for classes that contain steps/hooks/injectors, remove non-public classes from the glue package, e.g.:
-                    io.cucumber.java.GlueLoadingAdvisor
+                    io.cucumber.java.PackagePrivateClass
                     """);
     }
 
@@ -162,7 +199,7 @@ class GlueLoadingAdvisorTest {
 
         try (var advisor = new GlueLoadingAdvisor(request, clock)) {
             // When loading classes from root package
-            advisor.addGlueClass(GlueLoadingAdvisor.class);
+            advisor.addGlueClass(PublicClass.class);
             advisor.addGlueClass(Steps.class);
             advisor.addContainerClass(Steps.class);
             clock.tick(Duration.ofSeconds(1));
@@ -189,10 +226,10 @@ class GlueLoadingAdvisorTest {
 
         try (var advisor = new GlueLoadingAdvisor(request, clock)) {
             // When loading a lot of classes
-            advisor.addGlueClass(GlueLoadingAdvisor.class);
+            advisor.addGlueClass(PublicClass.class);
             advisor.addGlueClass(Steps.class);
             advisor.addContainerClass(Steps.class);
-            advisor.addGlueClass(PublicStaticInnerClass.class);
+            advisor.addGlueClass(PublicClass.PublicStaticInnerClass.class);
             clock.tick(Duration.ofSeconds(1));
         }
 
@@ -223,22 +260,16 @@ class GlueLoadingAdvisorTest {
                 .build();
 
         try (var advisor = new GlueLoadingAdvisor(request, clock)) {
-            advisor.addGlueClass(GlueLoadingAdvisor.class);
+            advisor.addGlueClass(PublicClass.class);
             advisor.addGlueClass(Steps.class);
             advisor.addContainerClass(Steps.class);
-            advisor.addGlueClass(PublicStaticInnerClass.class);
+            advisor.addGlueClass(PublicClass.PublicStaticInnerClass.class);
             // When loading a lot of classes
             clock.tick(Duration.ofMillis(300));
         }
 
         // Then no hint is displayed
         assertThat(listener.getLogRecords()).isEmpty();
-    }
-
-    public static class PublicStaticInnerClass {
-    }
-
-    static class NonPublicStaticInnerClass {
     }
 
 }

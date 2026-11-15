@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - [Spring] Minimize required dependencies ([#3265](https://github.com/cucumber/cucumber-jvm/issues/3265))
+- [Java] Exclude anonymous classes from glue loading advice ([#3266](https://github.com/cucumber/cucumber-jvm/issues/3266))
+- [Kotlin] Avoid `java.lang.IncompatibleClassChangeError` with Kotest ([#3255](https://github.com/cucumber/cucumber-jvm/issues/3255))
 
 ### Added
 - [Core] Add `--fail-if-no-tests` to exit with status 2 when no scenarios were run ([#2684](https://github.com/cucumber/cucumber-jvm/issues/2684), [#3259](https://github.com/cucumber/cucumber-jvm/pull/3259))

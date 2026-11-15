@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This class gives advices to the developer to improve the glue loading
@@ -69,9 +70,13 @@ final class GlueLoadingAdvisor implements AutoCloseable {
             return;
         }
 
-        int containerClassCount = containerClasses.size();
-        Duration durationPerGlueClass = duration.multipliedBy(containerClassCount).dividedBy(glueClassCount);
-        var expectedGain = duration.minus(durationPerGlueClass);
+        long glueClassesWithoutHint = glueClassCount - hintClasses().count();
+        // time_per_class = duration / classes
+        // mandatory_time = time_per_class * classes_without_hint
+        // expected_gain = duration - mandatory_time
+        //
+        // rearranged to avoid loss of precision:
+        var expectedGain = duration.minus(duration.multipliedBy(glueClassesWithoutHint).dividedBy(glueClassCount));
 
         if (expectedGain.compareTo(options.getGlueHintThreshold()) < 0) {
             return;
@@ -88,18 +93,20 @@ final class GlueLoadingAdvisor implements AutoCloseable {
         addSuggestionChangePublicStaticInnerClassesToPrivateClasses(suggestions);
         addSuggestionRemoveNonPublicClassFromGluePackage(suggestions);
 
+        if (suggestions.isEmpty()) {
+            return;
+        }
         // Glue may be discovered in parallel, avoid logging this more than
         // once.
         if (!loggedOnce.compareAndSet(false, true)) {
             return;
         }
-
         log.info(() -> """
                 Scanning the glue packages took %s ms for %d classes, but only %d of them contained Cucumber classes.
                 You could gain about %s ms by more precisely specifying the glue package.
 
                 Some advice in order of decreasing efficiency:
-                %s""".formatted(duration.toMillis(), glueClassCount, containerClassCount, expectedGain.toMillis(),
+                %s""".formatted(duration.toMillis(), glueClassCount, containerClasses.size(), expectedGain.toMillis(),
             String.join("\n", suggestions)));
     }
 
@@ -110,8 +117,7 @@ final class GlueLoadingAdvisor implements AutoCloseable {
     }
 
     private void addSuggestionRemoveClassWithoutGlueFromGluePackage(List<String> suggestions) {
-        String classesNotContainingGlueSuggestion = glueClasses.stream()
-                .filter(clazz -> !containerClasses.contains(clazz) && clazz.getDeclaringClass() == null)
+        String classesNotContainingGlueSuggestion = hintTopLevelClasses()
                 .limit(10)
                 .map(Class::getName)
                 .collect(Collectors.joining("\n"));
@@ -123,10 +129,7 @@ final class GlueLoadingAdvisor implements AutoCloseable {
     }
 
     private void addSuggestionChangePublicStaticInnerClassesToPrivateClasses(List<String> suggestions) {
-        String publicInnerClassesSuggestion = glueClasses.stream()
-                .filter(clazz -> !containerClasses.contains(clazz) &&
-                        Modifier.isPublic(clazz.getModifiers()) &&
-                        clazz.getDeclaringClass() != null)
+        String publicInnerClassesSuggestion = hintPublicInnerClasses()
                 .limit(10)
                 .map(Class::getName)
                 .collect(Collectors.joining("\n"));
@@ -139,9 +142,7 @@ final class GlueLoadingAdvisor implements AutoCloseable {
     }
 
     private void addSuggestionRemoveNonPublicClassFromGluePackage(List<String> suggestions) {
-        String nonPublicInnerClassesSuggestion = glueClasses.stream()
-                .filter(clazz -> !containerClasses.contains(clazz) &&
-                        !Modifier.isPublic(clazz.getModifiers()))
+        String nonPublicInnerClassesSuggestion = hintNonPublicClasses()
                 .limit(10)
                 .map(Class::getName)
                 .collect(Collectors.joining("\n"));
@@ -151,6 +152,39 @@ final class GlueLoadingAdvisor implements AutoCloseable {
                     +
                     nonPublicInnerClassesSuggestion + "\n");
         }
+    }
+
+    private Stream<Class<?>> hintClasses() {
+        return Stream.of(hintTopLevelClasses(), hintPublicInnerClasses(), hintNonPublicClasses())
+                .reduce(Stream.empty(), Stream::concat)
+                .distinct();
+    }
+
+    private Stream<Class<?>> hintTopLevelClasses() {
+        return glueClasses.stream()
+                .filter(clazz -> !containerClasses.contains(clazz))
+                // Anonymous classes are created by lambdas and comparators,
+                // ect. These can't be moved.
+                .filter(clazz -> !clazz.isAnonymousClass())
+                .filter(clazz -> clazz.getDeclaringClass() == null);
+    }
+
+    private Stream<Class<?>> hintPublicInnerClasses() {
+        return glueClasses.stream()
+                .filter(clazz -> !containerClasses.contains(clazz))
+                // Anonymous classes are created by lambdas and comparators,
+                // ect. These can't be moved.
+                .filter(clazz -> !clazz.isAnonymousClass())
+                .filter(clazz -> Modifier.isPublic(clazz.getModifiers()) && clazz.getDeclaringClass() != null);
+    }
+
+    private Stream<Class<?>> hintNonPublicClasses() {
+        return glueClasses.stream()
+                .filter(clazz -> !containerClasses.contains(clazz))
+                // Anonymous classes are created by lambdas and comparators,
+                // ect. These can't be moved.
+                .filter(clazz -> !clazz.isAnonymousClass())
+                .filter(clazz -> !Modifier.isPublic(clazz.getModifiers()));
     }
 
     /**
